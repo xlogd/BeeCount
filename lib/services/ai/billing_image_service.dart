@@ -4,9 +4,13 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../utils/image_file_info.dart';
+
+final billingImageServiceProvider =
+    Provider<BillingImageService>((ref) => BillingImageService());
 
 /// 图片附件与 AI 识别图片分别管理，避免识别压缩损失附件原图。
 class BillingImageFiles {
@@ -51,8 +55,6 @@ class BillingImageService {
 
   Future<BillingImageFiles> prepare(File file,
       {required bool keepOriginal}) async {
-    if (!keepOriginal) return BillingImageFiles(file, file);
-
     final info = await ImageFileInfo.fromFile(file);
     final width = info.width;
     final height = info.height;

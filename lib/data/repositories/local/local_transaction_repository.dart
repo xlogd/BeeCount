@@ -1611,7 +1611,8 @@ class LocalTransactionRepository implements TransactionRepository {
   @override
   Future<Transaction?> getTransactionBySyncId(String syncId) async {
     return await (db.select(db.transactions)
-          ..where((t) => t.syncId.equals(syncId)))
+          ..where((t) => t.syncId.equals(syncId))
+          ..limit(1))
         .getSingleOrNull();
   }
 

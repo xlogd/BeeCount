@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'dart:convert';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/enums.dart';
 
 import '../../ai/core/ai_extraction_context.dart';
 import '../../ai/core/ai_extraction_engine.dart';
@@ -9,6 +12,7 @@ import '../../l10n/app_localizations.dart';
 import '../billing/bill_creation_service.dart';
 import '../system/logger_service.dart';
 import 'bookkeeping_result.dart';
+import 'image_billing_source.dart';
 
 /// AI 记账应用层 (Layer 2)。
 ///
@@ -28,7 +32,9 @@ class AiBookkeeper {
   final AiExtractionEngine _engine;
   final BillCreationService _persister;
 
-  const AiBookkeeper({
+  final _imagesInFlight = <String, Future<BookkeepingResult>>{};
+
+  AiBookkeeper({
     required BaseRepository repository,
     required AiExtractionEngine engine,
     required BillCreationService persister,
@@ -51,7 +57,8 @@ class AiBookkeeper {
       repository: _repo,
       ledgerId: ledgerId,
     );
-    final bills = await _engine.extractFromText(text, context, billGuard: billGuard);
+    final bills =
+        await _engine.extractFromText(text, context, billGuard: billGuard);
     return _persistAll(
       bills: bills,
       ledgerId: ledgerId,
@@ -75,12 +82,151 @@ class AiBookkeeper {
     AppLocalizations? l10n,
     Future<void> Function(int txId, int index)? onSaved,
     void Function()? onSaving,
+    String? sourceFingerprint,
+    ImageBillingReviewer? review,
   }) async {
-    final context = await AiExtractionContext.forLedger(
-      repository: _repo,
-      ledgerId: ledgerId,
-    );
-    final bills = await _engine.extractFromImage(image, context, billGuard: billGuard);
+    final hash = sourceFingerprint ??
+        (await image.exists() ? await imageBillingSourceHash(image) : null);
+    final ledger = await _repo.getLedgerById(ledgerId);
+    final key = hash == null
+        ? null
+        : imageBillingDraftKey(ledger?.syncId ?? 'local:$ledgerId', hash);
+    if (key != null && _imagesInFlight[key] != null) {
+      return _imagesInFlight[key]!;
+    }
+    final operation = _fromImage(
+        image: image,
+        ledgerId: ledgerId,
+        billingTypes: billingTypes,
+        billGuard: billGuard,
+        l10n: l10n,
+        onSaved: onSaved,
+        onSaving: onSaving,
+        sourceKey: key,
+        baseCurrency: ledger?.currency ?? 'CNY',
+        review: review);
+    if (key != null) _imagesInFlight[key] = operation;
+    try {
+      return await operation;
+    } finally {
+      if (key != null && identical(_imagesInFlight[key], operation)) {
+        _imagesInFlight.remove(key);
+      }
+    }
+  }
+
+  Future<BookkeepingResult> _fromImage({
+    required File image,
+    required int ledgerId,
+    required List<String> billingTypes,
+    required String billGuard,
+    required String baseCurrency,
+    String? sourceKey,
+    AppLocalizations? l10n,
+    Future<void> Function(int txId, int index)? onSaved,
+    void Function()? onSaving,
+    ImageBillingReviewer? review,
+  }) async {
+    final cached =
+        sourceKey == null ? null : await _repo.getImageBillingDraft(sourceKey);
+    List<BillInfo> bills;
+    if (cached != null) {
+      bills = (jsonDecode(cached) as List)
+          .map((value) =>
+              BillInfo.fromJson(Map<String, dynamic>.from(value as Map)))
+          .toList();
+    } else {
+      final context = await AiExtractionContext.forLedger(
+        repository: _repo,
+        ledgerId: ledgerId,
+      );
+      bills =
+          await _engine.extractFromImage(image, context, billGuard: billGuard);
+      if (bills.isEmpty) return BookkeepingResult.empty;
+    }
+
+    bills =
+        bills.map((bill) => bill.copyWith(type: bill.effectiveType)).toList();
+    final identities = <int, String>{
+      if (sourceKey != null)
+        for (var i = 0; i < bills.length; i++)
+          i: const Uuid()
+              .v5(Namespace.url.value, 'beecount:image:$sourceKey:$i'),
+    };
+    final existingIds = <int, int>{};
+    final suspected = <int>{};
+    if (sourceKey != null || review != null) {
+      final existing = await _repo.getTransactionsByLedger(ledgerId);
+      final byIdentity = {
+        for (final tx in existing)
+          if (tx.syncId != null) tx.syncId!: tx.id
+      };
+      final matches = {
+        for (final tx in existing)
+          imageBillMatchKey(
+              type: tx.type,
+              amount: tx.amount,
+              time: tx.happenedAt,
+              note: tx.note ?? '',
+              currency: tx.currencyCode ?? baseCurrency)
+      };
+      final inResponse = <String>{};
+      for (var i = 0; i < bills.length; i++) {
+        final id = byIdentity[identities[i]];
+        if (id != null) existingIds[i] = id;
+        final bill = bills[i];
+        final key = imageBillMatchKey(
+            type: bill.type?.name ?? 'expense',
+            amount: bill.amount ?? 0,
+            time: bill.time ?? DateTime.now(),
+            note: bill.note ?? '',
+            currency: bill.currency ?? baseCurrency);
+        if (!inResponse.add(key) || (id == null && matches.contains(key))) {
+          suspected.add(i);
+        }
+      }
+    }
+    Set<int>? selection;
+    if (existingIds.length != bills.length) {
+      if (review != null) {
+        selection = await review(ImageBillingReview(
+            bills: List.unmodifiable(bills),
+            alreadySaved: Set.unmodifiable(existingIds.keys),
+            suspectedDuplicates: Set.unmodifiable(suspected)));
+        if (selection == null) return const BookkeepingResult(cancelled: true);
+        if (selection.any((i) => i < 0 || i >= bills.length)) {
+          throw ArgumentError('Invalid image review selection');
+        }
+      } else if (suspected.isNotEmpty) {
+        return const BookkeepingResult(needsReview: true);
+      }
+    }
+    // An unconfirmed crop must not freeze a draft. Concurrent writers reuse
+    // the winning immutable extraction before any source items are persisted.
+    if (sourceKey != null &&
+        cached == null &&
+        (selection == null || selection.isNotEmpty)) {
+      final encoded = jsonEncode(bills.map((b) => b.toJson()).toList());
+      final stored = await _repo.saveImageBillingDraft(
+          sourceKey: sourceKey, ledgerId: ledgerId, billsJson: encoded);
+      if (stored != encoded) {
+        return _fromImage(
+            image: image,
+            ledgerId: ledgerId,
+            billingTypes: billingTypes,
+            billGuard: billGuard,
+            baseCurrency: baseCurrency,
+            sourceKey: sourceKey,
+            l10n: l10n,
+            onSaved: onSaved,
+            onSaving: onSaving,
+            review: review);
+      }
+    }
+    logger.info(
+        _tag,
+        '图片批次 ${sourceKey ?? "uncached"}: '
+        '提取=${bills.length}, 已保存=${existingIds.length}, 疑似重复=${suspected.length}');
     return _persistAll(
       bills: bills,
       ledgerId: ledgerId,
@@ -88,6 +234,9 @@ class AiBookkeeper {
       l10n: l10n,
       onSaved: onSaved,
       onSaving: onSaving,
+      sourceItemIds: identities,
+      existingIds: existingIds,
+      selectedIndices: selection,
     );
   }
 
@@ -129,6 +278,9 @@ class AiBookkeeper {
     AppLocalizations? l10n,
     Future<void> Function(int txId, int index)? onSaved,
     void Function()? onSaving,
+    Map<int, String> sourceItemIds = const {},
+    Map<int, int> existingIds = const {},
+    Set<int>? selectedIndices,
   }) async {
     if (bills.isEmpty) {
       return BookkeepingResult.empty;
@@ -136,7 +288,11 @@ class AiBookkeeper {
 
     // Progress feedback must never prevent the financial write.
     try {
-      onSaving?.call();
+      if (List.generate(bills.length, (i) => i).any((i) =>
+          !existingIds.containsKey(i) &&
+          (selectedIndices?.contains(i) ?? true))) {
+        onSaving?.call();
+      }
     } catch (error, stack) {
       logger.error(_tag, '进度回调异常，不影响记账', error, stack);
     }
@@ -144,15 +300,26 @@ class AiBookkeeper {
     final saved = <BillInfo>[];
     final txIds = <int>[];
     var failed = 0;
+    var attachmentFailures = 0;
+    final reused = <int>[];
 
     for (var i = 0; i < bills.length; i++) {
       final bill = bills[i].copyWith(ledgerId: ledgerId);
+      final existing = existingIds[i];
+      if (existing != null) {
+        saved.add(await _enrichWithActualNames(bill, existing));
+        txIds.add(existing);
+        reused.add(existing);
+        continue;
+      }
+      if (selectedIndices != null && !selectedIndices.contains(i)) continue;
       try {
         final txId = await _persister.createFromBill(
           bill: bill,
           ledgerId: ledgerId,
           billingTypes: billingTypes,
           l10n: l10n,
+          syncId: sourceItemIds[i],
         );
         if (txId == null) {
           failed++;
@@ -169,6 +336,7 @@ class AiBookkeeper {
           try {
             await onSaved(txId, txIds.length);
           } catch (e, st) {
+            attachmentFailures++;
             logger.error(_tag, 'onSaved 回调异常,不影响主流程', e, st);
           }
         }
@@ -180,8 +348,8 @@ class AiBookkeeper {
         try {
           enriched = await _enrichWithActualNames(bill, txId);
         } catch (e, st) {
-          logger.error(_tag, 'enrichWithActualNames 异常,用 AI 原始 BillInfo',
-              e, st);
+          logger.error(
+              _tag, 'enrichWithActualNames 异常,用 AI 原始 BillInfo', e, st);
           enriched = bill;
         }
         saved.add(enriched);
@@ -200,6 +368,8 @@ class AiBookkeeper {
       savedBills: List.unmodifiable(saved),
       transactionIds: List.unmodifiable(txIds),
       failedCount: failed,
+      reusedTransactionIds: List.unmodifiable(reused),
+      attachmentFailureCount: attachmentFailures,
       unconvertedCurrencies:
           List.unmodifiable(await _collectUnconverted(txIds, ledgerId)),
     );
@@ -207,14 +377,14 @@ class AiBookkeeper {
 
   /// 找出本批里「外币且未折算」的币种(A5)。判定条件与 L11 补折算横幅一致:
   /// `currencyCode != 账本本位币 && nativeAmount == amount`。
-  Future<List<String>> _collectUnconverted(List<int> txIds, int ledgerId) async {
+  Future<List<String>> _collectUnconverted(
+      List<int> txIds, int ledgerId) async {
     if (txIds.isEmpty) return const [];
     try {
       final ledger = await _repo.getLedgerById(ledgerId);
-      final base = ((ledger?.currency.isNotEmpty ?? false)
-              ? ledger!.currency
-              : 'CNY')
-          .toUpperCase();
+      final base =
+          ((ledger?.currency.isNotEmpty ?? false) ? ledger!.currency : 'CNY')
+              .toUpperCase();
       final codes = <String>{};
       for (final id in txIds) {
         final tx = await _repo.getTransactionById(id);
@@ -254,6 +424,9 @@ class AiBookkeeper {
         actualAccount = acc?.name;
       }
       return bill.copyWith(
+        currency: tx.currencyCode ?? bill.currency,
+        type: BillType.values.firstWhere((type) => type.name == tx.type,
+            orElse: () => bill.type ?? BillType.expense),
         category: actualCategory ?? bill.category,
         account: actualAccount ?? bill.account,
       );

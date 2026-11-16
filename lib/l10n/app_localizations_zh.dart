@@ -9375,6 +9375,58 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get imageCropCurrentAvatar => '裁剪当前头像';
+
+  @override
+  String get aiImageReviewTitle => '核对图片账单';
+
+  @override
+  String get aiImageReviewHint => '请核对金额、时间和笔数。疑似重复的账单默认不选中。';
+
+  @override
+  String aiImageReviewSave(int count) {
+    return '保存 $count 笔';
+  }
+
+  @override
+  String get aiImageReviewDuplicate => '疑似重复，请确认这是一笔独立交易';
+
+  @override
+  String get aiImageReviewAlreadySaved => '此项已记账';
+
+  @override
+  String get aiImageReviewRequired => '识别结果可能重复，请在图片记账中核对后保存';
+
+  @override
+  String aiBillingSavedCount(int count) {
+    return '已新增 $count 笔';
+  }
+
+  @override
+  String aiBillingAlreadySavedCount(int count) {
+    return '已记过 $count 笔，已跳过';
+  }
+
+  @override
+  String aiBillingFailedCount(int count) {
+    return '未保存 $count 笔，可重试未完成项';
+  }
+
+  @override
+  String aiBillingAttachmentFailedCount(int count) {
+    return '有 $count 笔账单的附件未保存，可在账单中补充';
+  }
+
+  @override
+  String get aiBillingPostProcessingPending => '账单已保存，刷新或同步暂未完成';
+
+  @override
+  String get aiBillingBusy => '图片记账正在处理中，请稍候';
+
+  @override
+  String get syncRestoreMissingIdentity => '此备份缺少可靠的账单标识，已停止恢复以避免重复入账。';
+
+  @override
+  String get syncRestoreDuplicateIdentity => '备份中存在重复的账单标识，无法安全恢复。';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).
@@ -18030,4 +18082,56 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get imageCropCurrentAvatar => '裁剪目前頭像';
+
+  @override
+  String get aiImageReviewTitle => '核對圖片帳單';
+
+  @override
+  String get aiImageReviewHint => '請核對金額、時間和筆數。疑似重複的帳單預設不選取。';
+
+  @override
+  String aiImageReviewSave(int count) {
+    return '儲存 $count 筆';
+  }
+
+  @override
+  String get aiImageReviewDuplicate => '疑似重複，請確認這是一筆獨立交易';
+
+  @override
+  String get aiImageReviewAlreadySaved => '此項已記帳';
+
+  @override
+  String get aiImageReviewRequired => '辨識結果可能重複，請在圖片記帳中核對後儲存';
+
+  @override
+  String aiBillingSavedCount(int count) {
+    return '已新增 $count 筆';
+  }
+
+  @override
+  String aiBillingAlreadySavedCount(int count) {
+    return '已記過 $count 筆，已略過';
+  }
+
+  @override
+  String aiBillingFailedCount(int count) {
+    return '未儲存 $count 筆，可重試未完成項目';
+  }
+
+  @override
+  String aiBillingAttachmentFailedCount(int count) {
+    return '有 $count 筆帳單的附件未儲存，可在帳單中補充';
+  }
+
+  @override
+  String get aiBillingPostProcessingPending => '帳單已儲存，重新整理或同步暫未完成';
+
+  @override
+  String get aiBillingBusy => '圖片記帳正在處理中，請稍候';
+
+  @override
+  String get syncRestoreMissingIdentity => '此備份缺少可靠的帳單識別碼，已停止還原以避免重複入帳。';
+
+  @override
+  String get syncRestoreDuplicateIdentity => '備份中存在重複的帳單識別碼，無法安全還原。';
 }

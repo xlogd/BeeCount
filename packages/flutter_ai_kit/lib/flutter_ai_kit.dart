@@ -8,6 +8,7 @@ export 'src/core/ai_task.dart';
 export 'src/core/ai_provider.dart';
 export 'src/core/ai_result.dart';
 export 'src/core/ai_execution_context.dart';
+export 'src/utils/image_mime_type.dart';
 
 // Strategies
 export 'src/strategies/ai_execution_strategy.dart';

@@ -10,6 +10,10 @@ import '../pages/shared/feedback/recording_progress_dialog.dart';
 import '../providers.dart';
 import '../providers/ai_chat_providers.dart';
 import '../services/ai/billing_image_service.dart';
+import '../services/ai/bookkeeping_feedback.dart';
+import '../services/ai/image_billing_source.dart';
+import '../services/system/logger_service.dart';
+import '../pages/shared/feedback/image_billing_review.dart';
 import '../services/attachment_service.dart';
 import '../services/image_crop_service.dart';
 import '../services/billing/post_processor.dart';
@@ -18,6 +22,8 @@ import 'package:beecount_ui/beecount_ui.dart';
 
 /// 图片记账入口(相册/相机)。瘦身后:UI 流程 + 兜底,业务调 [AiBookkeeper]。
 class ImageBillingHelper {
+  static bool _processing = false;
+
   /// 从相册选择图片并自动记账
   static Future<void> pickImageForBilling(
     BuildContext context,
@@ -38,7 +44,11 @@ class ImageBillingHelper {
     ImageSource source,
   ) async {
     final l10n = AppLocalizations.of(context);
-    final imageService = BillingImageService();
+    if (_processing) {
+      showBeeToast(context, l10n.aiBillingBusy, tone: BeeTone.warning);
+      return;
+    }
+    _processing = true;
     BillingImageFiles? images;
     final saving = ValueNotifier(false);
     NavigatorState? progressNavigator;
@@ -46,18 +56,35 @@ class ImageBillingHelper {
     void closeProgress() {
       final route = progressRoute;
       if (route != null && route.isActive && progressNavigator!.mounted) {
-        progressNavigator.removeRoute(route);
+        progressNavigator!.removeRoute(route);
       }
       progressRoute = null;
     }
 
+    void openProgress(String ledgerName) {
+      progressNavigator = Navigator.of(context, rootNavigator: true);
+      progressRoute = DialogRoute<void>(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => RecordingProgressDialog(
+              saving: saving,
+              sourceLabel: source == ImageSource.gallery
+                  ? l10n.smartBillingImageBilling
+                  : l10n.smartBillingCameraBilling,
+              ledgerName: ledgerName));
+      progressNavigator!.push(progressRoute!);
+    }
+
     try {
+      final imageService = ref.read(billingImageServiceProvider);
       // 1. 选图
       final keepOriginal =
           await ref.read(attachmentKeepOriginalProvider.future);
       final imageFile =
-          await imageService.pickImage(source, keepOriginal: keepOriginal);
+          await imageService.pickImage(source, keepOriginal: true);
       if (imageFile == null) return;
+      if (!context.mounted) return;
+      final sourceHash = await imageBillingSourceHash(imageFile);
       if (!context.mounted) return;
       final cropped = await ref
           .read(imageCropServiceProvider)
@@ -87,19 +114,7 @@ class ImageBillingHelper {
       }
 
       if (!context.mounted) return;
-      progressNavigator = Navigator.of(context, rootNavigator: true);
-      progressRoute = DialogRoute<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => RecordingProgressDialog(
-          saving: saving,
-          sourceLabel: source == ImageSource.gallery
-              ? l10n.smartBillingImageBilling
-              : l10n.smartBillingCameraBilling,
-          ledgerName: currentLedger.name,
-        ),
-      );
-      progressNavigator.push(progressRoute!);
+      openProgress(currentLedger.name);
 
       // 5. 委托 AiBookkeeper(自动查 categories/accounts + 多笔保存)
       final autoAddAttachment = ref.read(smartBillingAutoAttachmentProvider);
@@ -119,19 +134,41 @@ class ImageBillingHelper {
         billGuard: PromptBuilder.billGuardForImage,
         billingTypes: billingTypes,
         l10n: l10n,
+        sourceFingerprint: sourceHash,
+        review: (review) async {
+          closeProgress();
+          if (!context.mounted) return null;
+          final selected = await showImageBillingReview(context, review,
+              currency: currentLedger.currency);
+          if (selected != null && context.mounted) {
+            openProgress(currentLedger.name);
+          }
+          return selected;
+        },
         onSaving: () => saving.value = true,
         // 多笔时每笔都挂同一张原图,方便后续从任意一笔溯源
         onSaved: autoAddAttachment
-            ? (txId, _) => attachmentService.saveAttachment(
+            ? (txId, _) async {
+                final attachment = await attachmentService.saveAttachment(
                   transactionId: txId,
                   sourceFile: images!.attachment,
                   index: 0,
-                )
+                );
+                if (attachment == null) {
+                  throw StateError('Billing attachment was not saved');
+                }
+              }
             : null,
       );
 
       if (!context.mounted) return;
       closeProgress();
+      if (result.cancelled) return;
+      if (result.needsReview) {
+        showBeeToast(context, l10n.aiImageReviewRequired,
+            tone: BeeTone.warning);
+        return;
+      }
 
       // 6. 提示用户
       if (!result.success) {
@@ -142,40 +179,44 @@ class ImageBillingHelper {
         return;
       }
 
-      await PostProcessor.run(
-        ref,
-        ledgerId: currentLedger.id,
-        tags: true,
-        attachments: autoAddAttachment,
-      );
+      var postProcessingFailed = false;
+      try {
+        if (result.createdCount > 0) {
+          await PostProcessor.run(
+            ref,
+            ledgerId: currentLedger.id,
+            tags: true,
+            attachments: autoAddAttachment,
+          );
+        }
+      } catch (error, stack) {
+        postProcessingFailed = true;
+        logger.error('ImageBilling', '账单已保存，后处理待重试', error, stack);
+      }
       if (!context.mounted) return;
-
-      final firstBill = result.firstBill!;
-      final typeText = firstBill.type?.name == 'income'
-          ? l10n.aiTypeIncome
-          : l10n.aiTypeExpense;
-      final amountStr = result.totalAbsAmount.toStringAsFixed(2);
-      final toastText = result.isMulti
-          ? '${l10n.aiOcrSuccess(typeText, amountStr)} × ${result.savedCount}'
-          : l10n.aiOcrSuccess(typeText, amountStr);
-      // 多币种降级提示(A5):缺汇率已按 1:1 暂记,指路统计页补折算
+      final warning = postProcessingFailed ||
+          result.failedCount > 0 ||
+          result.attachmentFailureCount > 0 ||
+          result.unconvertedCurrencies.isNotEmpty;
       showBeeToast(
           context,
-          result.unconvertedCurrencies.isEmpty
-              ? toastText
-              : '$toastText\n${l10n.aiBillingRateMissingHint(result.unconvertedCurrencies.join('、'))}',
-          tone: result.unconvertedCurrencies.isEmpty
-              ? BeeTone.success
-              : BeeTone.warning);
+          bookkeepingFeedback(l10n, result,
+              postProcessingFailed: postProcessingFailed),
+          tone: warning ? BeeTone.warning : BeeTone.success);
     } catch (e) {
       if (!context.mounted) return;
       closeProgress();
       showBeeToast(context, l10n.aiOcrFailed(e.toString()),
           tone: BeeTone.error);
     } finally {
+      _processing = false;
       closeProgress();
       saving.dispose();
-      await images?.dispose();
+      try {
+        await images?.dispose();
+      } catch (error) {
+        logger.warning('ImageBilling', '识别临时文件清理待重试: $error');
+      }
     }
   }
 }

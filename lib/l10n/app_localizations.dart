@@ -17653,6 +17653,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Crop current avatar'**
   String get imageCropCurrentAvatar;
+
+  /// No description provided for @aiImageReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review image transactions'**
+  String get aiImageReviewTitle;
+
+  /// No description provided for @aiImageReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the amounts, dates and number of transactions. Suspected duplicates are unselected by default.'**
+  String get aiImageReviewHint;
+
+  /// No description provided for @aiImageReviewSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save {count}'**
+  String aiImageReviewSave(int count);
+
+  /// No description provided for @aiImageReviewDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Possible duplicate. Select only if this is a separate payment.'**
+  String get aiImageReviewDuplicate;
+
+  /// No description provided for @aiImageReviewAlreadySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Already recorded'**
+  String get aiImageReviewAlreadySaved;
+
+  /// No description provided for @aiImageReviewRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Possible duplicates detected. Open image billing to review before saving.'**
+  String get aiImageReviewRequired;
+
+  /// No description provided for @aiBillingSavedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions added: {count}'**
+  String aiBillingSavedCount(int count);
+
+  /// No description provided for @aiBillingAlreadySavedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already recorded and skipped: {count}'**
+  String aiBillingAlreadySavedCount(int count);
+
+  /// No description provided for @aiBillingFailedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Not saved: {count}. Retry the unfinished items.'**
+  String aiBillingFailedCount(int count);
+
+  /// No description provided for @aiBillingAttachmentFailedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachments were not saved for {count} transactions. Add them from transaction details.'**
+  String aiBillingAttachmentFailedCount(int count);
+
+  /// No description provided for @aiBillingPostProcessingPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions are saved. Refresh or sync has not completed yet.'**
+  String get aiBillingPostProcessingPending;
+
+  /// No description provided for @aiBillingBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Image billing is in progress. Please wait.'**
+  String get aiBillingBusy;
+
+  /// No description provided for @syncRestoreMissingIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'This backup has no reliable transaction identities. Restore stopped to prevent duplicate transactions.'**
+  String get syncRestoreMissingIdentity;
+
+  /// No description provided for @syncRestoreDuplicateIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'The backup contains duplicate transaction identities and cannot be restored safely.'**
+  String get syncRestoreDuplicateIdentity;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

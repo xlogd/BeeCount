@@ -1348,6 +1348,7 @@ class SyncEngine implements app.SyncService {
       ledgerId,
       data,
       recordChanges: false,
+      mergeExisting: true,
     );
     logger.info('SyncEngine', '全量拉取完成: inserted=${result.inserted}');
 

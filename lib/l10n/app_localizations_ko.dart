@@ -9383,4 +9383,56 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get imageCropCurrentAvatar => '현재 프로필 사진 자르기';
+
+  @override
+  String get aiImageReviewTitle => '이미지 거래 확인';
+
+  @override
+  String get aiImageReviewHint => '금액, 날짜, 거래 수를 확인하세요. 중복 의심 항목은 기본적으로 선택되지 않습니다.';
+
+  @override
+  String aiImageReviewSave(int count) {
+    return '$count건 저장';
+  }
+
+  @override
+  String get aiImageReviewDuplicate => '중복이 의심됩니다. 별도 결제인 경우에만 선택하세요.';
+
+  @override
+  String get aiImageReviewAlreadySaved => '이미 기록됨';
+
+  @override
+  String get aiImageReviewRequired => '중복 의심 항목이 있습니다. 이미지 기록에서 확인한 후 저장하세요.';
+
+  @override
+  String aiBillingSavedCount(int count) {
+    return '추가된 거래: $count건';
+  }
+
+  @override
+  String aiBillingAlreadySavedCount(int count) {
+    return '이미 기록되어 건너뜀: $count건';
+  }
+
+  @override
+  String aiBillingFailedCount(int count) {
+    return '저장하지 못한 거래: $count건. 미완료 항목을 다시 시도하세요.';
+  }
+
+  @override
+  String aiBillingAttachmentFailedCount(int count) {
+    return '첨부 파일을 저장하지 못한 거래: $count건. 거래 상세에서 추가할 수 있습니다.';
+  }
+
+  @override
+  String get aiBillingPostProcessingPending => '거래는 저장되었습니다. 새로고침 또는 동기화가 아직 완료되지 않았습니다.';
+
+  @override
+  String get aiBillingBusy => '이미지 기록을 처리 중입니다. 잠시 기다려 주세요.';
+
+  @override
+  String get syncRestoreMissingIdentity => '백업에 신뢰할 수 있는 거래 식별자가 없어 중복 기록을 방지하기 위해 복원을 중단했습니다.';
+
+  @override
+  String get syncRestoreDuplicateIdentity => '백업에 중복 거래 식별자가 있어 안전하게 복원할 수 없습니다.';
 }

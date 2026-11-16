@@ -14,6 +14,10 @@ class BookkeepingResult {
 
   /// 因创建失败被跳过的笔数(amount 已校验,失败原因通常是 DB 异常)
   final int failedCount;
+  final List<int> reusedTransactionIds;
+  final int attachmentFailureCount;
+  final bool needsReview;
+  final bool cancelled;
 
   /// 本次入库里「拿不到汇率、按 1:1 暂记」的外币币种(去重、已排序)。
   ///
@@ -27,6 +31,10 @@ class BookkeepingResult {
     this.savedBills = const [],
     this.transactionIds = const [],
     this.failedCount = 0,
+    this.reusedTransactionIds = const [],
+    this.attachmentFailureCount = 0,
+    this.needsReview = false,
+    this.cancelled = false,
     this.unconvertedCurrencies = const [],
   });
 
@@ -38,6 +46,12 @@ class BookkeepingResult {
 
   /// 入库总笔数
   int get savedCount => transactionIds.length;
+
+  int get createdCount => savedCount - reusedTransactionIds.length;
+  List<BillInfo> get createdBills => [
+        for (var i = 0; i < savedBills.length; i++)
+          if (!reusedTransactionIds.contains(transactionIds[i])) savedBills[i],
+      ];
 
   /// 全部账单的金额绝对值之和(用于通知/toast 汇总)
   double get totalAbsAmount =>

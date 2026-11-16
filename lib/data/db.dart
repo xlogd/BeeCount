@@ -475,6 +475,17 @@ class SharedLedgerTags extends Table {
   Set<Column> get primaryKey => {ledgerSyncId, syncId};
 }
 
+/// Immutable recognition results let retries reuse the same source-item IDs.
+/// This local receipt cache is not uploaded as another financial entity.
+class ImageBillingDrafts extends Table {
+  TextColumn get sourceKey => text()();
+  IntColumn get ledgerId => integer()();
+  TextColumn get billsJson => text()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  @override
+  Set<Column> get primaryKey => {sourceKey};
+}
+
 @DriftDatabase(tables: [
   Ledgers,
   Accounts,
@@ -501,6 +512,7 @@ class SharedLedgerTags extends Table {
   SyncPullErrors,
   ExchangeRates,
   ExchangeRateOverrides,
+  ImageBillingDrafts,
 ])
 class BeeDatabase extends _$BeeDatabase {
   BeeDatabase() : super(_openConnection());
@@ -511,7 +523,8 @@ class BeeDatabase extends _$BeeDatabase {
   BeeDatabase.forTesting(QueryExecutor executor) : super(executor);
 
   @override
-  int get schemaVersion => 33; // v33: Agent 本地记忆、摘要与审计表
+  int get schemaVersion =>
+      34; // v34: image recognition drafts and retry identity
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -1257,6 +1270,10 @@ class BeeDatabase extends _$BeeDatabase {
             );
             await _createAgentMemoryFtsTable();
             logger.info('DBMigration', 'v33 迁移完成');
+          }
+          if (from < 34) {
+            await _createTableIfMissing(
+                migrator, 'image_billing_drafts', imageBillingDrafts);
           }
         },
         onCreate: (m) async {

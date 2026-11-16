@@ -42,8 +42,7 @@ class JsonResponseParser {
               _warnIfCurrencyDropped(item, raw);
               final sanitized = _sanitize(raw);
               if (sanitized == null) {
-                logger
-                    .warning(_tag, '数组第 ${i + 1} 项金额无效,跳过: ${raw.toJson()}');
+                logger.warning(_tag, '数组第 ${i + 1} 项金额无效,跳过: ${raw.toJson()}');
                 continue;
               }
               bills.add(sanitized);
@@ -70,7 +69,8 @@ class JsonResponseParser {
       return const [];
     }
     try {
-      final json = jsonDecode(_cleanupJson(objectBlock)) as Map<String, dynamic>;
+      final json =
+          jsonDecode(_cleanupJson(objectBlock)) as Map<String, dynamic>;
       final raw = BillInfo.fromJson(json);
       _warnIfCurrencyDropped(json, raw);
       final sanitized = _sanitize(raw);
@@ -94,10 +94,10 @@ class JsonResponseParser {
   /// 模型回的是 `"$"`,被歧义保护丢掉了)。
   void _warnIfCurrencyDropped(Map<String, dynamic> json, BillInfo bill) {
     if (bill.currency != null) return;
-    final raw = json['currency'] ?? json['currency_code'] ?? json['currencyCode'];
+    final raw =
+        json['currency'] ?? json['currency_code'] ?? json['currencyCode'];
     if (raw == null || (raw is String && raw.trim().isEmpty)) return;
-    logger.warning(
-        _tag, '币种「$raw」无法解析成 ISO 代码,本笔按账本本位币入账');
+    logger.warning(_tag, '币种「$raw」无法解析成 ISO 代码,本笔按账本本位币入账');
   }
 
   /// 单笔统一校验 + 兜底。
@@ -106,7 +106,7 @@ class JsonResponseParser {
   /// 返回非 null = 已修正(time 缺失填当前时间),可直接入库。
   BillInfo? _sanitize(BillInfo bill) {
     final amt = bill.amount;
-    if (amt == null || amt.abs() <= 0) return null;
+    if (amt == null || !amt.isFinite || amt.abs() <= 0) return null;
     if (bill.time == null) {
       return bill.copyWith(time: DateTime.now());
     }

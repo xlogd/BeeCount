@@ -539,6 +539,7 @@ void main() {
             billGuard: any(named: 'billGuard'),
             l10n: any(named: 'l10n'),
             onSaved: any(named: 'onSaved'),
+            sourceFingerprint: any(named: 'sourceFingerprint'),
           )).thenAnswer((call) async {
         final image = call.namedArguments[#image] as File;
         expect(await image.readAsBytes(),

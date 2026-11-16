@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:crypto/crypto.dart';
+import 'package:uuid/uuid.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -177,8 +178,7 @@ class AttachmentService {
         fileToStore = sourceFile;
       } else {
         // 先压缩到临时文件，再按实际保存内容的 sha256 命名（同图去重）。
-        final timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-        final tempPath = '${dir.path}/_tmp_${timestamp}_$index$finalExt';
+        final tempPath = '${dir.path}/_tmp_${const Uuid().v4()}$finalExt';
         final compressedFile = await _compressImage(sourceFile, tempPath);
         if (compressedFile == null) {
           logger.error('AttachmentService', '图片压缩失败');

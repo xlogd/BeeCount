@@ -9383,4 +9383,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get imageCropCurrentAvatar => 'Crop current avatar';
+
+  @override
+  String get aiImageReviewTitle => 'Review image transactions';
+
+  @override
+  String get aiImageReviewHint => 'Check the amounts, dates and number of transactions. Suspected duplicates are unselected by default.';
+
+  @override
+  String aiImageReviewSave(int count) {
+    return 'Save $count';
+  }
+
+  @override
+  String get aiImageReviewDuplicate => 'Possible duplicate. Select only if this is a separate payment.';
+
+  @override
+  String get aiImageReviewAlreadySaved => 'Already recorded';
+
+  @override
+  String get aiImageReviewRequired => 'Possible duplicates detected. Open image billing to review before saving.';
+
+  @override
+  String aiBillingSavedCount(int count) {
+    return 'Transactions added: $count';
+  }
+
+  @override
+  String aiBillingAlreadySavedCount(int count) {
+    return 'Already recorded and skipped: $count';
+  }
+
+  @override
+  String aiBillingFailedCount(int count) {
+    return 'Not saved: $count. Retry the unfinished items.';
+  }
+
+  @override
+  String aiBillingAttachmentFailedCount(int count) {
+    return 'Attachments were not saved for $count transactions. Add them from transaction details.';
+  }
+
+  @override
+  String get aiBillingPostProcessingPending => 'Transactions are saved. Refresh or sync has not completed yet.';
+
+  @override
+  String get aiBillingBusy => 'Image billing is in progress. Please wait.';
+
+  @override
+  String get syncRestoreMissingIdentity => 'This backup has no reliable transaction identities. Restore stopped to prevent duplicate transactions.';
+
+  @override
+  String get syncRestoreDuplicateIdentity => 'The backup contains duplicate transaction identities and cannot be restored safely.';
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import '../data/db.dart';
 import '../data/repositories/base_repository.dart';
+import '../data/repositories/local/local_repository.dart';
 import '../services/data_import_service.dart';
 import '../utils/app_localizations_resolver.dart';
 import '../services/system/logger_service.dart';
@@ -141,9 +142,10 @@ Future<String> exportTransactionsJson(BeeDatabase db, int ledgerId) async {
 
     // 记录分类缺失的交易（用于排查数据问题）
     if (t.categoryId != null && catInfo == null) {
-      logger.warning('TransactionsJson',
-        '交易 ${t.id} 引用了不存在的分类 ${t.categoryId}, '
-        'amount=${t.amount}, note=${t.note}, happenedAt=${t.happenedAt}');
+      logger.warning(
+          'TransactionsJson',
+          '交易 ${t.id} 引用了不存在的分类 ${t.categoryId}, '
+              'amount=${t.amount}, note=${t.note}, happenedAt=${t.happenedAt}');
     }
 
     final item = <String, dynamic>{
@@ -182,7 +184,8 @@ Future<String> exportTransactionsJson(BeeDatabase db, int ledgerId) async {
   }).toList();
 
   // v1.20.0: 导出附件元数据
-  final attachmentsMap = <int, List<Map<String, dynamic>>>{}; // transactionId -> attachments
+  final attachmentsMap =
+      <int, List<Map<String, dynamic>>>{}; // transactionId -> attachments
   if (txIds.isNotEmpty) {
     final allAttachments = await (db.select(db.transactionAttachments)
           ..where((a) => a.transactionId.isIn(txIds)))
@@ -294,7 +297,8 @@ Future<String> exportTransactionsJson(BeeDatabase db, int ledgerId) async {
     'items': items,
   };
 
-  logger.debug('TransactionsJson', '导出完成: ${items.length} 条交易, ${categoryItems.length} 个分类');
+  logger.debug('TransactionsJson',
+      '导出完成: ${items.length} 条交易, ${categoryItems.length} 个分类');
   return jsonEncode(payload);
 }
 
@@ -358,7 +362,11 @@ ImportData parseJsonToImportData(String jsonStr) {
       List<String>? tagNames;
       final tagsStr = it['tags'] as String?;
       if (tagsStr != null && tagsStr.trim().isNotEmpty) {
-        tagNames = tagsStr.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+        tagNames = tagsStr
+            .split(',')
+            .map((s) => s.trim())
+            .where((s) => s.isNotEmpty)
+            .toList();
       }
 
       // 解析附件元数据
@@ -389,8 +397,10 @@ ImportData parseJsonToImportData(String jsonStr) {
         note: it['note'] as String?,
         // 账户信息：转账用 fromAccountName/toAccountName，其他用 accountName
         accountName: type != 'transfer' ? it['accountName'] as String? : null,
-        fromAccountName: type == 'transfer' ? it['fromAccountName'] as String? : null,
-        toAccountName: type == 'transfer' ? it['toAccountName'] as String? : null,
+        fromAccountName:
+            type == 'transfer' ? it['fromAccountName'] as String? : null,
+        toAccountName:
+            type == 'transfer' ? it['toAccountName'] as String? : null,
         tagNames: tagNames,
         attachments: attachments,
         syncId: it['syncId'] as String?,
@@ -425,9 +435,68 @@ Future<({int inserted})> importTransactionsJson(
   String jsonStr, {
   void Function(int done, int total)? onProgress,
   bool recordChanges = true,
+  bool mergeExisting = false,
 }) async {
   // 1. 解析 JSON 为统一格式
   final importData = parseJsonToImportData(jsonStr);
+
+  if (mergeExisting) {
+    if (repo is! LocalRepository) {
+      throw UnsupportedError('Snapshot merge requires a local transaction');
+    }
+    return repo.db.transaction(() async {
+      final local = await repo.getTransactionsByLedger(ledgerId);
+      final seen = <String>{};
+      for (final row in importData.transactions) {
+        final identity = row.syncId;
+        if (identity == null || identity.trim().isEmpty) {
+          if (local.isNotEmpty) {
+            throw FormatException(
+                resolveAppLocalizations(null).syncRestoreMissingIdentity);
+          }
+        } else if (!seen.add(identity)) {
+          throw FormatException(
+              resolveAppLocalizations(null).syncRestoreDuplicateIdentity);
+        }
+      }
+      final existing = <String>{};
+      final identities = seen.toList();
+      for (var start = 0; start < identities.length; start += 500) {
+        final batch = identities.sublist(
+            start, (start + 500).clamp(0, identities.length));
+        final rows = await (repo.db.select(repo.db.transactions)
+              ..where((t) => t.syncId.isIn(batch)))
+            .get();
+        for (final row in rows) {
+          if (row.ledgerId != ledgerId) {
+            throw const FormatException(
+                'Snapshot identity belongs to another ledger');
+          }
+          existing.add(row.syncId!);
+        }
+      }
+      final missing = importData.transactions
+          .where((row) => row.syncId == null || !existing.contains(row.syncId))
+          .toList();
+      final result = await dataImportService.importData(
+          repo,
+          ledgerId,
+          ImportData(
+              accounts: importData.accounts,
+              categories: importData.categories,
+              tags: importData.tags,
+              transactions: missing,
+              ledgerName: importData.ledgerName,
+              currency: importData.currency),
+          defaultCurrency: importData.currency ?? 'CNY',
+          onProgress: onProgress,
+          recordChanges: recordChanges);
+      if (result.failed != 0 || result.inserted != missing.length) {
+        throw StateError('Snapshot merge was incomplete; rolled back');
+      }
+      return (inserted: result.inserted,);
+    });
+  }
 
   // 2. 使用统一导入服务
   // [recordChanges] 默认 true 兼容 CSV 导入路径(`data_import_service` 会

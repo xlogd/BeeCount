@@ -3305,5 +3305,54 @@
   "imageCropAvatarTitle": "裁剪頭像",
   "imageCropDone": "裁剪完成",
   "imageCropFailed": "裁剪或儲存圖片失敗，請重試。",
-  "imageCropCurrentAvatar": "裁剪目前頭像"
+  "imageCropCurrentAvatar": "裁剪目前頭像",
+  "aiImageReviewTitle": "核對圖片帳單",
+  "aiImageReviewHint": "請核對金額、時間和筆數。疑似重複的帳單預設不選取。",
+  "aiImageReviewSave": "儲存 {count} 筆",
+  "@aiImageReviewSave": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiImageReviewDuplicate": "疑似重複，請確認這是一筆獨立交易",
+  "aiImageReviewAlreadySaved": "此項已記帳",
+  "aiImageReviewRequired": "辨識結果可能重複，請在圖片記帳中核對後儲存",
+  "aiBillingSavedCount": "已新增 {count} 筆",
+  "@aiBillingSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingAlreadySavedCount": "已記過 {count} 筆，已略過",
+  "@aiBillingAlreadySavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingFailedCount": "未儲存 {count} 筆，可重試未完成項目",
+  "@aiBillingFailedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingAttachmentFailedCount": "有 {count} 筆帳單的附件未儲存，可在帳單中補充",
+  "@aiBillingAttachmentFailedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingPostProcessingPending": "帳單已儲存，重新整理或同步暫未完成",
+  "aiBillingBusy": "圖片記帳正在處理中，請稍候",
+  "syncRestoreMissingIdentity": "此備份缺少可靠的帳單識別碼，已停止還原以避免重複入帳。",
+  "syncRestoreDuplicateIdentity": "備份中存在重複的帳單識別碼，無法安全還原。"
 }

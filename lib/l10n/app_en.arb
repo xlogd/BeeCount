@@ -4751,5 +4751,54 @@
   "imageCropAvatarTitle": "Crop avatar",
   "imageCropDone": "Image cropped",
   "imageCropFailed": "Could not crop or save the image. Please try again.",
-  "imageCropCurrentAvatar": "Crop current avatar"
+  "imageCropCurrentAvatar": "Crop current avatar",
+  "aiImageReviewTitle": "Review image transactions",
+  "aiImageReviewHint": "Check the amounts, dates and number of transactions. Suspected duplicates are unselected by default.",
+  "aiImageReviewSave": "Save {count}",
+  "@aiImageReviewSave": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiImageReviewDuplicate": "Possible duplicate. Select only if this is a separate payment.",
+  "aiImageReviewAlreadySaved": "Already recorded",
+  "aiImageReviewRequired": "Possible duplicates detected. Open image billing to review before saving.",
+  "aiBillingSavedCount": "Transactions added: {count}",
+  "@aiBillingSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingAlreadySavedCount": "Already recorded and skipped: {count}",
+  "@aiBillingAlreadySavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingFailedCount": "Not saved: {count}. Retry the unfinished items.",
+  "@aiBillingFailedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingAttachmentFailedCount": "Attachments were not saved for {count} transactions. Add them from transaction details.",
+  "@aiBillingAttachmentFailedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingPostProcessingPending": "Transactions are saved. Refresh or sync has not completed yet.",
+  "aiBillingBusy": "Image billing is in progress. Please wait.",
+  "syncRestoreMissingIdentity": "This backup has no reliable transaction identities. Restore stopped to prevent duplicate transactions.",
+  "syncRestoreDuplicateIdentity": "The backup contains duplicate transaction identities and cannot be restored safely."
 }

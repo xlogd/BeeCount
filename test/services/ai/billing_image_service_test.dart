@@ -124,13 +124,15 @@ void main() {
     });
   }
 
-  test('default mode reuses the compressed picker file', () async {
+  test(
+      'recognition is independently bounded even when original retention is off',
+      () async {
     final file = await File('${directory.path}/source.png')
         .writeAsBytes(await _png(100, 100));
     final images = await service.prepare(file, keepOriginal: false);
-    expect(images.recognition.path, file.path);
+    expect(images.recognition.path, isNot(file.path));
     expect(images.attachment.path, file.path);
-    expect(compressor.calls, 0);
+    expect(compressor.calls, 1);
     await images.dispose();
     expect(await file.exists(), isTrue);
   });
