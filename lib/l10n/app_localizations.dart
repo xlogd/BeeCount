@@ -5681,7 +5681,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportDescription.
   ///
   /// In en, this message translates to:
-  /// **'Export transactions from the current ledger as a UTF-8 CSV file. Choose the columns and their order below. Your selection is remembered for the next export.'**
+  /// **'Export current-ledger transactions as a UTF-8 CSV file. Filter by date range and transaction type, then choose the columns and their order. Column settings are remembered for the next export.'**
   String get exportDescription;
 
   /// No description provided for @exportButtonIOS.
@@ -17737,6 +17737,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The backup contains duplicate transaction identities and cannot be restored safely.'**
   String get syncRestoreDuplicateIdentity;
+
+  /// No description provided for @exportFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export scope'**
+  String get exportFiltersTitle;
+
+  /// No description provided for @exportDateRangeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date range'**
+  String get exportDateRangeLabel;
+
+  /// No description provided for @exportDateRangeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses transaction dates and includes both the start and end dates.'**
+  String get exportDateRangeHint;
+
+  /// No description provided for @exportAllDates.
+  ///
+  /// In en, this message translates to:
+  /// **'All dates'**
+  String get exportAllDates;
+
+  /// No description provided for @exportClearDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear date range'**
+  String get exportClearDates;
+
+  /// No description provided for @exportRecordTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction type'**
+  String get exportRecordTypeLabel;
+
+  /// No description provided for @exportAllTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'All types'**
+  String get exportAllTypes;
+
+  /// No description provided for @exportDateRangePickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select export date range'**
+  String get exportDateRangePickerTitle;
+
+  /// No description provided for @exportNoMatchingRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions match the selected dates and type. Adjust the filters and try again.'**
+  String get exportNoMatchingRecords;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

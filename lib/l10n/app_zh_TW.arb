@@ -1205,7 +1205,7 @@
   "exportCsvHeaderTime": "時間",
   "exportCsvHeaderToAccount": "轉入帳戶",
   "exportCsvHeaderType": "類型",
-  "exportDescription": "將目前帳本的交易紀錄匯出為 UTF-8 CSV 檔案。您可以選擇匯出的欄位並調整順序，下次匯出會記住本次選擇。",
+  "exportDescription": "將目前帳本的交易紀錄匯出為 UTF-8 CSV 檔案。可依日期範圍和交易類型篩選，並選擇匯出的欄位及順序。欄位設定會保留供下次使用。",
   "exportFailedTitle": "匯出失敗",
   "exportSavedTo": "已儲存到：{path}",
   "@exportSavedTo": {
@@ -3354,5 +3354,14 @@
   "aiBillingPostProcessingPending": "帳單已儲存，重新整理或同步暫未完成",
   "aiBillingBusy": "圖片記帳正在處理中，請稍候",
   "syncRestoreMissingIdentity": "此備份缺少可靠的帳單識別碼，已停止還原以避免重複入帳。",
-  "syncRestoreDuplicateIdentity": "備份中存在重複的帳單識別碼，無法安全還原。"
+  "syncRestoreDuplicateIdentity": "備份中存在重複的帳單識別碼，無法安全還原。",
+  "exportFiltersTitle": "匯出範圍",
+  "exportDateRangeLabel": "日期範圍",
+  "exportDateRangeHint": "依帳單發生日期篩選，包含起訖日期當天。",
+  "exportAllDates": "全部時間",
+  "exportClearDates": "清除日期限制",
+  "exportRecordTypeLabel": "交易類型",
+  "exportAllTypes": "全部",
+  "exportDateRangePickerTitle": "選擇匯出時間區間",
+  "exportNoMatchingRecords": "沒有符合所選時間與類型的紀錄，請調整篩選條件後再匯出。"
 }

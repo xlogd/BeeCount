@@ -1274,7 +1274,7 @@
     }
   },
   "exportTitle": "导出",
-  "exportDescription": "将当前账本的交易记录导出为 UTF-8 CSV 文件。您可以选择导出的列并调整顺序，下次导出会记住本次选择。",
+  "exportDescription": "将当前账本的交易记录导出为 UTF-8 CSV 文件。可按日期范围和交易类型筛选，并选择导出的列及顺序。列设置会保留供下次使用。",
   "exportButtonIOS": "导出并分享",
   "exportButtonAndroid": "导出数据",
   "exportSavedTo": "已保存到：{path}",
@@ -4336,5 +4336,14 @@
   "aiBillingPostProcessingPending": "账单已保存，刷新或同步暂未完成",
   "aiBillingBusy": "图片记账正在处理中，请稍候",
   "syncRestoreMissingIdentity": "此备份缺少可靠的账单标识，已停止恢复以避免重复入账。",
-  "syncRestoreDuplicateIdentity": "备份中存在重复的账单标识，无法安全恢复。"
+  "syncRestoreDuplicateIdentity": "备份中存在重复的账单标识，无法安全恢复。",
+  "exportFiltersTitle": "导出范围",
+  "exportDateRangeLabel": "日期范围",
+  "exportDateRangeHint": "按账单发生日期筛选，包含起止日期当天。",
+  "exportAllDates": "全部时间",
+  "exportClearDates": "清除日期限制",
+  "exportRecordTypeLabel": "交易类型",
+  "exportAllTypes": "全部",
+  "exportDateRangePickerTitle": "选择导出时间段",
+  "exportNoMatchingRecords": "没有符合所选时间与类型的记录，请调整筛选条件后再导出。"
 }

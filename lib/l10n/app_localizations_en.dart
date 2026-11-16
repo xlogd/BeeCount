@@ -2991,7 +2991,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportTitle => 'Export';
 
   @override
-  String get exportDescription => 'Export transactions from the current ledger as a UTF-8 CSV file. Choose the columns and their order below. Your selection is remembered for the next export.';
+  String get exportDescription => 'Export current-ledger transactions as a UTF-8 CSV file. Filter by date range and transaction type, then choose the columns and their order. Column settings are remembered for the next export.';
 
   @override
   String get exportButtonIOS => 'Export and Share';
@@ -9435,4 +9435,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncRestoreDuplicateIdentity => 'The backup contains duplicate transaction identities and cannot be restored safely.';
+
+  @override
+  String get exportFiltersTitle => 'Export scope';
+
+  @override
+  String get exportDateRangeLabel => 'Date range';
+
+  @override
+  String get exportDateRangeHint => 'Uses transaction dates and includes both the start and end dates.';
+
+  @override
+  String get exportAllDates => 'All dates';
+
+  @override
+  String get exportClearDates => 'Clear date range';
+
+  @override
+  String get exportRecordTypeLabel => 'Transaction type';
+
+  @override
+  String get exportAllTypes => 'All types';
+
+  @override
+  String get exportDateRangePickerTitle => 'Select export date range';
+
+  @override
+  String get exportNoMatchingRecords => 'No transactions match the selected dates and type. Adjust the filters and try again.';
 }

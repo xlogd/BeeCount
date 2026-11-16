@@ -4,6 +4,7 @@ import '../../../../data/db.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../models/transaction_export_column.dart';
+import '../../../../models/transaction_export_filter.dart';
 import '../../../../utils/category_utils.dart';
 
 /// Exports a ledger snapshot using exactly the selected column order.
@@ -12,13 +13,20 @@ Future<String> buildTransactionExportCsv({
   required int ledgerId,
   required AppLocalizations l10n,
   List<TransactionExportColumn>? columns,
+  TransactionExportFilter filter = const TransactionExportFilter.all(),
+  void Function(int count)? onRecordCount,
   void Function(double)? onProgress,
 }) async {
   // Copy before the first await so an in-flight export cannot change shape.
   final selected = validateTransactionExportColumns(columns);
   final fields = selected.toSet();
-  final transactions =
+  final snapshot =
       await repo.transactionsWithCategoryAll(ledgerId: ledgerId).first;
+  final transactions = snapshot
+      .where((row) => filter.matches(
+          happenedAt: row.t.happenedAt, transactionType: row.t.type))
+      .toList(growable: false);
+  onRecordCount?.call(transactions.length);
   const encoder = ListToCsvConverter(eol: '\n');
   final output = StringBuffer(
       encoder.convert([exportCsvHeaders(l10n, columns: selected)]));

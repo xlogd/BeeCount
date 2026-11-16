@@ -2991,7 +2991,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get exportTitle => '내보내기';
 
   @override
-  String get exportDescription => '현재 장부의 거래 내역을 UTF-8 CSV 파일로 내보냅니다. 내보낼 열과 순서를 선택하세요. 다음 내보내기에도 선택 내용이 유지됩니다.';
+  String get exportDescription => '현재 장부의 거래를 UTF-8 CSV 파일로 내보냅니다. 날짜 범위와 거래 유형을 선택하고 열과 순서를 지정할 수 있습니다. 열 설정은 다음 내보내기에도 유지됩니다.';
 
   @override
   String get exportButtonIOS => '내보내기 및 공유';
@@ -9435,4 +9435,31 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get syncRestoreDuplicateIdentity => '백업에 중복 거래 식별자가 있어 안전하게 복원할 수 없습니다.';
+
+  @override
+  String get exportFiltersTitle => '내보내기 범위';
+
+  @override
+  String get exportDateRangeLabel => '날짜 범위';
+
+  @override
+  String get exportDateRangeHint => '거래 발생일을 기준으로 시작일과 종료일을 모두 포함합니다.';
+
+  @override
+  String get exportAllDates => '전체 기간';
+
+  @override
+  String get exportClearDates => '날짜 제한 해제';
+
+  @override
+  String get exportRecordTypeLabel => '거래 유형';
+
+  @override
+  String get exportAllTypes => '전체';
+
+  @override
+  String get exportDateRangePickerTitle => '내보낼 기간 선택';
+
+  @override
+  String get exportNoMatchingRecords => '선택한 기간과 유형에 해당하는 거래가 없습니다. 조건을 변경한 후 다시 시도하세요.';
 }

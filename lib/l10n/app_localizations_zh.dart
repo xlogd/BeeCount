@@ -2991,7 +2991,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get exportTitle => '导出';
 
   @override
-  String get exportDescription => '将当前账本的交易记录导出为 UTF-8 CSV 文件。您可以选择导出的列并调整顺序，下次导出会记住本次选择。';
+  String get exportDescription => '将当前账本的交易记录导出为 UTF-8 CSV 文件。可按日期范围和交易类型筛选，并选择导出的列及顺序。列设置会保留供下次使用。';
 
   @override
   String get exportButtonIOS => '导出并分享';
@@ -9427,6 +9427,33 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get syncRestoreDuplicateIdentity => '备份中存在重复的账单标识，无法安全恢复。';
+
+  @override
+  String get exportFiltersTitle => '导出范围';
+
+  @override
+  String get exportDateRangeLabel => '日期范围';
+
+  @override
+  String get exportDateRangeHint => '按账单发生日期筛选，包含起止日期当天。';
+
+  @override
+  String get exportAllDates => '全部时间';
+
+  @override
+  String get exportClearDates => '清除日期限制';
+
+  @override
+  String get exportRecordTypeLabel => '交易类型';
+
+  @override
+  String get exportAllTypes => '全部';
+
+  @override
+  String get exportDateRangePickerTitle => '选择导出时间段';
+
+  @override
+  String get exportNoMatchingRecords => '没有符合所选时间与类型的记录，请调整筛选条件后再导出。';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).
@@ -12392,7 +12419,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get exportTitle => '匯出';
 
   @override
-  String get exportDescription => '將目前帳本的交易紀錄匯出為 UTF-8 CSV 檔案。您可以選擇匯出的欄位並調整順序，下次匯出會記住本次選擇。';
+  String get exportDescription => '將目前帳本的交易紀錄匯出為 UTF-8 CSV 檔案。可依日期範圍和交易類型篩選，並選擇匯出的欄位及順序。欄位設定會保留供下次使用。';
 
   @override
   String get exportButtonIOS => '匯出並分享';
@@ -18134,4 +18161,31 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get syncRestoreDuplicateIdentity => '備份中存在重複的帳單識別碼，無法安全還原。';
+
+  @override
+  String get exportFiltersTitle => '匯出範圍';
+
+  @override
+  String get exportDateRangeLabel => '日期範圍';
+
+  @override
+  String get exportDateRangeHint => '依帳單發生日期篩選，包含起訖日期當天。';
+
+  @override
+  String get exportAllDates => '全部時間';
+
+  @override
+  String get exportClearDates => '清除日期限制';
+
+  @override
+  String get exportRecordTypeLabel => '交易類型';
+
+  @override
+  String get exportAllTypes => '全部';
+
+  @override
+  String get exportDateRangePickerTitle => '選擇匯出時間區間';
+
+  @override
+  String get exportNoMatchingRecords => '沒有符合所選時間與類型的紀錄，請調整篩選條件後再匯出。';
 }

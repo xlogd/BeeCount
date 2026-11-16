@@ -1272,7 +1272,7 @@
   "authErrorWeakPassword": "Password is too simple, please include letters and numbers, at least 6 characters.",
   "importSelectCsvFile": "Please select a file to import (CSV/TSV/XLSX supported)",
   "exportTitle": "Export",
-  "exportDescription": "Export transactions from the current ledger as a UTF-8 CSV file. Choose the columns and their order below. Your selection is remembered for the next export.",
+  "exportDescription": "Export current-ledger transactions as a UTF-8 CSV file. Filter by date range and transaction type, then choose the columns and their order. Column settings are remembered for the next export.",
   "exportButtonIOS": "Export and Share",
   "exportButtonAndroid": "Export Data",
   "exportSavedTo": "Saved to: {path}",
@@ -4800,5 +4800,14 @@
   "aiBillingPostProcessingPending": "Transactions are saved. Refresh or sync has not completed yet.",
   "aiBillingBusy": "Image billing is in progress. Please wait.",
   "syncRestoreMissingIdentity": "This backup has no reliable transaction identities. Restore stopped to prevent duplicate transactions.",
-  "syncRestoreDuplicateIdentity": "The backup contains duplicate transaction identities and cannot be restored safely."
+  "syncRestoreDuplicateIdentity": "The backup contains duplicate transaction identities and cannot be restored safely.",
+  "exportFiltersTitle": "Export scope",
+  "exportDateRangeLabel": "Date range",
+  "exportDateRangeHint": "Uses transaction dates and includes both the start and end dates.",
+  "exportAllDates": "All dates",
+  "exportClearDates": "Clear date range",
+  "exportRecordTypeLabel": "Transaction type",
+  "exportAllTypes": "All types",
+  "exportDateRangePickerTitle": "Select export date range",
+  "exportNoMatchingRecords": "No transactions match the selected dates and type. Adjust the filters and try again."
 }

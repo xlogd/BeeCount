@@ -18,6 +18,7 @@ class BeeTransactionExport extends StatelessWidget {
     this.errorTitle,
     this.errorMessage,
     this.fieldsEditor,
+    this.filtersEditor,
   });
 
   final String description, ledgerLabel, actionLabel;
@@ -26,7 +27,7 @@ class BeeTransactionExport extends StatelessWidget {
   final bool exporting;
   final double progress;
   final VoidCallback? onExport;
-  final Widget? fieldsEditor;
+  final Widget? fieldsEditor, filtersEditor;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +57,10 @@ class BeeTransactionExport extends StatelessWidget {
         ],
       ])),
       const SizedBox(height: 12),
+      if (filtersEditor != null) ...[
+        BeeSurface(child: filtersEditor!),
+        const SizedBox(height: 12),
+      ],
       BeeSurface(
           child: fieldsEditor ??
               Wrap(spacing: 8, runSpacing: 8, children: [

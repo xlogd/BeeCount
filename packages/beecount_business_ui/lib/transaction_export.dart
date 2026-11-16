@@ -3,3 +3,4 @@ library;
 
 export 'src/cloud_data/transaction_export.dart';
 export 'src/cloud_data/export_columns.dart';
+export 'src/cloud_data/export_filters.dart';
