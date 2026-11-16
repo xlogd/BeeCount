@@ -1,7 +1,7 @@
 import 'package:beecount_ui/beecount_ui.dart';
 import 'package:flutter/material.dart';
 
-/// Presentation of a fixed CSV export. The host supplies the current ledger,
+/// Presentation of a CSV export. The host supplies the current ledger,
 /// localized columns and task state; repository, platform and file I/O stay out.
 class BeeTransactionExport extends StatelessWidget {
   const BeeTransactionExport({
@@ -17,6 +17,7 @@ class BeeTransactionExport extends StatelessWidget {
     this.savedMessage,
     this.errorTitle,
     this.errorMessage,
+    this.fieldsEditor,
   });
 
   final String description, ledgerLabel, actionLabel;
@@ -25,6 +26,7 @@ class BeeTransactionExport extends StatelessWidget {
   final bool exporting;
   final double progress;
   final VoidCallback? onExport;
+  final Widget? fieldsEditor;
 
   @override
   Widget build(BuildContext context) {
@@ -55,20 +57,23 @@ class BeeTransactionExport extends StatelessWidget {
       ])),
       const SizedBox(height: 12),
       BeeSurface(
-          child: Wrap(spacing: 8, runSpacing: 8, children: [
-        for (final label in fieldLabels)
-          Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-              decoration: BoxDecoration(
-                  color: BeeCardTheme.of(context).soft,
-                  borderRadius: BorderRadius.circular(10)),
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                const BeeLineIcon('Check', size: 12),
-                const SizedBox(width: 5),
-                Flexible(
-                    child: Text(label, style: const TextStyle(fontSize: 12))),
+          child: fieldsEditor ??
+              Wrap(spacing: 8, runSpacing: 8, children: [
+                for (final label in fieldLabels)
+                  Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 7),
+                      decoration: BoxDecoration(
+                          color: BeeCardTheme.of(context).soft,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Row(mainAxisSize: MainAxisSize.min, children: [
+                        const BeeLineIcon('Check', size: 12),
+                        const SizedBox(width: 5),
+                        Flexible(
+                            child: Text(label,
+                                style: const TextStyle(fontSize: 12))),
+                      ])),
               ])),
-      ])),
       const SizedBox(height: 16),
       BeeButton(
           key: const ValueKey('transaction-export-action'),

@@ -5681,7 +5681,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportDescription.
   ///
   /// In en, this message translates to:
-  /// **'Supported export types:\n• Transactions (Income/Expense/Transfer)\n• Categories\n• Accounts\n\nClick the button below to select save location and export current ledger to CSV file.'**
+  /// **'Export transactions from the current ledger as a UTF-8 CSV file. Choose the columns and their order below. Your selection is remembered for the next export.'**
   String get exportDescription;
 
   /// No description provided for @exportButtonIOS.
@@ -17557,6 +17557,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This is taking a little longer. Processing is continuing.'**
   String get recordingProgressSlow;
+
+  /// No description provided for @exportColumnsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export columns'**
+  String get exportColumnsTitle;
+
+  /// No description provided for @exportColumnsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the columns to include. Expand column order to arrange the exported headers.'**
+  String get exportColumnsDescription;
+
+  /// Number of selected export columns
+  ///
+  /// In en, this message translates to:
+  /// **'Selected {selected} of {total} columns'**
+  String exportColumnsSelected(int selected, int total);
+
+  /// No description provided for @exportColumnsSelectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get exportColumnsSelectAll;
+
+  /// No description provided for @exportColumnsClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get exportColumnsClear;
+
+  /// No description provided for @exportColumnsReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore defaults'**
+  String get exportColumnsReset;
+
+  /// No description provided for @exportColumnsOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Column order and header preview'**
+  String get exportColumnsOrder;
+
+  /// No description provided for @exportColumnsMoveUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Move up'**
+  String get exportColumnsMoveUp;
+
+  /// No description provided for @exportColumnsMoveDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Move down'**
+  String get exportColumnsMoveDown;
+
+  /// No description provided for @exportColumnsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one column to export.'**
+  String get exportColumnsEmpty;
+
+  /// No description provided for @imageCropTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop image'**
+  String get imageCropTitle;
+
+  /// No description provided for @imageCropAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop'**
+  String get imageCropAction;
+
+  /// No description provided for @imageCropAvatarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop avatar'**
+  String get imageCropAvatarTitle;
+
+  /// No description provided for @imageCropDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Image cropped'**
+  String get imageCropDone;
+
+  /// No description provided for @imageCropFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not crop or save the image. Please try again.'**
+  String get imageCropFailed;
+
+  /// No description provided for @imageCropCurrentAvatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop current avatar'**
+  String get imageCropCurrentAvatar;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

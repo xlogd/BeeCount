@@ -2991,7 +2991,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get exportTitle => '导出';
 
   @override
-  String get exportDescription => '支持导出的数据类型：\n• 交易记录（收入/支出/转账）\n• 分类信息\n• 账户信息\n\n点击下方按钮选择保存位置，开始导出当前账本为 CSV 文件。';
+  String get exportDescription => '将当前账本的交易记录导出为 UTF-8 CSV 文件。您可以选择导出的列并调整顺序，下次导出会记住本次选择。';
 
   @override
   String get exportButtonIOS => '导出并分享';
@@ -9325,6 +9325,56 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get recordingProgressSlow => '这次处理时间稍长，仍在继续处理。';
+
+  @override
+  String get exportColumnsTitle => '导出列';
+
+  @override
+  String get exportColumnsDescription => '点选需要导出的列，展开列顺序可调整表头位置。';
+
+  @override
+  String exportColumnsSelected(int selected, int total) {
+    return '已选 $selected / $total 列';
+  }
+
+  @override
+  String get exportColumnsSelectAll => '全选';
+
+  @override
+  String get exportColumnsClear => '清空';
+
+  @override
+  String get exportColumnsReset => '恢复默认';
+
+  @override
+  String get exportColumnsOrder => '列顺序与表头预览';
+
+  @override
+  String get exportColumnsMoveUp => '上移';
+
+  @override
+  String get exportColumnsMoveDown => '下移';
+
+  @override
+  String get exportColumnsEmpty => '请至少选择一列再导出。';
+
+  @override
+  String get imageCropTitle => '裁剪图片';
+
+  @override
+  String get imageCropAction => '裁剪';
+
+  @override
+  String get imageCropAvatarTitle => '裁剪头像';
+
+  @override
+  String get imageCropDone => '裁剪完成';
+
+  @override
+  String get imageCropFailed => '裁剪或保存图片失败，请重试。';
+
+  @override
+  String get imageCropCurrentAvatar => '裁剪当前头像';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).
@@ -12290,7 +12340,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get exportTitle => '匯出';
 
   @override
-  String get exportDescription => '支援匯出的資料類型：\n• 交易記錄（收入／支出／轉帳）\n• 分類資訊\n• 帳戶資訊\n\n點擊下方按鈕選擇儲存位置，開始匯出目前帳本為 CSV 檔案。';
+  String get exportDescription => '將目前帳本的交易紀錄匯出為 UTF-8 CSV 檔案。您可以選擇匯出的欄位並調整順序，下次匯出會記住本次選擇。';
 
   @override
   String get exportButtonIOS => '匯出並分享';
@@ -17930,4 +17980,54 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String logExportCount(int count) {
     return '日誌數量：$count';
   }
+
+  @override
+  String get exportColumnsTitle => '匯出欄位';
+
+  @override
+  String get exportColumnsDescription => '點選需要匯出的欄位，展開欄位順序可調整表頭位置。';
+
+  @override
+  String exportColumnsSelected(int selected, int total) {
+    return '已選 $selected / $total 欄';
+  }
+
+  @override
+  String get exportColumnsSelectAll => '全選';
+
+  @override
+  String get exportColumnsClear => '清空';
+
+  @override
+  String get exportColumnsReset => '還原預設';
+
+  @override
+  String get exportColumnsOrder => '欄位順序與表頭預覽';
+
+  @override
+  String get exportColumnsMoveUp => '上移';
+
+  @override
+  String get exportColumnsMoveDown => '下移';
+
+  @override
+  String get exportColumnsEmpty => '請至少選擇一個欄位再匯出。';
+
+  @override
+  String get imageCropTitle => '裁剪圖片';
+
+  @override
+  String get imageCropAction => '裁剪';
+
+  @override
+  String get imageCropAvatarTitle => '裁剪頭像';
+
+  @override
+  String get imageCropDone => '裁剪完成';
+
+  @override
+  String get imageCropFailed => '裁剪或儲存圖片失敗，請重試。';
+
+  @override
+  String get imageCropCurrentAvatar => '裁剪目前頭像';
 }

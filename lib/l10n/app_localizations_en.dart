@@ -2991,7 +2991,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportTitle => 'Export';
 
   @override
-  String get exportDescription => 'Supported export types:\n• Transactions (Income/Expense/Transfer)\n• Categories\n• Accounts\n\nClick the button below to select save location and export current ledger to CSV file.';
+  String get exportDescription => 'Export transactions from the current ledger as a UTF-8 CSV file. Choose the columns and their order below. Your selection is remembered for the next export.';
 
   @override
   String get exportButtonIOS => 'Export and Share';
@@ -9333,4 +9333,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recordingProgressSlow => 'This is taking a little longer. Processing is continuing.';
+
+  @override
+  String get exportColumnsTitle => 'Export columns';
+
+  @override
+  String get exportColumnsDescription => 'Select the columns to include. Expand column order to arrange the exported headers.';
+
+  @override
+  String exportColumnsSelected(int selected, int total) {
+    return 'Selected $selected of $total columns';
+  }
+
+  @override
+  String get exportColumnsSelectAll => 'Select all';
+
+  @override
+  String get exportColumnsClear => 'Clear';
+
+  @override
+  String get exportColumnsReset => 'Restore defaults';
+
+  @override
+  String get exportColumnsOrder => 'Column order and header preview';
+
+  @override
+  String get exportColumnsMoveUp => 'Move up';
+
+  @override
+  String get exportColumnsMoveDown => 'Move down';
+
+  @override
+  String get exportColumnsEmpty => 'Select at least one column to export.';
+
+  @override
+  String get imageCropTitle => 'Crop image';
+
+  @override
+  String get imageCropAction => 'Crop';
+
+  @override
+  String get imageCropAvatarTitle => 'Crop avatar';
+
+  @override
+  String get imageCropDone => 'Image cropped';
+
+  @override
+  String get imageCropFailed => 'Could not crop or save the image. Please try again.';
+
+  @override
+  String get imageCropCurrentAvatar => 'Crop current avatar';
 }

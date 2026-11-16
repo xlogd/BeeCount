@@ -61,6 +61,29 @@ class LocalAttachmentRepository implements AttachmentRepository {
   }
 
   @override
+  Future<TransactionAttachment?> replaceAttachmentImage({
+    required int id,
+    required String expectedFileName,
+    required String fileName,
+    required int fileSize,
+    int? width,
+    int? height,
+  }) async {
+    final changed = await (db.update(db.transactionAttachments)
+          ..where((row) =>
+              row.id.equals(id) & row.fileName.equals(expectedFileName)))
+        .write(TransactionAttachmentsCompanion(
+      fileName: d.Value(fileName),
+      fileSize: d.Value(fileSize),
+      width: d.Value(width),
+      height: d.Value(height),
+      cloudFileId: const d.Value(null),
+      cloudSha256: const d.Value(null),
+    ));
+    return changed == 1 ? getAttachmentById(id) : null;
+  }
+
+  @override
   Future<void> deleteAttachmentsByTransaction(int transactionId) async {
     await (db.delete(db.transactionAttachments)
       ..where((t) => t.transactionId.equals(transactionId))).go();

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:ui' as ui;
@@ -8,6 +9,7 @@ import 'package:beecount/l10n/app_localizations.dart';
 import 'package:beecount/pages/attachment/attachment_preview_page.dart';
 import 'package:beecount/providers.dart';
 import 'package:beecount/services/attachment_service.dart';
+import 'package:beecount/services/image_crop_service.dart';
 import 'package:beecount_ui/beecount_ui.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,19 @@ class _Repository extends LocalRepository {
   Future<void> deleteAttachment(int id) {
     if (rejectDelete) throw StateError('Synthetic delete failure');
     return super.deleteAttachment(id);
+  }
+}
+
+class _Cropper extends ImageCropService {
+  File? result;
+  bool fail = false;
+  Completer<File?>? gate;
+  @override
+  Future<File?> crop(BuildContext context, File source,
+      {ImageCropPurpose purpose = ImageCropPurpose.attachment,
+      Color? primaryColor}) async {
+    if (fail) throw StateError('Synthetic crop failure');
+    return gate == null ? result : gate!.future;
   }
 }
 
@@ -48,9 +63,11 @@ void main() {
   late _Attachments service;
   late List<TransactionAttachment> rows;
   late List<File> pending;
+  late _Cropper cropper;
 
   setUp(() async {
-    SharedPreferences.setMockInitialValues({'auto_sync': false});
+    SharedPreferences.setMockInitialValues(
+        {'auto_sync': false, 'attachmentKeepOriginal': true});
     directory = await Directory.systemTemp.createTemp('beecount-v4-viewer-');
     db = BeeDatabase.forTesting(NativeDatabase.memory());
     repo = _Repository(db);
@@ -82,7 +99,9 @@ void main() {
     // Another transaction shares the first physical file.
     await repo.createAttachment(transactionId: 2, fileName: 'synthetic-0.png');
     rows = await repo.getAttachmentsByTransaction(1);
+    cropper = _Cropper();
     container = ProviderContainer(overrides: [
+      imageCropServiceProvider.overrideWithValue(cropper),
       repositoryProvider.overrideWithValue(repo),
       attachmentServiceProvider
           .overrideWith((ref) => service = _Attachments(ref, directory)),
@@ -121,8 +140,129 @@ void main() {
 
   Future<void> close(WidgetTester tester) async {
     await tester.pumpWidget(const SizedBox.shrink());
-    await tester.pump(const Duration(seconds: 3));
+    // Native reads finish outside the fake clock; flush their callbacks before
+    // removing temporary image files on Windows.
+    for (var frame = 0; frame < 5; frame++) {
+      tester.binding.imageCache.clear();
+      tester.binding.imageCache.clearLiveImages();
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 20)));
+      await tester.pump(const Duration(milliseconds: 20));
+    }
+    await tester.pump(const Duration(seconds: 4));
+    await tester.pumpAndSettle();
   }
+
+  Future<File> cropFile(WidgetTester tester) async =>
+      (await tester.runAsync(() async {
+        final recorder = ui.PictureRecorder();
+        ui.Canvas(recorder)
+            .drawPaint(ui.Paint()..color = const Color(0xfffacd20));
+        final picture = recorder.endRecording();
+        final image = await picture.toImage(20, 40);
+        final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+        image.dispose();
+        picture.dispose();
+        return File('${directory.path}/cropped.png')
+            .writeAsBytes(bytes!.buffer.asUint8List());
+      }))!;
+
+  Future<void> finishCrop(WidgetTester tester) async {
+    for (var i = 0; i < 80; i++) {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 10)));
+      await tester.pump(const Duration(milliseconds: 20));
+      if (find.byType(CircularProgressIndicator).evaluate().isEmpty) return;
+    }
+    fail('Crop did not finish');
+  }
+
+  testWidgets('草稿裁剪更新父级列表，原图不修改且不写数据库', (tester) async {
+    cropper.result = await cropFile(tester);
+    List<File>? draft;
+    await open(
+        tester,
+        AttachmentPreviewPage(
+            attachments: const [],
+            pendingFiles: pending,
+            onPendingFilesChanged: (files) => draft = files));
+    await tester.tap(find.byKey(const ValueKey('attachment-crop')));
+    await finishCrop(tester);
+    expect(draft!.map((file) => file.path),
+        [cropper.result!.path, pending.last.path]);
+    expect(await repo.getAttachmentsByTransaction(1), rows);
+    expect(pending.first.existsSync(), isTrue);
+    expect(tester.takeException(), isNull);
+    await close(tester);
+  });
+
+  testWidgets('已保存附件裁剪保留ID与顺序，共享原图及其他交易不变', (tester) async {
+    cropper.result = await cropFile(tester);
+    await open(
+        tester, const AttachmentPreviewPage.fromTransaction(transactionId: 1));
+    final before = await repo.getAttachmentsByTransaction(2);
+    await tester.tap(find.byKey(const ValueKey('attachment-crop')));
+    await finishCrop(tester);
+    final after = await repo.getAttachmentsByTransaction(1);
+    expect(after, hasLength(2));
+    expect(after.first.id, rows.first.id);
+    expect(after.first.sortOrder, rows.first.sortOrder);
+    expect(after.first.fileName, isNot(rows.first.fileName));
+    expect((after.first.width, after.first.height), (20, 40));
+    expect(await repo.getAttachmentsByTransaction(2), before);
+    expect(pending.first.existsSync(), isTrue);
+    expect(find.textContaining('20×40'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await close(tester);
+  });
+
+  testWidgets('取消裁剪保持草稿、数据库和当前图片不变', (tester) async {
+    List<File>? changed;
+    await open(
+        tester,
+        AttachmentPreviewPage(
+            attachments: const [],
+            pendingFiles: pending,
+            onPendingFilesChanged: (files) => changed = files));
+    await tester.tap(find.byKey(const ValueKey('attachment-crop')));
+    await finishCrop(tester);
+    expect(changed, isNull);
+    expect(await repo.getAttachmentsByTransaction(1), rows);
+    expect(find.text('1 / 2'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await close(tester);
+  });
+
+  testWidgets('裁剪失败显示错误并保留原附件', (tester) async {
+    cropper.fail = true;
+    await open(
+        tester, const AttachmentPreviewPage.fromTransaction(transactionId: 1));
+    await tester.tap(find.byKey(const ValueKey('attachment-crop')));
+    await finishCrop(tester);
+    expect(find.text('裁剪或保存图片失败，请重试。'), findsOneWidget);
+    expect(await repo.getAttachmentsByTransaction(1), rows);
+    expect(pending.first.existsSync(), isTrue);
+    expect(tester.takeException(), isNull);
+    await close(tester);
+  });
+
+  testWidgets('裁剪处理中禁止重复操作和系统返回，取消后恢复', (tester) async {
+    cropper.gate = Completer<File?>();
+    await open(
+        tester, const AttachmentPreviewPage.fromTransaction(transactionId: 1));
+    await tester.tap(find.byKey(const ValueKey('attachment-crop')));
+    await tester.pump();
+    expect(
+        tester.widget<PopScope>(find.byType(PopScope).first).canPop, isFalse);
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    expect(find.byType(AttachmentPreviewPage), findsOneWidget);
+    cropper.gate!.complete(null);
+    await finishCrop(tester);
+    expect(tester.widget<PopScope>(find.byType(PopScope).first).canPop, isTrue);
+    expect(await repo.getAttachmentsByTransaction(1), rows);
+    await close(tester);
+  });
 
   testWidgets('真实附件加载、索引夹取、滑动与缩略图切换，保留缩放', (tester) async {
     await open(
@@ -279,6 +419,7 @@ void main() {
     expect(find.text('1 / 2'), findsOneWidget);
     expect(find.bySemanticsLabel('删除'), findsNothing);
     expect(find.bySemanticsLabel('添加图片'), findsNothing);
+    expect(find.byKey(const ValueKey('attachment-crop')), findsNothing);
     expect(tester.takeException(), isNull);
     await close(tester);
   });

@@ -3035,6 +3035,30 @@ class LocalRepository extends BaseRepository {
   }
 
   @override
+  Future<TransactionAttachment?> replaceAttachmentImage({
+    required int id,
+    required String expectedFileName,
+    required String fileName,
+    required int fileSize,
+    int? width,
+    int? height,
+  }) =>
+      db.transaction(() async {
+        final updated = await _attachmentRepo.replaceAttachmentImage(
+            id: id,
+            expectedFileName: expectedFileName,
+            fileName: fileName,
+            fileSize: fileSize,
+            width: width,
+            height: height);
+        if (updated != null) {
+          await _recordTransactionUpdateForAttachmentChange(
+              updated.transactionId);
+        }
+        return updated;
+      });
+
+  @override
   Future<void> deleteAttachmentsByTransaction(int transactionId) async {
     await _attachmentRepo.deleteAttachmentsByTransaction(transactionId);
     await _recordTransactionUpdateForAttachmentChange(transactionId);

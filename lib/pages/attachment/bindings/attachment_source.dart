@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../services/attachment_service.dart';
+import '../../../services/image_crop_service.dart';
 
 enum _AttachmentSource { camera, gallery }
 
@@ -24,9 +25,32 @@ Future<List<File>> pickAttachmentFiles(BuildContext context, WidgetRef ref,
           onGallery: () => Navigator.pop(context, _AttachmentSource.gallery)));
   if (source == null || !context.mounted) return [];
   final service = ref.read(attachmentServiceProvider);
+  final List<File> files;
   if (source == _AttachmentSource.gallery) {
-    return service.pickFromGallery(maxCount: remaining);
+    files = await service.pickFromGallery(maxCount: remaining);
+  } else {
+    final file = await service.takePhoto();
+    files = file == null ? [] : [file];
   }
-  final file = await service.takePhoto();
-  return file == null ? [] : [file];
+  if (!context.mounted) return [];
+  return cropPickedAttachmentFiles(context, ref, files);
+}
+
+/// Batches retain their multi-select workflow and can be cropped individually
+/// in the preview. Single photos open the cropper immediately.
+Future<List<File>> cropPickedAttachmentFiles(
+    BuildContext context, WidgetRef ref, List<File> files) async {
+  if (!context.mounted || files.isEmpty) return [];
+  if (files.length != 1) return List.unmodifiable(files);
+  final l = AppLocalizations.of(context);
+  try {
+    final cropped =
+        await ref.read(imageCropServiceProvider).crop(context, files.single);
+    return cropped == null ? [] : [cropped];
+  } catch (_) {
+    if (context.mounted) {
+      showBeeToast(context, l.imageCropFailed, tone: BeeTone.error);
+    }
+    return [];
+  }
 }

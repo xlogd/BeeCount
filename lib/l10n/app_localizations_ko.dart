@@ -2991,7 +2991,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get exportTitle => '내보내기';
 
   @override
-  String get exportDescription => '지원되는 내보내기 유형:\n• 거래 (수입/지출/이체)\n• 카테고리\n• 계정\n\n아래 버튼을 눌러 저장 위치를 선택하면 현재 가계부를 CSV 파일로 내보냅니다.';
+  String get exportDescription => '현재 장부의 거래 내역을 UTF-8 CSV 파일로 내보냅니다. 내보낼 열과 순서를 선택하세요. 다음 내보내기에도 선택 내용이 유지됩니다.';
 
   @override
   String get exportButtonIOS => '내보내기 및 공유';
@@ -9333,4 +9333,54 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get recordingProgressSlow => 'This is taking a little longer. Processing is continuing.';
+
+  @override
+  String get exportColumnsTitle => '내보낼 열';
+
+  @override
+  String get exportColumnsDescription => '포함할 열을 선택하세요. 열 순서를 펼쳐 헤더 위치를 조정할 수 있습니다.';
+
+  @override
+  String exportColumnsSelected(int selected, int total) {
+    return '$total개 열 중 $selected개 선택';
+  }
+
+  @override
+  String get exportColumnsSelectAll => '전체 선택';
+
+  @override
+  String get exportColumnsClear => '선택 해제';
+
+  @override
+  String get exportColumnsReset => '기본값 복원';
+
+  @override
+  String get exportColumnsOrder => '열 순서 및 헤더 미리보기';
+
+  @override
+  String get exportColumnsMoveUp => '위로 이동';
+
+  @override
+  String get exportColumnsMoveDown => '아래로 이동';
+
+  @override
+  String get exportColumnsEmpty => '내보낼 열을 하나 이상 선택하세요.';
+
+  @override
+  String get imageCropTitle => '이미지 자르기';
+
+  @override
+  String get imageCropAction => '자르기';
+
+  @override
+  String get imageCropAvatarTitle => '프로필 사진 자르기';
+
+  @override
+  String get imageCropDone => '이미지를 잘랐어요';
+
+  @override
+  String get imageCropFailed => '이미지를 자르거나 저장하지 못했습니다. 다시 시도하세요.';
+
+  @override
+  String get imageCropCurrentAvatar => '현재 프로필 사진 자르기';
 }

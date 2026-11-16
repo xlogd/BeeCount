@@ -1274,7 +1274,7 @@
     }
   },
   "exportTitle": "导出",
-  "exportDescription": "支持导出的数据类型：\n• 交易记录（收入/支出/转账）\n• 分类信息\n• 账户信息\n\n点击下方按钮选择保存位置，开始导出当前账本为 CSV 文件。",
+  "exportDescription": "将当前账本的交易记录导出为 UTF-8 CSV 文件。您可以选择导出的列并调整顺序，下次导出会记住本次选择。",
   "exportButtonIOS": "导出并分享",
   "exportButtonAndroid": "导出数据",
   "exportSavedTo": "已保存到：{path}",
@@ -4271,5 +4271,21 @@
   "recordingProgressRecognizing": "正在识别账单",
   "recordingProgressRecognizingDetail": "整理金额、分类与备注",
   "recordingProgressSavingDetail": "正在保存本次识别的记录",
-  "recordingProgressSlow": "这次处理时间稍长，仍在继续处理。"
+  "recordingProgressSlow": "这次处理时间稍长，仍在继续处理。",
+  "exportColumnsTitle": "导出列",
+  "exportColumnsDescription": "点选需要导出的列，展开列顺序可调整表头位置。",
+  "exportColumnsSelected": "已选 {selected} / {total} 列",
+  "exportColumnsSelectAll": "全选",
+  "exportColumnsClear": "清空",
+  "exportColumnsReset": "恢复默认",
+  "exportColumnsOrder": "列顺序与表头预览",
+  "exportColumnsMoveUp": "上移",
+  "exportColumnsMoveDown": "下移",
+  "exportColumnsEmpty": "请至少选择一列再导出。",
+  "imageCropTitle": "裁剪图片",
+  "imageCropAction": "裁剪",
+  "imageCropAvatarTitle": "裁剪头像",
+  "imageCropDone": "裁剪完成",
+  "imageCropFailed": "裁剪或保存图片失败，请重试。",
+  "imageCropCurrentAvatar": "裁剪当前头像"
 }

@@ -11,6 +11,7 @@ import '../providers.dart';
 import '../providers/ai_chat_providers.dart';
 import '../services/ai/billing_image_service.dart';
 import '../services/attachment_service.dart';
+import '../services/image_crop_service.dart';
 import '../services/billing/post_processor.dart';
 import '../services/data/tag_seed_service.dart';
 import 'package:beecount_ui/beecount_ui.dart';
@@ -58,6 +59,16 @@ class ImageBillingHelper {
           await imageService.pickImage(source, keepOriginal: keepOriginal);
       if (imageFile == null) return;
       if (!context.mounted) return;
+      final cropped = await ref
+          .read(imageCropServiceProvider)
+          .crop(context, imageFile, purpose: ImageCropPurpose.recognition)
+          .catchError((Object error) {
+        if (context.mounted) {
+          showBeeToast(context, l10n.imageCropFailed, tone: BeeTone.error);
+        }
+        return null;
+      });
+      if (cropped == null || !context.mounted) return;
 
       // 3. AI vision 兜底
       if (!await AIProviderManager.isCapabilityConfigured(
@@ -101,8 +112,7 @@ class ImageBillingHelper {
 
       final attachmentService = ref.read(attachmentServiceProvider);
       final bookkeeper = ref.read(aiBookkeeperProvider);
-      images =
-          await imageService.prepare(imageFile, keepOriginal: keepOriginal);
+      images = await imageService.prepare(cropped, keepOriginal: keepOriginal);
       final result = await bookkeeper.fromImage(
         image: images.recognition,
         ledgerId: currentLedger.id,
