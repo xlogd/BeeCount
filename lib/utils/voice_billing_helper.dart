@@ -15,6 +15,7 @@ import '../services/system/logger_service.dart';
 import '../ai/providers/ai_provider_manager.dart';
 import '../ai/providers/ai_provider_config.dart';
 import '../services/billing/post_processor.dart';
+import '../services/ai/bookkeeping_feedback.dart';
 import '../services/data/tag_seed_service.dart';
 import '../pages/shared/dialogs/app_dialogs.dart';
 import 'package:beecount_ui/beecount_ui.dart';
@@ -496,22 +497,25 @@ class _VoiceRecordingDialogState extends ConsumerState<_VoiceRecordingDialog> {
         return;
       }
 
-      await PostProcessor.run(ref, ledgerId: currentLedger.id, tags: true);
+      var postProcessingFailed = false;
+      try {
+        await PostProcessor.run(ref, ledgerId: currentLedger.id, tags: true);
+      } catch (error, stack) {
+        postProcessingFailed = true;
+        logger.error('VoiceRecording', '账单已保存，后处理待重试', error, stack);
+      }
       if (!mounted) return;
       Navigator.of(context).pop();
       if (!mounted) return;
 
-      final toast = response.result.isMulti
-          ? '${l10n.voiceRecordingSuccess} × ${response.result.savedCount}'
-          : l10n.voiceRecordingSuccess;
-      // 多币种降级提示(A5):缺汇率已按 1:1 暂记,指路统计页补折算
-      final unconverted = response.result.unconvertedCurrencies;
+      final warning = postProcessingFailed ||
+          response.result.failedCount > 0 ||
+          response.result.unconvertedCurrencies.isNotEmpty;
       showBeeToast(
           context,
-          unconverted.isEmpty
-              ? toast
-              : '$toast\n${l10n.aiBillingRateMissingHint(unconverted.join('、'))}',
-          tone: unconverted.isEmpty ? BeeTone.success : BeeTone.warning);
+          bookkeepingFeedback(l10n, response.result,
+              postProcessingFailed: postProcessingFailed),
+          tone: warning ? BeeTone.warning : BeeTone.success);
     } catch (e) {
       if (!mounted) return;
       setState(() {

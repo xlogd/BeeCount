@@ -10,6 +10,7 @@ import '../../../data/db.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../providers.dart';
 import '../../../services/attachment_service.dart';
+import '../../../services/image_crop_service.dart';
 import '../bindings/attachment_source.dart';
 
 /// Real file access, repository mutations and platform pickers stay in the App.
@@ -21,12 +22,14 @@ class AttachmentViewerBinding extends ConsumerStatefulWidget {
       this.initialIndex = 0,
       this.allowDelete = true,
       this.allowAdd = false,
+      this.allowCrop,
       this.pendingFiles,
       this.onPendingFilesChanged});
   final List<TransactionAttachment>? attachments;
   final int? transactionId;
   final int initialIndex;
   final bool allowDelete, allowAdd;
+  final bool? allowCrop;
   final List<File>? pendingFiles;
   final ValueChanged<List<File>>? onPendingFilesChanged;
   @override
@@ -109,7 +112,7 @@ class _AttachmentViewerBindingState
 
   List<BeeAttachment> _models(AppLocalizations l10n) => [
         ..._saved.map((a) => BeeAttachment(
-            id: 'saved-${a.id}',
+            id: 'saved-${a.id}-${a.fileName}',
             image: FileImage(File('$_directory/${a.fileName}')),
             label: a.originalName ?? l10n.attachmentPreview,
             info:
@@ -135,38 +138,102 @@ class _AttachmentViewerBindingState
                 BeeButton(label: l10n.v4RecordingRetry, onPressed: _load),
               ])
             : null;
-    return Scaffold(
-        backgroundColor: Colors.black,
-        body: BeeAttachmentViewer(
-            items: _loading || _failed ? const [] : _models(l10n),
-            currentIndex: _index,
-            fullScreen: true,
-            busy: _busy,
-            maxScale: 4,
-            onIndexChanged: (index) => setState(() => _index = index),
-            onClose: _close,
-            onImageTap: _close,
-            emptyLabel:
-                _loading ? l10n.attachmentPreview : l10n.attachmentPreviewEmpty,
-            errorLabel: l10n.commonError,
-            placeholder: placeholder,
-            actions: [
-              if (!_loading &&
-                  !_failed &&
-                  widget.allowAdd &&
-                  _count < AttachmentService.maxAttachments)
-                BeeIconButton(
-                    label: l10n.attachmentAdd,
-                    icon: const BeeLineIcon('ImagePlus', color: Colors.white),
-                    onPressed: _busy ? null : _sources),
-              if (!_loading && !_failed && widget.allowDelete && _count > 0)
-                BeeIconButton(
-                    label: l10n.commonDelete,
-                    icon: const BeeLineIcon('Trash2', color: Colors.white),
-                    onPressed: _busy
-                        ? null
-                        : () => saved ? _deleteSaved() : _deletePending()),
-            ]));
+    return PopScope(
+        canPop: !_busy,
+        child: Scaffold(
+            backgroundColor: Colors.black,
+            body: BeeAttachmentViewer(
+                items: _loading || _failed ? const [] : _models(l10n),
+                currentIndex: _index,
+                fullScreen: true,
+                busy: _busy,
+                maxScale: 4,
+                onIndexChanged: (index) => setState(() => _index = index),
+                onClose: _close,
+                onImageTap: _close,
+                emptyLabel: _loading
+                    ? l10n.attachmentPreview
+                    : l10n.attachmentPreviewEmpty,
+                errorLabel: l10n.commonError,
+                placeholder: placeholder,
+                actions: [
+                  if (!_loading &&
+                      !_failed &&
+                      widget.allowAdd &&
+                      _count < AttachmentService.maxAttachments)
+                    BeeIconButton(
+                        label: l10n.attachmentAdd,
+                        icon:
+                            const BeeLineIcon('ImagePlus', color: Colors.white),
+                        onPressed: _busy ? null : _sources),
+                  if (!_loading &&
+                      !_failed &&
+                      _count > 0 &&
+                      (widget.allowCrop ?? widget.allowDelete))
+                    BeeIconButton(
+                        key: const ValueKey('attachment-crop'),
+                        label: l10n.imageCropAction,
+                        icon: const BeeLineIcon('Crop', color: Colors.white),
+                        onPressed: _busy ? null : _crop),
+                  if (!_loading && !_failed && widget.allowDelete && _count > 0)
+                    BeeIconButton(
+                        label: l10n.commonDelete,
+                        icon: const BeeLineIcon('Trash2', color: Colors.white),
+                        onPressed: _busy
+                            ? null
+                            : () => saved ? _deleteSaved() : _deletePending()),
+                ])));
+  }
+
+  Future<void> _crop() async {
+    if (_busy || _loading || _failed || _count == 0) return;
+    final index = _bounded(_index);
+    final saved = index < _saved.length ? _saved[index] : null;
+    final pendingIndex = index - _saved.length;
+    final source = saved == null
+        ? _pending[pendingIndex]
+        : File('$_directory/${saved.fileName}');
+    final cropper = ref.read(imageCropServiceProvider);
+    final service = ref.read(attachmentServiceProvider);
+    final refresh = ref.read(attachmentListRefreshProvider.notifier);
+    final l = AppLocalizations.of(context);
+    setState(() => _busy = true);
+    try {
+      final cropped = await cropper.crop(context, source);
+      if (cropped == null || !mounted) return;
+      if (saved == null) {
+        setState(() => _pending[pendingIndex] = cropped);
+        _emitPending();
+      } else {
+        final updated = await service.replaceAttachmentImage(
+            id: saved.id,
+            expectedFileName: saved.fileName,
+            sourceFile: cropped);
+        if (updated == null) {
+          throw StateError('Cropped attachment was not saved');
+        }
+        if (refresh.mounted) refresh.state++;
+        if (!mounted) return;
+        setState(() {
+          _saved = [
+            for (final row in _saved) row.id == saved.id ? updated : row
+          ];
+          _index = _bounded(index);
+        });
+      }
+      if (mounted) {
+        showBeeToast(context, l.imageCropDone, tone: BeeTone.success);
+      }
+    } catch (_) {
+      if (mounted) {
+        showBeeToast(context, l.imageCropFailed, tone: BeeTone.error);
+      }
+    } finally {
+      if (mounted) {
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+        setState(() => _busy = false);
+      }
+    }
   }
 
   Future<void> _sources() async {

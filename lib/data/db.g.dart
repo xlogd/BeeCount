@@ -12473,6 +12473,280 @@ class ExchangeRateOverridesCompanion
   }
 }
 
+class $ImageBillingDraftsTable extends ImageBillingDrafts
+    with TableInfo<$ImageBillingDraftsTable, ImageBillingDraft> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ImageBillingDraftsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _sourceKeyMeta =
+      const VerificationMeta('sourceKey');
+  @override
+  late final GeneratedColumn<String> sourceKey = GeneratedColumn<String>(
+      'source_key', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _ledgerIdMeta =
+      const VerificationMeta('ledgerId');
+  @override
+  late final GeneratedColumn<int> ledgerId = GeneratedColumn<int>(
+      'ledger_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _billsJsonMeta =
+      const VerificationMeta('billsJson');
+  @override
+  late final GeneratedColumn<String> billsJson = GeneratedColumn<String>(
+      'bills_json', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [sourceKey, ledgerId, billsJson, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'image_billing_drafts';
+  @override
+  VerificationContext validateIntegrity(Insertable<ImageBillingDraft> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('source_key')) {
+      context.handle(_sourceKeyMeta,
+          sourceKey.isAcceptableOrUnknown(data['source_key']!, _sourceKeyMeta));
+    } else if (isInserting) {
+      context.missing(_sourceKeyMeta);
+    }
+    if (data.containsKey('ledger_id')) {
+      context.handle(_ledgerIdMeta,
+          ledgerId.isAcceptableOrUnknown(data['ledger_id']!, _ledgerIdMeta));
+    } else if (isInserting) {
+      context.missing(_ledgerIdMeta);
+    }
+    if (data.containsKey('bills_json')) {
+      context.handle(_billsJsonMeta,
+          billsJson.isAcceptableOrUnknown(data['bills_json']!, _billsJsonMeta));
+    } else if (isInserting) {
+      context.missing(_billsJsonMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {sourceKey};
+  @override
+  ImageBillingDraft map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ImageBillingDraft(
+      sourceKey: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}source_key'])!,
+      ledgerId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}ledger_id'])!,
+      billsJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}bills_json'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+    );
+  }
+
+  @override
+  $ImageBillingDraftsTable createAlias(String alias) {
+    return $ImageBillingDraftsTable(attachedDatabase, alias);
+  }
+}
+
+class ImageBillingDraft extends DataClass
+    implements Insertable<ImageBillingDraft> {
+  final String sourceKey;
+  final int ledgerId;
+  final String billsJson;
+  final DateTime createdAt;
+  const ImageBillingDraft(
+      {required this.sourceKey,
+      required this.ledgerId,
+      required this.billsJson,
+      required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['source_key'] = Variable<String>(sourceKey);
+    map['ledger_id'] = Variable<int>(ledgerId);
+    map['bills_json'] = Variable<String>(billsJson);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  ImageBillingDraftsCompanion toCompanion(bool nullToAbsent) {
+    return ImageBillingDraftsCompanion(
+      sourceKey: Value(sourceKey),
+      ledgerId: Value(ledgerId),
+      billsJson: Value(billsJson),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory ImageBillingDraft.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ImageBillingDraft(
+      sourceKey: serializer.fromJson<String>(json['sourceKey']),
+      ledgerId: serializer.fromJson<int>(json['ledgerId']),
+      billsJson: serializer.fromJson<String>(json['billsJson']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'sourceKey': serializer.toJson<String>(sourceKey),
+      'ledgerId': serializer.toJson<int>(ledgerId),
+      'billsJson': serializer.toJson<String>(billsJson),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  ImageBillingDraft copyWith(
+          {String? sourceKey,
+          int? ledgerId,
+          String? billsJson,
+          DateTime? createdAt}) =>
+      ImageBillingDraft(
+        sourceKey: sourceKey ?? this.sourceKey,
+        ledgerId: ledgerId ?? this.ledgerId,
+        billsJson: billsJson ?? this.billsJson,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  ImageBillingDraft copyWithCompanion(ImageBillingDraftsCompanion data) {
+    return ImageBillingDraft(
+      sourceKey: data.sourceKey.present ? data.sourceKey.value : this.sourceKey,
+      ledgerId: data.ledgerId.present ? data.ledgerId.value : this.ledgerId,
+      billsJson: data.billsJson.present ? data.billsJson.value : this.billsJson,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ImageBillingDraft(')
+          ..write('sourceKey: $sourceKey, ')
+          ..write('ledgerId: $ledgerId, ')
+          ..write('billsJson: $billsJson, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(sourceKey, ledgerId, billsJson, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ImageBillingDraft &&
+          other.sourceKey == this.sourceKey &&
+          other.ledgerId == this.ledgerId &&
+          other.billsJson == this.billsJson &&
+          other.createdAt == this.createdAt);
+}
+
+class ImageBillingDraftsCompanion extends UpdateCompanion<ImageBillingDraft> {
+  final Value<String> sourceKey;
+  final Value<int> ledgerId;
+  final Value<String> billsJson;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const ImageBillingDraftsCompanion({
+    this.sourceKey = const Value.absent(),
+    this.ledgerId = const Value.absent(),
+    this.billsJson = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ImageBillingDraftsCompanion.insert({
+    required String sourceKey,
+    required int ledgerId,
+    required String billsJson,
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : sourceKey = Value(sourceKey),
+        ledgerId = Value(ledgerId),
+        billsJson = Value(billsJson);
+  static Insertable<ImageBillingDraft> custom({
+    Expression<String>? sourceKey,
+    Expression<int>? ledgerId,
+    Expression<String>? billsJson,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (sourceKey != null) 'source_key': sourceKey,
+      if (ledgerId != null) 'ledger_id': ledgerId,
+      if (billsJson != null) 'bills_json': billsJson,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ImageBillingDraftsCompanion copyWith(
+      {Value<String>? sourceKey,
+      Value<int>? ledgerId,
+      Value<String>? billsJson,
+      Value<DateTime>? createdAt,
+      Value<int>? rowid}) {
+    return ImageBillingDraftsCompanion(
+      sourceKey: sourceKey ?? this.sourceKey,
+      ledgerId: ledgerId ?? this.ledgerId,
+      billsJson: billsJson ?? this.billsJson,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (sourceKey.present) {
+      map['source_key'] = Variable<String>(sourceKey.value);
+    }
+    if (ledgerId.present) {
+      map['ledger_id'] = Variable<int>(ledgerId.value);
+    }
+    if (billsJson.present) {
+      map['bills_json'] = Variable<String>(billsJson.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ImageBillingDraftsCompanion(')
+          ..write('sourceKey: $sourceKey, ')
+          ..write('ledgerId: $ledgerId, ')
+          ..write('billsJson: $billsJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$BeeDatabase extends GeneratedDatabase {
   _$BeeDatabase(QueryExecutor e) : super(e);
   $BeeDatabaseManager get managers => $BeeDatabaseManager(this);
@@ -12510,6 +12784,8 @@ abstract class _$BeeDatabase extends GeneratedDatabase {
   late final $ExchangeRatesTable exchangeRates = $ExchangeRatesTable(this);
   late final $ExchangeRateOverridesTable exchangeRateOverrides =
       $ExchangeRateOverridesTable(this);
+  late final $ImageBillingDraftsTable imageBillingDrafts =
+      $ImageBillingDraftsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -12539,7 +12815,8 @@ abstract class _$BeeDatabase extends GeneratedDatabase {
         transactionTagOverrides,
         syncPullErrors,
         exchangeRates,
-        exchangeRateOverrides
+        exchangeRateOverrides,
+        imageBillingDrafts
       ];
 }
 
@@ -18532,6 +18809,166 @@ typedef $$ExchangeRateOverridesTableProcessedTableManager
         ),
         ExchangeRateOverride,
         PrefetchHooks Function()>;
+typedef $$ImageBillingDraftsTableCreateCompanionBuilder
+    = ImageBillingDraftsCompanion Function({
+  required String sourceKey,
+  required int ledgerId,
+  required String billsJson,
+  Value<DateTime> createdAt,
+  Value<int> rowid,
+});
+typedef $$ImageBillingDraftsTableUpdateCompanionBuilder
+    = ImageBillingDraftsCompanion Function({
+  Value<String> sourceKey,
+  Value<int> ledgerId,
+  Value<String> billsJson,
+  Value<DateTime> createdAt,
+  Value<int> rowid,
+});
+
+class $$ImageBillingDraftsTableFilterComposer
+    extends Composer<_$BeeDatabase, $ImageBillingDraftsTable> {
+  $$ImageBillingDraftsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get sourceKey => $composableBuilder(
+      column: $table.sourceKey, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get ledgerId => $composableBuilder(
+      column: $table.ledgerId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get billsJson => $composableBuilder(
+      column: $table.billsJson, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$ImageBillingDraftsTableOrderingComposer
+    extends Composer<_$BeeDatabase, $ImageBillingDraftsTable> {
+  $$ImageBillingDraftsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get sourceKey => $composableBuilder(
+      column: $table.sourceKey, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get ledgerId => $composableBuilder(
+      column: $table.ledgerId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get billsJson => $composableBuilder(
+      column: $table.billsJson, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$ImageBillingDraftsTableAnnotationComposer
+    extends Composer<_$BeeDatabase, $ImageBillingDraftsTable> {
+  $$ImageBillingDraftsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get sourceKey =>
+      $composableBuilder(column: $table.sourceKey, builder: (column) => column);
+
+  GeneratedColumn<int> get ledgerId =>
+      $composableBuilder(column: $table.ledgerId, builder: (column) => column);
+
+  GeneratedColumn<String> get billsJson =>
+      $composableBuilder(column: $table.billsJson, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$ImageBillingDraftsTableTableManager extends RootTableManager<
+    _$BeeDatabase,
+    $ImageBillingDraftsTable,
+    ImageBillingDraft,
+    $$ImageBillingDraftsTableFilterComposer,
+    $$ImageBillingDraftsTableOrderingComposer,
+    $$ImageBillingDraftsTableAnnotationComposer,
+    $$ImageBillingDraftsTableCreateCompanionBuilder,
+    $$ImageBillingDraftsTableUpdateCompanionBuilder,
+    (
+      ImageBillingDraft,
+      BaseReferences<_$BeeDatabase, $ImageBillingDraftsTable, ImageBillingDraft>
+    ),
+    ImageBillingDraft,
+    PrefetchHooks Function()> {
+  $$ImageBillingDraftsTableTableManager(
+      _$BeeDatabase db, $ImageBillingDraftsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ImageBillingDraftsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ImageBillingDraftsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ImageBillingDraftsTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> sourceKey = const Value.absent(),
+            Value<int> ledgerId = const Value.absent(),
+            Value<String> billsJson = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ImageBillingDraftsCompanion(
+            sourceKey: sourceKey,
+            ledgerId: ledgerId,
+            billsJson: billsJson,
+            createdAt: createdAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String sourceKey,
+            required int ledgerId,
+            required String billsJson,
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ImageBillingDraftsCompanion.insert(
+            sourceKey: sourceKey,
+            ledgerId: ledgerId,
+            billsJson: billsJson,
+            createdAt: createdAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$ImageBillingDraftsTableProcessedTableManager = ProcessedTableManager<
+    _$BeeDatabase,
+    $ImageBillingDraftsTable,
+    ImageBillingDraft,
+    $$ImageBillingDraftsTableFilterComposer,
+    $$ImageBillingDraftsTableOrderingComposer,
+    $$ImageBillingDraftsTableAnnotationComposer,
+    $$ImageBillingDraftsTableCreateCompanionBuilder,
+    $$ImageBillingDraftsTableUpdateCompanionBuilder,
+    (
+      ImageBillingDraft,
+      BaseReferences<_$BeeDatabase, $ImageBillingDraftsTable, ImageBillingDraft>
+    ),
+    ImageBillingDraft,
+    PrefetchHooks Function()>;
 
 class $BeeDatabaseManager {
   final _$BeeDatabase _db;
@@ -18590,4 +19027,6 @@ class $BeeDatabaseManager {
       $$ExchangeRatesTableTableManager(_db, _db.exchangeRates);
   $$ExchangeRateOverridesTableTableManager get exchangeRateOverrides =>
       $$ExchangeRateOverridesTableTableManager(_db, _db.exchangeRateOverrides);
+  $$ImageBillingDraftsTableTableManager get imageBillingDrafts =>
+      $$ImageBillingDraftsTableTableManager(_db, _db.imageBillingDrafts);
 }

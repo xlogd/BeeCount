@@ -77,6 +77,13 @@ class BillInfo {
   /// (parser 内部已 fallback 到 `DateTime.now()`),所以此 getter 主要用于
   /// 测试或边界排查,业务代码不需要再判 `isComplete`。
   bool get isComplete => amount != null && time != null;
+  BillType get effectiveType {
+    if (type != null) return type!;
+    final value = category?.trim().toLowerCase();
+    return value == '转账' || value == '轉帳' || value == 'transfer'
+        ? BillType.transfer
+        : BillType.expense;
+  }
 
   /// 派生新实例,缺省沿用原值。
   BillInfo copyWith({

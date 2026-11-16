@@ -2991,7 +2991,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportTitle => 'Export';
 
   @override
-  String get exportDescription => 'Supported export types:\n• Transactions (Income/Expense/Transfer)\n• Categories\n• Accounts\n\nClick the button below to select save location and export current ledger to CSV file.';
+  String get exportDescription => 'Export current-ledger transactions as a UTF-8 CSV file. Filter by date range and transaction type, then choose the columns and their order. Column settings are remembered for the next export.';
 
   @override
   String get exportButtonIOS => 'Export and Share';
@@ -9333,4 +9333,133 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recordingProgressSlow => 'This is taking a little longer. Processing is continuing.';
+
+  @override
+  String get exportColumnsTitle => 'Export columns';
+
+  @override
+  String get exportColumnsDescription => 'Select the columns to include. Expand column order to arrange the exported headers.';
+
+  @override
+  String exportColumnsSelected(int selected, int total) {
+    return 'Selected $selected of $total columns';
+  }
+
+  @override
+  String get exportColumnsSelectAll => 'Select all';
+
+  @override
+  String get exportColumnsClear => 'Clear';
+
+  @override
+  String get exportColumnsReset => 'Restore defaults';
+
+  @override
+  String get exportColumnsOrder => 'Column order and header preview';
+
+  @override
+  String get exportColumnsMoveUp => 'Move up';
+
+  @override
+  String get exportColumnsMoveDown => 'Move down';
+
+  @override
+  String get exportColumnsEmpty => 'Select at least one column to export.';
+
+  @override
+  String get imageCropTitle => 'Crop image';
+
+  @override
+  String get imageCropAction => 'Crop';
+
+  @override
+  String get imageCropAvatarTitle => 'Crop avatar';
+
+  @override
+  String get imageCropDone => 'Image cropped';
+
+  @override
+  String get imageCropFailed => 'Could not crop or save the image. Please try again.';
+
+  @override
+  String get imageCropCurrentAvatar => 'Crop current avatar';
+
+  @override
+  String get aiImageReviewTitle => 'Review image transactions';
+
+  @override
+  String get aiImageReviewHint => 'Check the amounts, dates and number of transactions. Suspected duplicates are unselected by default.';
+
+  @override
+  String aiImageReviewSave(int count) {
+    return 'Save $count';
+  }
+
+  @override
+  String get aiImageReviewDuplicate => 'Possible duplicate. Select only if this is a separate payment.';
+
+  @override
+  String get aiImageReviewAlreadySaved => 'Already recorded';
+
+  @override
+  String get aiImageReviewRequired => 'Possible duplicates detected. Open image billing to review before saving.';
+
+  @override
+  String aiBillingSavedCount(int count) {
+    return 'Transactions added: $count';
+  }
+
+  @override
+  String aiBillingAlreadySavedCount(int count) {
+    return 'Already recorded and skipped: $count';
+  }
+
+  @override
+  String aiBillingFailedCount(int count) {
+    return 'Not saved: $count. Retry the unfinished items.';
+  }
+
+  @override
+  String aiBillingAttachmentFailedCount(int count) {
+    return 'Attachments were not saved for $count transactions. Add them from transaction details.';
+  }
+
+  @override
+  String get aiBillingPostProcessingPending => 'Transactions are saved. Refresh or sync has not completed yet.';
+
+  @override
+  String get aiBillingBusy => 'Image billing is in progress. Please wait.';
+
+  @override
+  String get syncRestoreMissingIdentity => 'This backup has no reliable transaction identities. Restore stopped to prevent duplicate transactions.';
+
+  @override
+  String get syncRestoreDuplicateIdentity => 'The backup contains duplicate transaction identities and cannot be restored safely.';
+
+  @override
+  String get exportFiltersTitle => 'Export scope';
+
+  @override
+  String get exportDateRangeLabel => 'Date range';
+
+  @override
+  String get exportDateRangeHint => 'Uses transaction dates and includes both the start and end dates.';
+
+  @override
+  String get exportAllDates => 'All dates';
+
+  @override
+  String get exportClearDates => 'Clear date range';
+
+  @override
+  String get exportRecordTypeLabel => 'Transaction type';
+
+  @override
+  String get exportAllTypes => 'All types';
+
+  @override
+  String get exportDateRangePickerTitle => 'Select export date range';
+
+  @override
+  String get exportNoMatchingRecords => 'No transactions match the selected dates and type. Adjust the filters and try again.';
 }

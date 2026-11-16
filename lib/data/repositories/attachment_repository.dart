@@ -29,6 +29,17 @@ abstract class AttachmentRepository {
   /// 删除附件记录
   Future<void> deleteAttachment(int id);
 
+  /// Replaces only the image of an existing attachment, preserving its identity
+  /// and order. A stale file name must not overwrite a concurrent edit.
+  Future<TransactionAttachment?> replaceAttachmentImage({
+    required int id,
+    required String expectedFileName,
+    required String fileName,
+    required int fileSize,
+    int? width,
+    int? height,
+  });
+
   /// 删除交易的所有附件记录
   Future<void> deleteAttachmentsByTransaction(int transactionId);
 

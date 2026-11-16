@@ -23,6 +23,7 @@ class AttachmentPreviewPage extends StatelessWidget {
 
   /// 是否允许添加
   final bool allowAdd;
+  final bool? allowCrop;
 
   /// 待上传的文件列表（新建模式）
   final List<File>? pendingFiles;
@@ -35,6 +36,7 @@ class AttachmentPreviewPage extends StatelessWidget {
     this.initialIndex = 0,
     this.allowDelete = true,
     this.allowAdd = false,
+    this.allowCrop,
     this.pendingFiles,
     this.onPendingFilesChanged,
     this.transactionId,
@@ -47,6 +49,7 @@ class AttachmentPreviewPage extends StatelessWidget {
     this.initialIndex = 0,
     this.allowDelete = true,
     this.allowAdd = false,
+    this.allowCrop,
     this.onPendingFilesChanged,
   })  : attachments = null,
         pendingFiles = null;
@@ -58,6 +61,7 @@ class AttachmentPreviewPage extends StatelessWidget {
       initialIndex: initialIndex,
       allowDelete: allowDelete,
       allowAdd: allowAdd,
+      allowCrop: allowCrop,
       pendingFiles: pendingFiles,
       onPendingFilesChanged: onPendingFilesChanged);
 }

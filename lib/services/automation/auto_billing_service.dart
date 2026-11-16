@@ -12,6 +12,8 @@ import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../providers/ai_chat_providers.dart';
 import '../ai/bookkeeping_result.dart';
+import '../ai/bookkeeping_feedback.dart';
+import '../ai/image_billing_source.dart';
 import '../attachment_service.dart';
 import '../billing/post_processor.dart';
 import '../data/tag_seed_service.dart';
@@ -32,10 +34,14 @@ class AutoBillingService {
   final Set<String> _processedPaths = {};
   String? _lastProcessedPath;
   int _lastProcessedTime = 0;
+  late final Future<void> _processedReady;
+  final _screenshotsInFlight = <String, Future<int?>>{};
 
   AutoBillingService(this._container) {
     _initNotifications();
-    _loadProcessedScreenshots();
+    _processedReady = _loadProcessedScreenshots().catchError((Object error) {
+      logger.warning('AutoBilling', '加载截图缓存失败，仍使用账单来源保护: $error');
+    });
   }
 
   /// 解析当前账本 ID(Provider → SharedPreferences → 数据库默认)。
@@ -119,6 +125,27 @@ class AutoBillingService {
     String? recognitionImagePath,
     bool showNotification = true,
   }) async {
+    await _processedReady;
+    final active = _screenshotsInFlight[imagePath];
+    if (active != null) return active;
+    final operation = _processScreenshot(imagePath,
+        recognitionImagePath: recognitionImagePath,
+        showNotification: showNotification);
+    _screenshotsInFlight[imagePath] = operation;
+    try {
+      return await operation;
+    } finally {
+      if (identical(_screenshotsInFlight[imagePath], operation)) {
+        _screenshotsInFlight.remove(imagePath);
+      }
+    }
+  }
+
+  Future<int?> _processScreenshot(
+    String imagePath, {
+    String? recognitionImagePath,
+    bool showNotification = true,
+  }) async {
     final totalStartTime = DateTime.now().millisecondsSinceEpoch;
     print('📸 [AutoBilling] 开始处理截图: $imagePath');
     logger.info('AutoBilling', '开始处理截图', imagePath);
@@ -177,7 +204,8 @@ class AutoBillingService {
             logger.info('AutoBilling', '文件就绪', '等待时间=${waitTime}ms');
             break;
           }
-          await Future.delayed(Duration(milliseconds: AutoBillingConfig.fileCheckInterval));
+          await Future.delayed(
+              Duration(milliseconds: AutoBillingConfig.fileCheckInterval));
           waitTime = DateTime.now().millisecondsSinceEpoch - waitStartTime;
         }
 
@@ -208,8 +236,8 @@ class AutoBillingService {
           AICapabilityType.vision)) {
         logger.warning('AutoBilling', 'AI vision 未配置,跳过自动记账');
         if (showNotification) {
-          final l10n = lookupAppLocalizations(
-              PlatformDispatcher.instance.locale);
+          final l10n =
+              lookupAppLocalizations(PlatformDispatcher.instance.locale);
           await _showFinalNotification(
             progressId: notificationId,
             finalId: resultNotificationId,
@@ -222,8 +250,7 @@ class AutoBillingService {
 
       // 更新通知：开始识别
       if (showNotification) {
-        final l10n =
-            lookupAppLocalizations(PlatformDispatcher.instance.locale);
+        final l10n = lookupAppLocalizations(PlatformDispatcher.instance.locale);
         await _showNotification(
           id: notificationId,
           title: l10n.autoBillingNotifyRecognizingScreenshotTitle,
@@ -255,47 +282,67 @@ class AutoBillingService {
       final autoAddAttachment =
           _container.read(smartBillingAutoAttachmentProvider);
       final result = await _container.read(aiBookkeeperProvider).fromImage(
-        image: recognitionImagePath == null ? file : File(recognitionImagePath),
-        ledgerId: ledgerId,
-        billGuard: PromptBuilder.billGuardForImage,
-        billingTypes: const [
-          TagSeedService.billingTypeImage,
-          TagSeedService.billingTypeAi,
-        ],
-        l10n: lookupAppLocalizations(PlatformDispatcher.instance.locale),
-        // 多笔截图(罕见,但 AI 可能识别出一张账单页里的多笔)时,每笔都挂
-        // 同一张原图,与相册路径行为对齐。
-        //
-        // 走 urgent 模式:跳过 FlutterImageCompress(platform channel,后台冻
-        // 结时会卡)和 _getImageInfo,用 sync File.copy 几十 ms 内完成。
-        // 这样 attachment 在 perform() return 前就写完,不依赖用户开 app。
-        onSaved: autoAddAttachment
-            ? (txId, _) async {
-                try {
-                  final attachmentService =
-                      _container.read(attachmentServiceProvider);
-                  await attachmentService.saveAttachment(
-                    transactionId: txId,
-                    sourceFile: file,
-                    index: 0,
-                    urgent: true,
-                  );
-                  _container
-                      .read(attachmentListRefreshProvider.notifier)
-                      .state++;
-                } catch (e, st) {
-                  logger.error('AutoBilling', '保存截图附件失败', e, st);
-                }
-              }
-            : null,
-      );
+            image: recognitionImagePath == null
+                ? file
+                : File(recognitionImagePath),
+            ledgerId: ledgerId,
+            billGuard: PromptBuilder.billGuardForImage,
+            billingTypes: const [
+              TagSeedService.billingTypeImage,
+              TagSeedService.billingTypeAi,
+            ],
+            l10n: lookupAppLocalizations(PlatformDispatcher.instance.locale),
+            sourceFingerprint: await imageBillingSourceHash(file),
+            // 多笔截图(罕见,但 AI 可能识别出一张账单页里的多笔)时,每笔都挂
+            // 同一张原图,与相册路径行为对齐。
+            //
+            // 走 urgent 模式:跳过 FlutterImageCompress(platform channel,后台冻
+            // 结时会卡)和 _getImageInfo,用 sync File.copy 几十 ms 内完成。
+            // 这样 attachment 在 perform() return 前就写完,不依赖用户开 app。
+            onSaved: autoAddAttachment
+                ? (txId, _) async {
+                    try {
+                      final attachmentService =
+                          _container.read(attachmentServiceProvider);
+                      final saved = await attachmentService.saveAttachment(
+                        transactionId: txId,
+                        sourceFile: file,
+                        index: 0,
+                        urgent: true,
+                      );
+                      if (saved == null)
+                        throw StateError('Billing attachment was not saved');
+                      _container
+                          .read(attachmentListRefreshProvider.notifier)
+                          .state++;
+                    } catch (e, st) {
+                      logger.error('AutoBilling', '保存截图附件失败', e, st);
+                      rethrow;
+                    }
+                  }
+                : null,
+          );
 
       final aiElapsed = DateTime.now().millisecondsSinceEpoch - aiStartTime;
       logger.info('AutoBilling', 'AI 识别 + 落库完成',
           '耗时=${aiElapsed}ms, 成功=${result.savedCount} 笔, 失败=${result.failedCount}');
 
       // 不管成败,这张截图都不再处理
-      await _markAsProcessed(imagePath);
+      if (result.failedCount == 0) {
+        await _markAsProcessed(imagePath);
+      }
+
+      if (result.needsReview) {
+        if (showNotification) {
+          final l = lookupAppLocalizations(PlatformDispatcher.instance.locale);
+          await _showFinalNotification(
+              progressId: notificationId,
+              finalId: resultNotificationId,
+              title: l.aiImageReviewTitle,
+              body: l.aiImageReviewRequired);
+        }
+        return null;
+      }
 
       if (!result.success) {
         if (showNotification) {
@@ -317,17 +364,25 @@ class AutoBillingService {
         return null;
       }
 
-      _container.read(statsRefreshProvider.notifier).state++;
-      await PostProcessor.runC(_container, ledgerId: ledgerId, tags: true);
+      var postProcessingFailed = false;
+      try {
+        if (result.createdCount > 0) {
+          await PostProcessor.runC(_container,
+              ledgerId: ledgerId, tags: true, attachments: autoAddAttachment);
+        }
+      } catch (error, stack) {
+        postProcessingFailed = true;
+        logger.error('AutoBilling', '账单已保存，后处理待重试', error, stack);
+      }
 
       if (showNotification) {
-        final l10n =
-            lookupAppLocalizations(PlatformDispatcher.instance.locale);
+        final l10n = lookupAppLocalizations(PlatformDispatcher.instance.locale);
         await _showFinalNotification(
           progressId: notificationId,
           finalId: resultNotificationId,
           title: _successTitle(result, l10n),
-          body: _successBody(result, l10n),
+          body: _successBody(result, l10n,
+              postProcessingFailed: postProcessingFailed),
         );
       }
       logger.info('AutoBilling', '自动记账成功',
@@ -335,11 +390,15 @@ class AutoBillingService {
       return result.firstTransactionId;
     } catch (e, stackTrace) {
       print('❌ 处理截图失败: $e');
-      logger.error('AutoBilling', '处理截图失败', {
-        'path': imagePath,
-        'error': e.toString(),
-        'stage': '未知阶段',
-      }, stackTrace);
+      logger.error(
+          'AutoBilling',
+          '处理截图失败',
+          {
+            'path': imagePath,
+            'error': e.toString(),
+            'stage': '未知阶段',
+          },
+          stackTrace);
       if (showNotification) {
         try {
           final l10n =
@@ -414,14 +473,14 @@ class AutoBillingService {
       }
 
       final result = await _container.read(aiBookkeeperProvider).fromText(
-        text: text,
-        ledgerId: ledgerId,
-        billingTypes: const [
-          TagSeedService.billingTypeImage, // 通知文本场景沿用 image 标签习惯
-          TagSeedService.billingTypeAi,
-        ],
-        l10n: l10n,
-      );
+            text: text,
+            ledgerId: ledgerId,
+            billingTypes: const [
+              TagSeedService.billingTypeImage, // 通知文本场景沿用 image 标签习惯
+              TagSeedService.billingTypeAi,
+            ],
+            l10n: l10n,
+          );
 
       if (!result.success) {
         if (showNotification) {
@@ -435,23 +494,28 @@ class AutoBillingService {
         return null;
       }
 
-      _container.read(statsRefreshProvider.notifier).state++;
-      await PostProcessor.runC(_container, ledgerId: ledgerId, tags: true);
+      var postProcessingFailed = false;
+      try {
+        await PostProcessor.runC(_container, ledgerId: ledgerId, tags: true);
+      } catch (error, stack) {
+        postProcessingFailed = true;
+        logger.error('AutoBilling', '账单已保存，后处理待重试', error, stack);
+      }
 
       if (showNotification) {
         await _showFinalNotification(
           progressId: notificationId,
           finalId: resultNotificationId,
           title: _successTitle(result, l10n),
-          body: _successBody(result, l10n),
+          body: _successBody(result, l10n,
+              postProcessingFailed: postProcessingFailed),
         );
       }
       return result.firstTransactionId;
     } catch (e) {
       logger.error('AutoBilling', '文本处理失败', e);
       if (showNotification) {
-        final l10n =
-            lookupAppLocalizations(PlatformDispatcher.instance.locale);
+        final l10n = lookupAppLocalizations(PlatformDispatcher.instance.locale);
         await _showNotification(
           id: 1002,
           title: l10n.autoBillingNotifyProcessFailedTitle,
@@ -468,23 +532,16 @@ class AutoBillingService {
 
   /// 通知标题统一格式
   String _successTitle(BookkeepingResult result, AppLocalizations l10n) {
-    if (result.isMulti) {
-      return l10n.autoBillingNotifySuccessMultiTitle(result.savedCount);
-    }
-    return l10n.autoBillingNotifySuccessSingleTitle(
-        result.totalAbsAmount.toStringAsFixed(2));
+    return result.createdCount > 0
+        ? l10n.aiBillingSavedCount(result.createdCount)
+        : l10n.aiBillingAlreadySavedCount(result.reusedTransactionIds.length);
   }
 
   /// 通知正文统一格式
-  String _successBody(BookkeepingResult result, AppLocalizations l10n) {
-    if (result.isMulti) {
-      return l10n.autoBillingNotifySuccessMultiBody(
-          result.totalAbsAmount.toStringAsFixed(2));
-    }
-    final note = result.firstBill?.note;
-    return (note != null && note.isNotEmpty)
-        ? l10n.autoBillingNotifySuccessSingleBodyNote(note)
-        : l10n.autoBillingNotifySuccessSingleBodyDefault;
+  String _successBody(BookkeepingResult result, AppLocalizations l10n,
+      {bool postProcessingFailed = false}) {
+    return bookkeepingFeedback(l10n, result,
+        postProcessingFailed: postProcessingFailed, includeCounts: false);
   }
 
   /// 显示通知。
@@ -517,8 +574,7 @@ class AutoBillingService {
     try {
       await _notificationsPlugin.show(id, title, body, details);
     } catch (e) {
-      logger.warning('AutoBilling',
-          '通知发送失败(未授权通知时属预期,不中断记账流程): $e');
+      logger.warning('AutoBilling', '通知发送失败(未授权通知时属预期,不中断记账流程): $e');
     }
   }
 

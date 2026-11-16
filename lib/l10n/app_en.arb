@@ -1272,7 +1272,7 @@
   "authErrorWeakPassword": "Password is too simple, please include letters and numbers, at least 6 characters.",
   "importSelectCsvFile": "Please select a file to import (CSV/TSV/XLSX supported)",
   "exportTitle": "Export",
-  "exportDescription": "Supported export types:\n• Transactions (Income/Expense/Transfer)\n• Categories\n• Accounts\n\nClick the button below to select save location and export current ledger to CSV file.",
+  "exportDescription": "Export current-ledger transactions as a UTF-8 CSV file. Filter by date range and transaction type, then choose the columns and their order. Column settings are remembered for the next export.",
   "exportButtonIOS": "Export and Share",
   "exportButtonAndroid": "Export Data",
   "exportSavedTo": "Saved to: {path}",
@@ -4724,5 +4724,90 @@
   "recordingProgressRecognizing": "Reading your bill",
   "recordingProgressRecognizingDetail": "Organizing amounts, categories and notes",
   "recordingProgressSavingDetail": "Saving the entries from this recognition",
-  "recordingProgressSlow": "This is taking a little longer. Processing is continuing."
+  "recordingProgressSlow": "This is taking a little longer. Processing is continuing.",
+  "exportColumnsTitle": "Export columns",
+  "exportColumnsDescription": "Select the columns to include. Expand column order to arrange the exported headers.",
+  "exportColumnsSelected": "Selected {selected} of {total} columns",
+  "exportColumnsSelectAll": "Select all",
+  "exportColumnsClear": "Clear",
+  "exportColumnsReset": "Restore defaults",
+  "exportColumnsOrder": "Column order and header preview",
+  "exportColumnsMoveUp": "Move up",
+  "exportColumnsMoveDown": "Move down",
+  "exportColumnsEmpty": "Select at least one column to export.",
+  "@exportColumnsSelected": {
+    "description": "Number of selected export columns",
+    "placeholders": {
+      "selected": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "imageCropTitle": "Crop image",
+  "imageCropAction": "Crop",
+  "imageCropAvatarTitle": "Crop avatar",
+  "imageCropDone": "Image cropped",
+  "imageCropFailed": "Could not crop or save the image. Please try again.",
+  "imageCropCurrentAvatar": "Crop current avatar",
+  "aiImageReviewTitle": "Review image transactions",
+  "aiImageReviewHint": "Check the amounts, dates and number of transactions. Suspected duplicates are unselected by default.",
+  "aiImageReviewSave": "Save {count}",
+  "@aiImageReviewSave": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiImageReviewDuplicate": "Possible duplicate. Select only if this is a separate payment.",
+  "aiImageReviewAlreadySaved": "Already recorded",
+  "aiImageReviewRequired": "Possible duplicates detected. Open image billing to review before saving.",
+  "aiBillingSavedCount": "Transactions added: {count}",
+  "@aiBillingSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingAlreadySavedCount": "Already recorded and skipped: {count}",
+  "@aiBillingAlreadySavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingFailedCount": "Not saved: {count}. Retry the unfinished items.",
+  "@aiBillingFailedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingAttachmentFailedCount": "Attachments were not saved for {count} transactions. Add them from transaction details.",
+  "@aiBillingAttachmentFailedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingPostProcessingPending": "Transactions are saved. Refresh or sync has not completed yet.",
+  "aiBillingBusy": "Image billing is in progress. Please wait.",
+  "syncRestoreMissingIdentity": "This backup has no reliable transaction identities. Restore stopped to prevent duplicate transactions.",
+  "syncRestoreDuplicateIdentity": "The backup contains duplicate transaction identities and cannot be restored safely.",
+  "exportFiltersTitle": "Export scope",
+  "exportDateRangeLabel": "Date range",
+  "exportDateRangeHint": "Uses transaction dates and includes both the start and end dates.",
+  "exportAllDates": "All dates",
+  "exportClearDates": "Clear date range",
+  "exportRecordTypeLabel": "Transaction type",
+  "exportAllTypes": "All types",
+  "exportDateRangePickerTitle": "Select export date range",
+  "exportNoMatchingRecords": "No transactions match the selected dates and type. Adjust the filters and try again."
 }

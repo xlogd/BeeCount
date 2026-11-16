@@ -75,6 +75,12 @@ class MainActivity: FlutterFragmentActivity() {
             LoggerPlugin.info("MainActivity", "收到图片分享")
 
             val imageUri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+            // Consume this delivery before asynchronous work. Activity recreation
+            // must not turn a previous share into another financial request.
+            intent.action = Intent.ACTION_MAIN
+            intent.removeExtra(Intent.EXTRA_STREAM)
+            intent.type = null
+            setIntent(intent)
             if (imageUri != null) {
                 android.util.Log.d("MainActivity", "图片URI: $imageUri")
                 LoggerPlugin.info("MainActivity", "分享图片URI: $imageUri")

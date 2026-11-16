@@ -1274,7 +1274,7 @@
     }
   },
   "exportTitle": "导出",
-  "exportDescription": "支持导出的数据类型：\n• 交易记录（收入/支出/转账）\n• 分类信息\n• 账户信息\n\n点击下方按钮选择保存位置，开始导出当前账本为 CSV 文件。",
+  "exportDescription": "将当前账本的交易记录导出为 UTF-8 CSV 文件。可按日期范围和交易类型筛选，并选择导出的列及顺序。列设置会保留供下次使用。",
   "exportButtonIOS": "导出并分享",
   "exportButtonAndroid": "导出数据",
   "exportSavedTo": "已保存到：{path}",
@@ -4271,5 +4271,79 @@
   "recordingProgressRecognizing": "正在识别账单",
   "recordingProgressRecognizingDetail": "整理金额、分类与备注",
   "recordingProgressSavingDetail": "正在保存本次识别的记录",
-  "recordingProgressSlow": "这次处理时间稍长，仍在继续处理。"
+  "recordingProgressSlow": "这次处理时间稍长，仍在继续处理。",
+  "exportColumnsTitle": "导出列",
+  "exportColumnsDescription": "点选需要导出的列，展开列顺序可调整表头位置。",
+  "exportColumnsSelected": "已选 {selected} / {total} 列",
+  "exportColumnsSelectAll": "全选",
+  "exportColumnsClear": "清空",
+  "exportColumnsReset": "恢复默认",
+  "exportColumnsOrder": "列顺序与表头预览",
+  "exportColumnsMoveUp": "上移",
+  "exportColumnsMoveDown": "下移",
+  "exportColumnsEmpty": "请至少选择一列再导出。",
+  "imageCropTitle": "裁剪图片",
+  "imageCropAction": "裁剪",
+  "imageCropAvatarTitle": "裁剪头像",
+  "imageCropDone": "裁剪完成",
+  "imageCropFailed": "裁剪或保存图片失败，请重试。",
+  "imageCropCurrentAvatar": "裁剪当前头像",
+  "aiImageReviewTitle": "核对图片账单",
+  "aiImageReviewHint": "请核对金额、时间和笔数。疑似重复的账单默认不选中。",
+  "aiImageReviewSave": "保存 {count} 笔",
+  "@aiImageReviewSave": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiImageReviewDuplicate": "疑似重复，请确认这是一笔独立交易",
+  "aiImageReviewAlreadySaved": "此项已记账",
+  "aiImageReviewRequired": "识别结果可能重复，请在图片记账中核对后保存",
+  "aiBillingSavedCount": "已新增 {count} 笔",
+  "@aiBillingSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingAlreadySavedCount": "已记过 {count} 笔，已跳过",
+  "@aiBillingAlreadySavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingFailedCount": "未保存 {count} 笔，可重试未完成项",
+  "@aiBillingFailedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingAttachmentFailedCount": "有 {count} 笔账单的附件未保存，可在账单中补充",
+  "@aiBillingAttachmentFailedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingPostProcessingPending": "账单已保存，刷新或同步暂未完成",
+  "aiBillingBusy": "图片记账正在处理中，请稍候",
+  "syncRestoreMissingIdentity": "此备份缺少可靠的账单标识，已停止恢复以避免重复入账。",
+  "syncRestoreDuplicateIdentity": "备份中存在重复的账单标识，无法安全恢复。",
+  "exportFiltersTitle": "导出范围",
+  "exportDateRangeLabel": "日期范围",
+  "exportDateRangeHint": "按账单发生日期筛选，包含起止日期当天。",
+  "exportAllDates": "全部时间",
+  "exportClearDates": "清除日期限制",
+  "exportRecordTypeLabel": "交易类型",
+  "exportAllTypes": "全部",
+  "exportDateRangePickerTitle": "选择导出时间段",
+  "exportNoMatchingRecords": "没有符合所选时间与类型的记录，请调整筛选条件后再导出。"
 }

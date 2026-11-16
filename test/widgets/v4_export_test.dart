@@ -6,6 +6,8 @@ import 'package:beecount/data/db.dart';
 import 'package:beecount/data/repositories/local/local_repository.dart';
 import 'package:beecount/l10n/app_localizations.dart';
 import 'package:beecount/l10n/app_localizations_en.dart';
+import 'package:beecount/models/transaction_export_column.dart';
+import 'package:beecount/models/transaction_export_filter.dart';
 import 'package:beecount/pages/data/export_page.dart';
 import 'package:beecount/pages/data/export/bindings/export_csv.dart';
 import 'package:beecount/pages/data/export/bindings/export_platform.dart';
@@ -51,6 +53,25 @@ class _Platform implements TransactionExportPlatform {
   }
 }
 
+class _TrackedRepository extends LocalRepository {
+  _TrackedRepository(super.db);
+  final tagBatches = <int>[];
+  final attachmentBatches = <int>[];
+
+  @override
+  Future<Map<int, List<Tag>>> getTagsForTransactions(List<int> ids) {
+    tagBatches.add(ids.length);
+    return super.getTagsForTransactions(ids);
+  }
+
+  @override
+  Future<Map<int, List<TransactionAttachment>>> getAttachmentsForTransactions(
+      List<int> ids) {
+    attachmentBatches.add(ids.length);
+    return super.getAttachmentsForTransactions(ids);
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final l = AppLocalizationsEn();
@@ -76,7 +97,8 @@ void main() {
       int? account = 1,
       int? category = 2,
       String? currency = 'eur',
-      String note = 'QA note'}) async {
+      String note = 'QA note',
+      DateTime? happenedAt}) async {
     await db.customStatement(
         'INSERT INTO transactions(id,ledger_id,type,amount,category_id,account_id,to_account_id,happened_at,note,currency_code) VALUES(?,?,?,?,?,?,?,?,?,?)',
         [
@@ -87,7 +109,9 @@ void main() {
           category,
           account,
           type == 'transfer' ? 2 : null,
-          DateTime(2026, 10, 25, 8, 9, 10).millisecondsSinceEpoch ~/ 1000,
+          (happenedAt ?? DateTime(2026, 10, 25, 8, 9, 10))
+                  .millisecondsSinceEpoch ~/
+              1000,
           note,
           currency
         ]);
@@ -149,6 +173,204 @@ void main() {
     await t.pumpAndSettle();
   }
 
+  Future<void> pickDates(WidgetTester t, String start, String end) async {
+    await t.ensureVisible(find.byKey(const ValueKey('export-date-range')));
+    await t.tap(find.byKey(const ValueKey('export-date-range')));
+    await t.pumpAndSettle();
+    final pickerContext = t.element(find.byType(DateRangePickerDialog));
+    final material = MaterialLocalizations.of(pickerContext);
+    await t.tap(find.byTooltip(material.inputDateModeButtonLabel));
+    await t.pumpAndSettle();
+    await t.enterText(find.byType(TextField).at(0), start);
+    await t.enterText(find.byType(TextField).at(1), end);
+    t.testTextInput.hide();
+    await t.pump();
+    await t.tap(find.text(l.commonConfirm).last);
+    await t.pumpAndSettle();
+  }
+
+  test('日期筛选包含起止日全天，正确比较UTC时刻并拒绝倒置范围', () {
+    final selected = TransactionExportFilter(
+        startDate: DateTime(2026, 11, 1), endDate: DateTime(2026, 11, 1));
+    expect(
+        selected.matches(
+            happenedAt: DateTime(2026, 11, 1).toUtc(),
+            transactionType: 'expense'),
+        isTrue);
+    expect(
+        selected.matches(
+            happenedAt: DateTime(2026, 11, 1, 23, 59, 59, 999, 999).toUtc(),
+            transactionType: 'income'),
+        isTrue);
+    expect(
+        selected.matches(
+            happenedAt: DateTime(2026, 10, 31, 23, 59, 59),
+            transactionType: 'expense'),
+        isFalse);
+    expect(
+        selected.matches(
+            happenedAt: DateTime(2026, 11, 2), transactionType: 'expense'),
+        isFalse);
+    expect(
+        () => TransactionExportFilter(
+            startDate: DateTime(2026, 11, 2), endDate: DateTime(2026, 11, 1)),
+        throwsArgumentError);
+  });
+
+  test('组合筛选只导出范围内支出，与导出列是否包含日期类型无关', () async {
+    await seed(
+        id: 1, note: 'before', happenedAt: DateTime(2026, 10, 24, 23, 59, 59));
+    await seed(
+        id: 2,
+        note: 'start expense',
+        happenedAt: DateTime(2026, 10, 25).toUtc());
+    await seed(
+        id: 3,
+        note: 'end expense',
+        happenedAt: DateTime(2026, 10, 31, 23, 59, 59, 999));
+    await seed(id: 4, note: 'after', happenedAt: DateTime(2026, 11, 1));
+    await seed(id: 5, note: 'income', type: 'income', category: 3);
+    await seed(id: 6, note: 'transfer', type: 'transfer', category: null);
+    await seed(id: 7, note: 'other ledger', ledgerId: 2);
+    final before = await db.select(db.transactions).get();
+    final tracked = _TrackedRepository(db);
+    int? matched;
+    final csv = await buildTransactionExportCsv(
+        repo: tracked,
+        ledgerId: 1,
+        l10n: l,
+        filter: TransactionExportFilter(
+            startDate: DateTime(2026, 10, 25),
+            endDate: DateTime(2026, 10, 31),
+            type: TransactionExportType.expense),
+        columns: [
+          TransactionExportColumn.note,
+          TransactionExportColumn.tags,
+          TransactionExportColumn.attachments
+        ],
+        onRecordCount: (count) => matched = count);
+    final rows = const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
+        .convert(csv);
+    expect(rows.skip(1).map((row) => row.first).toSet(),
+        {'start expense', 'end expense'});
+    expect(matched, 2);
+    expect(tracked.tagBatches, [2]);
+    expect(tracked.attachmentBatches, [2]);
+    expect(await db.select(db.transactions).get(), before);
+  });
+
+  for (final type in TransactionExportType.values) {
+    test('类型筛选使用交易类型字段并保留全部/收入/支出/转账 $type', () async {
+      await seed(note: 'expense');
+      await seed(id: 2, type: 'income', category: 3, note: 'income');
+      await seed(id: 3, type: 'transfer', category: null, note: 'transfer');
+      final csv = await buildTransactionExportCsv(
+          repo: repo,
+          ledgerId: 1,
+          l10n: l,
+          filter: TransactionExportFilter(type: type),
+          columns: [TransactionExportColumn.note]);
+      final rows =
+          const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
+              .convert(csv);
+      expect(
+          rows.skip(1).map((row) => row.single).toSet(),
+          type == TransactionExportType.all
+              ? {'expense', 'income', 'transfer'}
+              : {type.name});
+    });
+  }
+
+  test('无匹配记录时返回表头和零笔数，不读取无关标签附件', () async {
+    await seed();
+    final tracked = _TrackedRepository(db);
+    int? matched;
+    final progress = <double>[];
+    final csv = await buildTransactionExportCsv(
+        repo: tracked,
+        ledgerId: 1,
+        l10n: l,
+        filter: TransactionExportFilter(type: TransactionExportType.income),
+        onRecordCount: (count) => matched = count,
+        onProgress: progress.add);
+    expect(csv,
+        const ListToCsvConverter(eol: '\n').convert([exportCsvHeaders(l)]));
+    expect(matched, 0);
+    expect(progress, [1]);
+    expect(tracked.tagBatches, isEmpty);
+    expect(tracked.attachmentBatches, isEmpty);
+  });
+
+  scenario('日期选择与支出筛选组合，清除日期后保留类型筛选', (t) async {
+    screen(t, const Size(398, 1000));
+    await seed(note: 'selected expense');
+    await seed(id: 2, type: 'income', category: 3, note: 'excluded income');
+    await seed(
+        id: 3, note: 'earlier expense', happenedAt: DateTime(2026, 10, 24));
+    final platform = _Platform();
+    await t.pumpWidget(host(platform));
+    await t.pumpAndSettle();
+    await pickDates(t, '10/25/2026', '10/25/2026');
+    await t.ensureVisible(find.byKey(const ValueKey('export-type-expense')));
+    await t.tap(find.byKey(const ValueKey('export-type-expense')));
+    await t.pumpAndSettle();
+    await start(t);
+    await pumpTask(t);
+    expect(platform.csv, contains('selected expense'));
+    expect(platform.csv, isNot(contains('earlier expense')));
+    expect(platform.csv, isNot(contains('excluded income')));
+    await dismiss(t);
+    await t.ensureVisible(find.byKey(const ValueKey('export-clear-dates')));
+    await t.tap(find.byKey(const ValueKey('export-clear-dates')));
+    await t.pumpAndSettle();
+    expect(
+        t.widget<BeeExportFilters>(find.byType(BeeExportFilters)).selectedType,
+        'expense');
+    await start(t);
+    await pumpTask(t);
+    expect(platform.csv, contains('earlier expense'));
+    expect(platform.csv, isNot(contains('excluded income')));
+    await dismiss(t);
+  });
+
+  scenario('无匹配的类型筛选提示用户且不写出空文件', (t) async {
+    await seed();
+    final platform = _Platform();
+    await t.pumpWidget(host(platform));
+    await t.pumpAndSettle();
+    await t.ensureVisible(find.byKey(const ValueKey('export-type-income')));
+    await t.tap(find.byKey(const ValueKey('export-type-income')));
+    await t.pumpAndSettle();
+    await start(t);
+    await pumpTask(t);
+    expect(find.text(l.exportNoMatchingRecords), findsOneWidget);
+    expect(platform.writes, 0);
+    await dismiss(t);
+  });
+
+  scenario('导出时日期和类型锁定，文件使用触发时所选类型', (t) async {
+    await seed(note: 'expense');
+    await seed(id: 2, type: 'income', category: 3, note: 'income');
+    final platform = _Platform()..gate = Completer<void>();
+    await t.pumpWidget(host(platform));
+    await t.pumpAndSettle();
+    await t.ensureVisible(find.byKey(const ValueKey('export-type-income')));
+    await t.tap(find.byKey(const ValueKey('export-type-income')));
+    await t.pumpAndSettle();
+    await start(t);
+    final editor = t.widget<BeeExportFilters>(find.byType(BeeExportFilters));
+    expect(editor.onTypeChanged, isNull);
+    expect(editor.onPickDates, isNull);
+    expect(editor.onClearDates, isNull);
+    platform.gate!.complete();
+    await pumpTask(t);
+    final rows = const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
+        .convert(platform.csv!);
+    expect(rows.length, 2);
+    expect(rows.last[8], 'income');
+    await dismiss(t);
+  });
+
   test('CSV保留12列顺序、当前账本、类型、分类层级、币种和转账账户', () async {
     await seed(note: 'Comma, quote " and\nnewline');
     await seed(id: 2, type: 'income', category: 3, currency: null);
@@ -209,7 +431,7 @@ void main() {
         .singleWhere((row) => row[0] == l.exportTypeExpense && row[5] == '');
     expect(noAccount[4], 'CNY');
     expect(csv, isNot(contains('Other ledger excluded')));
-    expect(progress, [.25]);
+    expect(progress, [.25, 1]);
     expect(await db.select(db.transactions).get(), before);
     expect(exportTypeDisplayName(l, 'unknown'), 'unknown');
   });
@@ -247,7 +469,302 @@ void main() {
     }
   });
 
+  test('自定义表头和数据保持同一顺序，正确引用逗号、引号与换行', () async {
+    await seed(note: '咖啡, "双份"\n第二行');
+    final tracked = _TrackedRepository(db);
+    final csv = await buildTransactionExportCsv(
+        repo: tracked,
+        ledgerId: 1,
+        l10n: l,
+        columns: [
+          TransactionExportColumn.note,
+          TransactionExportColumn.amount,
+          TransactionExportColumn.type
+        ]);
+    final rows = const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
+        .convert(csv);
+    expect(rows, [
+      [l.exportCsvHeaderNote, l.exportCsvHeaderAmount, l.exportCsvHeaderType],
+      ['咖啡, "双份"\n第二行', '12.35', l.exportTypeExpense]
+    ]);
+    expect(tracked.tagBatches, isEmpty);
+    expect(tracked.attachmentBatches, isEmpty);
+  });
+
+  test('开始导出后修改调用方列表不改变本次文件结构', () async {
+    await seed();
+    final selected = [
+      TransactionExportColumn.note,
+      TransactionExportColumn.amount
+    ];
+    final pending = buildTransactionExportCsv(
+        repo: repo, ledgerId: 1, l10n: l, columns: selected);
+    selected
+      ..clear()
+      ..add(TransactionExportColumn.type);
+    final rows = const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
+        .convert(await pending);
+    expect(rows.first, [l.exportCsvHeaderNote, l.exportCsvHeaderAmount]);
+    expect(rows.last, ['QA note', '12.35']);
+  });
+
+  test('仅导出一个可空字段时空值仍保留每笔交易的完整单元格', () async {
+    await seed(note: '');
+    await seed(id: 2, type: 'income', note: '');
+    for (final column in [
+      TransactionExportColumn.note,
+      TransactionExportColumn.tags,
+      TransactionExportColumn.attachments
+    ]) {
+      final csv = await buildTransactionExportCsv(
+          repo: repo, ledgerId: 1, l10n: l, columns: [column]);
+      final rows =
+          const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
+              .convert(csv);
+      expect(rows, [
+        [exportCsvColumnLabel(l, column)],
+        [''],
+        ['']
+      ]);
+      expect(csv, endsWith('\n""\n""'));
+    }
+  });
+
+  test('服务拒绝空列和重复列，空账本仍完成自定义表头与进度', () async {
+    await expectLater(
+        buildTransactionExportCsv(
+            repo: repo, ledgerId: 1, l10n: l, columns: []),
+        throwsArgumentError);
+    await expectLater(
+        buildTransactionExportCsv(repo: repo, ledgerId: 1, l10n: l, columns: [
+          TransactionExportColumn.note,
+          TransactionExportColumn.note
+        ]),
+        throwsArgumentError);
+    final values = <double>[];
+    final csv = await buildTransactionExportCsv(
+        repo: repo,
+        ledgerId: 1,
+        l10n: l,
+        columns: [TransactionExportColumn.amount],
+        onProgress: values.add);
+    expect(csv, l.exportCsvHeaderAmount);
+    expect(values, [1]);
+  });
+
+  test('大批量标签附件查询分批且保留末行数据', () async {
+    for (var id = 1; id <= 501; id++) {
+      await seed(id: id, note: 'batch $id');
+    }
+    await db.customStatement("INSERT INTO tags(id,name) VALUES(1,'last tag')");
+    await db.customStatement(
+        'INSERT INTO transaction_tags(transaction_id,tag_id) VALUES(501,1)');
+    await db.customStatement(
+        "INSERT INTO transaction_attachments(transaction_id,file_name) VALUES(501,'last.png')");
+    final tracked = _TrackedRepository(db);
+    final csv = await buildTransactionExportCsv(
+        repo: tracked,
+        ledgerId: 1,
+        l10n: l,
+        columns: [
+          TransactionExportColumn.note,
+          TransactionExportColumn.tags,
+          TransactionExportColumn.attachments
+        ]);
+    expect(tracked.tagBatches, [500, 1]);
+    expect(tracked.attachmentBatches, [500, 1]);
+    final rows = const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
+        .convert(csv);
+    expect(rows.length, 502);
+    expect(rows.singleWhere((row) => row.first == 'batch 501'),
+        ['batch 501', 'last tag', 'last.png']);
+  });
+
+  test('列偏好保留顺序、过滤未知或重复ID，并恢复无法识别的旧配置', () {
+    expect(
+        restoreTransactionExportColumns(null), defaultTransactionExportColumns);
+    expect(restoreTransactionExportColumns([]), isEmpty);
+    expect(
+        restoreTransactionExportColumns(['note', 'unknown', 'amount', 'note']),
+        [TransactionExportColumn.note, TransactionExportColumn.amount]);
+    expect(restoreTransactionExportColumns(['obsolete']),
+        defaultTransactionExportColumns);
+  });
+
+  test('系统写入失败不会留下半成品文件', () async {
+    final temporary =
+        await Directory.systemTemp.createTemp('beecount-export-atomic-');
+    try {
+      final target = Directory('${temporary.path}/blocked.csv');
+      await target.create();
+      await expectLater(
+          const SystemTransactionExportPlatform()
+              .writeCsv(target.path, 'Header\nValue'),
+          throwsA(isA<FileSystemException>()));
+      expect(await target.exists(), isTrue);
+      expect(await File('${target.path}.part').exists(), isFalse);
+    } finally {
+      await temporary.delete(recursive: true);
+    }
+  });
+
+  scenario('清空列禁用导出，重新勾选后只导出所选数据并记住选择', (t) async {
+    screen(t, const Size(398, 1000));
+    await seed();
+    final platform = _Platform();
+    await t.pumpWidget(host(platform));
+    await t.pumpAndSettle();
+    await t.ensureVisible(find.byKey(const ValueKey('export-columns-clear')));
+    await t.tap(find.byKey(const ValueKey('export-columns-clear')));
+    await t.pumpAndSettle();
+    expect(find.text(l.exportColumnsEmpty), findsOneWidget);
+    expect(
+        t
+            .widget<BeeTransactionExport>(find.byType(BeeTransactionExport))
+            .onExport,
+        isNull);
+    expect(platform.writes, 0);
+    await t.ensureVisible(find.byKey(const ValueKey('export-column-amount')));
+    await t.tap(find.byKey(const ValueKey('export-column-amount')));
+    await t.pumpAndSettle();
+    await start(t);
+    await pumpTask(t);
+    expect(
+        const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
+            .convert(platform.csv!),
+        [
+          [l.exportCsvHeaderAmount],
+          ['12.35']
+        ]);
+    await dismiss(t);
+    expect(
+        (await SharedPreferences.getInstance())
+            .getStringList(transactionExportColumnsPreferenceKey),
+        ['amount']);
+    await t.pumpWidget(const SizedBox.shrink());
+    await t.pumpAndSettle();
+    await t.pumpWidget(host(platform));
+    await t.pumpAndSettle();
+    expect(
+        t.widget<BeeExportColumns>(find.byType(BeeExportColumns)).selectedIds,
+        ['amount']);
+    await t.ensureVisible(find.byKey(const ValueKey('export-columns-reset')));
+    await t.tap(find.byKey(const ValueKey('export-columns-reset')));
+    await t.pumpAndSettle();
+    expect(
+        t.widget<BeeExportColumns>(find.byType(BeeExportColumns)).selectedIds,
+        TransactionExportColumn.values.map((column) => column.name));
+  });
+
+  scenario('恢复并调整列顺序，导出过程中锁定选择且使用捕获的顺序', (t) async {
+    screen(t, const Size(398, 1000));
+    SharedPreferences.setMockInitialValues({
+      transactionExportColumnsPreferenceKey: ['amount', 'note', 'type']
+    });
+    await seed();
+    final platform = _Platform()..gate = Completer<void>();
+    await t.pumpWidget(host(platform));
+    await t.pumpAndSettle();
+    await t.ensureVisible(find.byKey(const ValueKey('export-columns-order')));
+    await t.tap(find.text(l.exportColumnsOrder));
+    await t.pumpAndSettle();
+    await t.ensureVisible(find.byKey(const ValueKey('export-column-up-note')));
+    await t.tap(find.byKey(const ValueKey('export-column-up-note')));
+    await t.pumpAndSettle();
+    expect(
+        t.widget<BeeExportColumns>(find.byType(BeeExportColumns)).selectedIds,
+        ['note', 'amount', 'type']);
+    await start(t);
+    expect(t.widget<BeeExportColumns>(find.byType(BeeExportColumns)).onChanged,
+        isNull);
+    platform.gate!.complete();
+    await pumpTask(t);
+    expect(
+        const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
+            .convert(platform.csv!)
+            .first,
+        [
+          l.exportCsvHeaderNote,
+          l.exportCsvHeaderAmount,
+          l.exportCsvHeaderType
+        ]);
+    await dismiss(t);
+  });
+
   for (final brightness in Brightness.values) {
+    scenario('日期选择器320宽1.4倍字号可切换输入并取消 $brightness', (t) async {
+      screen(t, const Size(320, 568));
+      final platform = _Platform();
+      await t.pumpWidget(ProviderScope(
+          overrides: [
+            repositoryProvider.overrideWithValue(repo),
+            transactionExportPlatformProvider.overrideWithValue(platform),
+          ],
+          child: MaterialApp(
+              theme: beeTheme(brightness: brightness),
+              locale: const Locale('en'),
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              builder: (context, child) => MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(textScaler: TextScaler.linear(1.4)),
+                  child: child!),
+              home: const ExportPage())));
+      await t.pumpAndSettle();
+      await t.ensureVisible(find.byKey(const ValueKey('export-date-range')));
+      await t.tap(find.byKey(const ValueKey('export-date-range')));
+      await t.pumpAndSettle();
+      expect(t.takeException(), isNull);
+      final material = MaterialLocalizations.of(
+          t.element(find.byType(DateRangePickerDialog)));
+      await t.tap(find.byTooltip(material.inputDateModeButtonLabel));
+      await t.pumpAndSettle();
+      expect(t.takeException(), isNull);
+      await t.binding.handlePopRoute();
+      await t.pumpAndSettle();
+      expect(find.byType(DateRangePickerDialog), findsNothing);
+      final filters = t.widget<BeeExportFilters>(find.byType(BeeExportFilters));
+      expect(filters.dateValue, l.exportAllDates);
+      expect(filters.selectedType, 'all');
+      expect(platform.writes, 0);
+    });
+
+    scenario('可选列编辑器320宽1.4倍字号展开排序无溢出 $brightness', (t) async {
+      screen(t, const Size(320, 568));
+      final platform = _Platform();
+      await t.pumpWidget(ProviderScope(
+          overrides: [
+            repositoryProvider.overrideWithValue(repo),
+            transactionExportPlatformProvider.overrideWithValue(platform),
+          ],
+          child: MaterialApp(
+            theme: beeTheme(brightness: brightness),
+            locale: const Locale('en'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: TextScaler.linear(1.4)),
+                child: child!),
+            home: const ExportPage(),
+          )));
+      await t.pumpAndSettle();
+      await t.ensureVisible(find.byKey(const ValueKey('export-columns-order')));
+      await t.tap(find.text(l.exportColumnsOrder));
+      await t.pumpAndSettle();
+      await t.ensureVisible(
+          find.byKey(const ValueKey('export-column-up-category')));
+      await t.tap(find.byKey(const ValueKey('export-column-up-category')));
+      await t.pumpAndSettle();
+      expect(
+          t
+              .widget<BeeExportColumns>(find.byType(BeeExportColumns))
+              .selectedIds
+              .first,
+          'category');
+      expect(t.takeException(), isNull);
+    });
+
     scenario('纯导出卡320宽1.4倍长文本无溢出 $brightness', (t) async {
       screen(t, const Size(320, 568));
       var calls = 0;
@@ -290,8 +807,10 @@ void main() {
     platform.gate!.complete();
     await pumpTask(t);
     expect(platform.writes, 1);
-    expect(platform.path,
-        matches(RegExp(r'/QA/Download/BeeCount/beecount_\d{8}_\d{6}\.csv')));
+    expect(
+        platform.path!.replaceAll('\\', '/'),
+        matches(
+            RegExp(r'/QA/Download/BeeCount/beecount_\d{8}_\d{6}_\d{6}\.csv')));
     expect(platform.csv, contains('QA parent'));
     expect(platform.sharedPath, isNull);
     expect(find.text(l.exportSuccessTitle), findsOneWidget);
@@ -311,7 +830,7 @@ void main() {
     await pumpTask(t);
     expect(platform.sharedPath, platform.path);
     expect(platform.sharedText, l.exportShareText);
-    expect(platform.path, startsWith('/QA/Documents/'));
+    expect(platform.path!.replaceAll('\\', '/'), startsWith('/QA/Documents/'));
     await dismiss(t);
     expect(t.takeException(), isNull);
   });

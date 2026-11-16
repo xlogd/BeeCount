@@ -33,6 +33,15 @@ abstract class BaseRepository
         BudgetRepository,
         AttachmentRepository,
         ExchangeRateRepository {
+  Future<String?> getImageBillingDraft(String sourceKey);
+
+  /// First writer wins: a retry always uses the original extraction and indices.
+  Future<String> saveImageBillingDraft({
+    required String sourceKey,
+    required int ledgerId,
+    required String billsJson,
+  });
+
   /// Read a small, complete first screen and its full-day totals in one snapshot.
   /// The ordering must be the exact prefix of transactionsWithCategoryAll.
   Future<HomeTransactionPreview> getHomeTransactionPreview({

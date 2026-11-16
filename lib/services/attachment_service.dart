@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:crypto/crypto.dart';
+import 'package:uuid/uuid.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -114,62 +115,13 @@ class AttachmentService {
     bool urgent = false,
   }) async {
     try {
-      final dir = await getAttachmentDirectory();
-      final ext = path.extension(sourceFile.path).toLowerCase();
-      final finalExt = ext.isEmpty ? '.jpg' : ext;
-
-      // 按内容 sha256 命名:多笔/多次记账用到同一张图时复用同一物理文件,
-      // 不再每笔复制一份(配合删除处的引用计数,避免误删共享文件)。
-      final String fileName;
-      final File savedFile;
-      int? width;
-      int? height;
-      final int fileSize;
-      if (urgent) {
-        // 跳过压缩,sync copy。iOS background launch 状态下唯一可靠的写法。
-        // 同时跳过 _getImageInfo:它走 ui.instantiateImageCodec 也是 platform
-        // channel,后台冻结时也卡。width/height 留 null 不影响主功能。
-        final bytes = sourceFile.readAsBytesSync();
-        fileName = 'sha_${sha256.convert(bytes)}$finalExt';
-        final destPath = '${dir.path}/$fileName';
-        savedFile = File(destPath);
-        if (!savedFile.existsSync()) {
-          sourceFile.copySync(destPath);
-        }
-        fileSize = savedFile.lengthSync();
-      } else {
-        final keepOriginal =
-            await ref.read(attachmentKeepOriginalProvider.future);
-        final File fileToStore;
-        if (keepOriginal) {
-          fileToStore = sourceFile;
-        } else {
-          // 先压缩到临时文件，再按实际保存内容的 sha256 命名（同图去重）。
-          final timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-          final tempPath = '${dir.path}/_tmp_${timestamp}_$index$finalExt';
-          final compressedFile = await _compressImage(sourceFile, tempPath);
-          if (compressedFile == null) {
-            logger.error('AttachmentService', '图片压缩失败');
-            return null;
-          }
-          fileToStore = compressedFile;
-        }
-        final bytes = await fileToStore.readAsBytes();
-        fileName = 'sha_${sha256.convert(bytes)}$finalExt';
-        final destPath = '${dir.path}/$fileName';
-        if (await File(destPath).exists()) {
-          if (!keepOriginal) await fileToStore.delete();
-        } else if (keepOriginal) {
-          await sourceFile.copy(destPath);
-        } else {
-          await fileToStore.rename(destPath);
-        }
-        savedFile = File(destPath);
-        final imageInfo = await _getImageInfo(savedFile.path);
-        width = imageInfo?.width;
-        height = imageInfo?.height;
-        fileSize = await savedFile.length();
-      }
+      final stored = await _prepareAttachmentImage(sourceFile,
+          index: index, urgent: urgent);
+      if (stored == null) return null;
+      final fileName = stored.fileName;
+      final fileSize = stored.fileSize;
+      final width = stored.width;
+      final height = stored.height;
 
       // 保存到数据库(Drift FFI,纯 Dart,不走 platform channel,不受冻结影响)
       final repo = ref.read(repositoryProvider);
@@ -188,6 +140,123 @@ class AttachmentService {
       return repo.getAttachmentById(id);
     } catch (e, stackTrace) {
       logger.error('AttachmentService', '保存附件失败', e, stackTrace);
+      return null;
+    }
+  }
+
+  Future<({String fileName, int fileSize, int? width, int? height})?>
+      _prepareAttachmentImage(File sourceFile,
+          {required int index, bool urgent = false}) async {
+    final dir = await getAttachmentDirectory();
+    final ext = path.extension(sourceFile.path).toLowerCase();
+    final finalExt = ext.isEmpty ? '.jpg' : ext;
+
+    // 按内容 sha256 命名:多笔/多次记账用到同一张图时复用同一物理文件,
+    // 不再每笔复制一份(配合删除处的引用计数,避免误删共享文件)。
+    final String fileName;
+    final File savedFile;
+    int? width;
+    int? height;
+    final int fileSize;
+    if (urgent) {
+      // 跳过压缩,sync copy。iOS background launch 状态下唯一可靠的写法。
+      // 同时跳过 _getImageInfo:它走 ui.instantiateImageCodec 也是 platform
+      // channel,后台冻结时也卡。width/height 留 null 不影响主功能。
+      final bytes = sourceFile.readAsBytesSync();
+      fileName = 'sha_${sha256.convert(bytes)}$finalExt';
+      final destPath = '${dir.path}/$fileName';
+      savedFile = File(destPath);
+      if (!savedFile.existsSync()) {
+        sourceFile.copySync(destPath);
+      }
+      fileSize = savedFile.lengthSync();
+    } else {
+      final keepOriginal =
+          await ref.read(attachmentKeepOriginalProvider.future);
+      final File fileToStore;
+      if (keepOriginal) {
+        fileToStore = sourceFile;
+      } else {
+        // 先压缩到临时文件，再按实际保存内容的 sha256 命名（同图去重）。
+        final tempPath = '${dir.path}/_tmp_${const Uuid().v4()}$finalExt';
+        final compressedFile = await _compressImage(sourceFile, tempPath);
+        if (compressedFile == null) {
+          logger.error('AttachmentService', '图片压缩失败');
+          return null;
+        }
+        fileToStore = compressedFile;
+      }
+      final bytes = await fileToStore.readAsBytes();
+      fileName = 'sha_${sha256.convert(bytes)}$finalExt';
+      final destPath = '${dir.path}/$fileName';
+      if (await File(destPath).exists()) {
+        if (!keepOriginal) await fileToStore.delete();
+      } else if (keepOriginal) {
+        await sourceFile.copy(destPath);
+      } else {
+        await fileToStore.rename(destPath);
+      }
+      savedFile = File(destPath);
+      final imageInfo = await _getImageInfo(savedFile.path);
+      width = imageInfo?.width;
+      height = imageInfo?.height;
+      fileSize = await savedFile.length();
+    }
+
+    return (
+      fileName: fileName,
+      fileSize: fileSize,
+      width: width,
+      height: height
+    );
+  }
+
+  /// Cropping stores new content and swaps one record; shared originals stay intact.
+  Future<TransactionAttachment?> replaceAttachmentImage({
+    required int id,
+    required String expectedFileName,
+    required File sourceFile,
+  }) async {
+    String? preparedName;
+    final repo = ref.read(repositoryProvider);
+    try {
+      final original = await repo.getAttachmentById(id);
+      if (original == null || original.fileName != expectedFileName) {
+        return null;
+      }
+      final stored =
+          await _prepareAttachmentImage(sourceFile, index: original.sortOrder);
+      if (stored == null) return null;
+      preparedName = stored.fileName;
+      if (stored.fileName == original.fileName) return original;
+      final updated = await repo.replaceAttachmentImage(
+        id: id,
+        expectedFileName: expectedFileName,
+        fileName: stored.fileName,
+        fileSize: stored.fileSize,
+        width: stored.width,
+        height: stored.height,
+      );
+      if (updated == null) {
+        throw StateError('Attachment changed while cropping');
+      }
+      // A file can still be displayed by another view. Cleanup must not turn an
+      // already committed edit into a reported failure.
+      try {
+        await _deletePhysicalFileIfUnreferenced(original.fileName);
+      } catch (error) {
+        logger.warning(
+            'AttachmentService', 'Deferred old image cleanup: $error');
+      }
+      return updated;
+    } catch (error, stack) {
+      if (preparedName != null) {
+        try {
+          await _deletePhysicalFileIfUnreferenced(preparedName);
+        } catch (_) {}
+      }
+      logger.error('AttachmentService', 'Replacing cropped attachment failed',
+          error, stack);
       return null;
     }
   }

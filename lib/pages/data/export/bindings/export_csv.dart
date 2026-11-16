@@ -3,176 +3,169 @@ import 'package:csv/csv.dart';
 import '../../../../data/db.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../models/transaction_export_column.dart';
+import '../../../../models/transaction_export_filter.dart';
 import '../../../../utils/category_utils.dart';
 
-/// The original CSV contract, extracted from ExportPage without storage or UI.
-/// Reads the same current-ledger repository stream and never writes app data.
+/// Exports a ledger snapshot using exactly the selected column order.
 Future<String> buildTransactionExportCsv({
   required BaseRepository repo,
   required int ledgerId,
   required AppLocalizations l10n,
+  List<TransactionExportColumn>? columns,
+  TransactionExportFilter filter = const TransactionExportFilter.all(),
+  void Function(int count)? onRecordCount,
   void Function(double)? onProgress,
 }) async {
-  // 获取交易和分类数据
-  final transactionsWithCategory =
+  // Copy before the first await so an in-flight export cannot change shape.
+  final selected = validateTransactionExportColumns(columns);
+  final fields = selected.toSet();
+  final snapshot =
       await repo.transactionsWithCategoryAll(ledgerId: ledgerId).first;
-  final total = transactionsWithCategory.length;
-  final rows = <List<dynamic>>[];
-  rows.add(exportCsvHeaders(l10n));
-
-  // 批量获取所有交易的标签
-  final transactionIds = transactionsWithCategory.map((tx) => tx.t.id).toList();
-  final tagsMap = await repo.getTagsForTransactions(transactionIds);
-
-  // 批量获取所有交易的附件
-  final attachmentsMap =
-      await repo.getAttachmentsForTransactions(transactionIds);
-
-  // 缓存所有账户信息，避免重复查询
-  final allAccounts = await repo.getAllAccounts();
-  final accountMap = {for (var acc in allAccounts) acc.id: acc};
-
-  // v30 多币种:账本本位币(currencyCode 为 NULL 的历史行按账户/本位币兜底,
-  // 与统计读取端同语义 —— 导出自包含,回导不丢币种)
-  final ledgerData = await repo.getLedgerById(ledgerId);
-  final ledgerBase = ((ledgerData?.currency.isNotEmpty ?? false)
-          ? ledgerData!.currency
-          : 'CNY')
-      .toUpperCase();
-
-  // 缓存所有分类信息（包括父分类）
-  final incomeCategories = await repo.getTopLevelCategories('income');
-  final expenseCategories = await repo.getTopLevelCategories('expense');
-  final allCategories = <int, Category>{};
-  for (final cat in [...incomeCategories, ...expenseCategories]) {
-    allCategories[cat.id] = cat;
-    // 获取子分类
-    final subCategories = await repo.getSubCategories(cat.id);
-    for (final subCat in subCategories) {
-      allCategories[subCat.id] = subCat;
-    }
+  final transactions = snapshot
+      .where((row) => filter.matches(
+          happenedAt: row.t.happenedAt, transactionType: row.t.type))
+      .toList(growable: false);
+  onRecordCount?.call(transactions.length);
+  const encoder = ListToCsvConverter(eol: '\n');
+  final output = StringBuffer(
+      encoder.convert([exportCsvHeaders(l10n, columns: selected)]));
+  if (transactions.isEmpty) {
+    onProgress?.call(1);
+    return output.toString();
   }
 
-  for (int i = 0; i < transactionsWithCategory.length; i++) {
-    final txWithCat = transactionsWithCategory[i];
-    final t = txWithCat.t;
-    final c = txWithCat.category;
-    final a = t.accountId != null ? accountMap[t.accountId] : null;
-    // 使用完整的时间格式，包含年份和秒，添加前导空格增加列宽
-    final timeStr = () {
-      try {
-        final localTime = t.happenedAt.toLocal();
-        // 完整时间格式: YYYY-MM-DD HH:mm:ss，前面添加空格增加列宽
-        return '  ${localTime.year}-${localTime.month.toString().padLeft(2, '0')}-${localTime.day.toString().padLeft(2, '0')} ${localTime.hour.toString().padLeft(2, '0')}:${localTime.minute.toString().padLeft(2, '0')}:${localTime.second.toString().padLeft(2, '0')}  ';
-      } catch (e) {
-        return '';
+  final ids = transactions.map((row) => row.t.id).toList();
+  final tags = <int, List<Tag>>{};
+  final attachments = <int, List<TransactionAttachment>>{};
+  // Keep queries below SQLite's variable limit, including on older devices.
+  if (fields.contains(TransactionExportColumn.tags) ||
+      fields.contains(TransactionExportColumn.attachments)) {
+    for (var start = 0; start < ids.length; start += 500) {
+      final batch = ids.sublist(start, (start + 500).clamp(0, ids.length));
+      if (fields.contains(TransactionExportColumn.tags)) {
+        tags.addAll(await repo.getTagsForTransactions(batch));
       }
-    }();
-    final typeStr = exportTypeDisplayName(l10n, t.type);
-
-    // 对于转账类型，需要特殊处理账户信息
-    String accountName;
-    String fromAccountName;
-    String toAccountName;
-    String categoryName;
-    String subCategoryName;
-
-    if (t.type == 'transfer') {
-      // 转账记录：账户列留空，填充转出账户和转入账户
-      accountName = '';
-      final fromAccount = accountMap[t.accountId];
-      final toAccount = accountMap[t.toAccountId];
-      fromAccountName = fromAccount?.name ?? '';
-      toAccountName = toAccount?.name ?? '';
-      categoryName = ''; // 转账没有分类
-      subCategoryName = '';
-    } else {
-      // 收入或支出：正常填充账户列，转出转入账户留空
-      accountName = a?.name ?? '';
-      fromAccountName = '';
-      toAccountName = '';
-
-      // 处理分类信息
-      if (c != null) {
-        if (c.level == 2 && c.parentId != null) {
-          // 二级分类：分类列填一级分类名称，二级分类列填当前分类名称
-          final parentCategory = allCategories[c.parentId];
-          categoryName = CategoryUtils.displayName(parentCategory?.name, l10n);
-          subCategoryName = CategoryUtils.displayName(c.name, l10n);
-        } else {
-          // 一级分类：分类列填当前分类，二级分类列留空
-          categoryName = CategoryUtils.displayName(c.name, l10n);
-          subCategoryName = '';
-        }
-      } else {
-        categoryName = '';
-        subCategoryName = '';
+      if (fields.contains(TransactionExportColumn.attachments)) {
+        attachments.addAll(await repo.getAttachmentsForTransactions(batch));
       }
     }
+  }
 
-    // 获取该交易的标签，用逗号分隔
-    final transactionTags = tagsMap[t.id] ?? [];
-    final tagsStr = transactionTags.map((tag) => tag.name).join(',');
-
-    // 获取该交易的附件，用逗号分隔文件名
-    final transactionAttachments = attachmentsMap[t.id] ?? [];
-    final attachmentsStr =
-        transactionAttachments.map((a) => a.fileName).join(',');
-
-    final currencyStr = (t.currencyCode ??
-            (a?.currency.isNotEmpty ?? false ? a!.currency : null) ??
-            ledgerBase)
-        .toUpperCase();
-
-    rows.add([
-      typeStr,
-      categoryName,
-      subCategoryName,
-      t.amount.toStringAsFixed(2),
-      currencyStr,
-      accountName,
-      fromAccountName,
-      toAccountName,
-      t.note ?? '',
-      timeStr,
-      tagsStr,
-      attachmentsStr,
-    ]);
-    if (i % 50 == 0) {
-      onProgress?.call((i + 1) / (total == 0 ? 1 : total));
+  final needsAccounts = fields.any(const {
+    TransactionExportColumn.currency,
+    TransactionExportColumn.account,
+    TransactionExportColumn.fromAccount,
+    TransactionExportColumn.toAccount,
+  }.contains);
+  final accounts = needsAccounts ? await repo.getAllAccounts() : <Account>[];
+  final accountMap = {for (final account in accounts) account.id: account};
+  var ledgerCurrency = 'CNY';
+  if (fields.contains(TransactionExportColumn.currency)) {
+    final ledger = await repo.getLedgerById(ledgerId);
+    if (ledger != null && ledger.currency.isNotEmpty) {
+      ledgerCurrency = ledger.currency.toUpperCase();
     }
   }
 
-  final csvStr = const ListToCsvConverter(eol: '\n').convert(rows);
-  return csvStr;
-}
-
-List<String> exportCsvHeaders(AppLocalizations l10n) {
-  return [
-    l10n.exportCsvHeaderType,
-    l10n.exportCsvHeaderCategory,
-    l10n.exportCsvHeaderSubCategory, // 二级分类名称
-    l10n.exportCsvHeaderAmount,
-    l10n.exportCsvHeaderCurrency, // v30 多币种:交易原币种(反馈10)
-    l10n.exportCsvHeaderAccount,
-    l10n.exportCsvHeaderFromAccount, // 转出账户
-    l10n.exportCsvHeaderToAccount, // 转入账户
-    l10n.exportCsvHeaderNote,
-    l10n.exportCsvHeaderTime,
-    l10n.exportCsvHeaderTags,
-    l10n.exportCsvHeaderAttachments, // 附件文件名（逗号分隔）
-  ];
-}
-
-String exportTypeDisplayName(AppLocalizations l10n, String type) {
-  switch (type) {
-    case 'income':
-      return l10n.exportTypeIncome;
-    case 'expense':
-      return l10n.exportTypeExpense;
-    case 'transfer':
-      return l10n.exportTypeTransfer;
-    default:
-      return type;
+  final parents = <int, Category>{};
+  if (fields.contains(TransactionExportColumn.category) &&
+      transactions.any((row) => row.category?.level == 2)) {
+    for (final kind in ['income', 'expense']) {
+      for (final category in await repo.getTopLevelCategories(kind)) {
+        parents[category.id] = category;
+      }
+    }
   }
+
+  for (var i = 0; i < transactions.length; i++) {
+    final row = transactions[i];
+    final transaction = row.t;
+    final category = row.category;
+    final account = accountMap[transaction.accountId];
+    final transfer = transaction.type == 'transfer';
+    final child = category?.level == 2 && category?.parentId != null;
+    Object value(TransactionExportColumn column) => switch (column) {
+          TransactionExportColumn.type =>
+            exportTypeDisplayName(l10n, transaction.type),
+          TransactionExportColumn.category => transfer || category == null
+              ? ''
+              : CategoryUtils.displayName(
+                  child ? parents[category.parentId]?.name : category.name,
+                  l10n),
+          TransactionExportColumn.subCategory => !transfer && child
+              ? CategoryUtils.displayName(category!.name, l10n)
+              : '',
+          TransactionExportColumn.amount =>
+            transaction.amount.toStringAsFixed(2),
+          TransactionExportColumn.currency => (transaction.currencyCode ??
+                  (account?.currency.isNotEmpty == true
+                      ? account!.currency
+                      : null) ??
+                  ledgerCurrency)
+              .toUpperCase(),
+          TransactionExportColumn.account =>
+            transfer ? '' : account?.name ?? '',
+          TransactionExportColumn.fromAccount =>
+            transfer ? account?.name ?? '' : '',
+          TransactionExportColumn.toAccount =>
+            transfer ? accountMap[transaction.toAccountId]?.name ?? '' : '',
+          TransactionExportColumn.note => transaction.note ?? '',
+          TransactionExportColumn.time => _exportTime(transaction.happenedAt),
+          TransactionExportColumn.tags =>
+            (tags[transaction.id] ?? <Tag>[]).map((tag) => tag.name).join(','),
+          TransactionExportColumn.attachments =>
+            (attachments[transaction.id] ?? <TransactionAttachment>[])
+                .map((attachment) => attachment.fileName)
+                .join(','),
+        };
+    // Encode rows directly instead of retaining a second copy of the ledger.
+    output.write('\n');
+    final values = selected.map(value).toList();
+    // A single empty field must be quoted, otherwise readers may discard it as
+    // a blank line or treat it as a row with zero columns.
+    encoder.convertSingleRow(output, values,
+        delimitAllFields: values.length == 1 && values.single == '',
+        returnString: false);
+    if (i % 50 == 0 || i == transactions.length - 1) {
+      onProgress?.call((i + 1) / transactions.length);
+    }
+  }
+  return output.toString();
 }
+
+String _exportTime(DateTime time) {
+  final local = time.toLocal();
+  return '  ${local.year}-${local.month.toString().padLeft(2, '0')}-${local.day.toString().padLeft(2, '0')} ${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}:${local.second.toString().padLeft(2, '0')}  ';
+}
+
+String exportCsvColumnLabel(
+        AppLocalizations l10n, TransactionExportColumn column) =>
+    switch (column) {
+      TransactionExportColumn.type => l10n.exportCsvHeaderType,
+      TransactionExportColumn.category => l10n.exportCsvHeaderCategory,
+      TransactionExportColumn.subCategory => l10n.exportCsvHeaderSubCategory,
+      TransactionExportColumn.amount => l10n.exportCsvHeaderAmount,
+      TransactionExportColumn.currency => l10n.exportCsvHeaderCurrency,
+      TransactionExportColumn.account => l10n.exportCsvHeaderAccount,
+      TransactionExportColumn.fromAccount => l10n.exportCsvHeaderFromAccount,
+      TransactionExportColumn.toAccount => l10n.exportCsvHeaderToAccount,
+      TransactionExportColumn.note => l10n.exportCsvHeaderNote,
+      TransactionExportColumn.time => l10n.exportCsvHeaderTime,
+      TransactionExportColumn.tags => l10n.exportCsvHeaderTags,
+      TransactionExportColumn.attachments => l10n.exportCsvHeaderAttachments,
+    };
+
+List<String> exportCsvHeaders(AppLocalizations l10n,
+        {List<TransactionExportColumn>? columns}) =>
+    validateTransactionExportColumns(columns)
+        .map((column) => exportCsvColumnLabel(l10n, column))
+        .toList();
+
+String exportTypeDisplayName(AppLocalizations l10n, String type) =>
+    switch (type) {
+      'income' => l10n.exportTypeIncome,
+      'expense' => l10n.exportTypeExpense,
+      'transfer' => l10n.exportTypeTransfer,
+      _ => type,
+    };

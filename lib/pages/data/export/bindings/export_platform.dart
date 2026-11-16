@@ -42,8 +42,14 @@ class SystemTransactionExportPlatform implements TransactionExportPlatform {
   Future<void> writeCsv(String path, String csv) async {
     // 添加UTF-8 BOM标记，确保Excel正确识别中文编码
     const utf8Bom = '\uFEFF';
-    await File(path)
-        .writeAsString(utf8Bom + csv, encoding: Encoding.getByName('utf-8')!);
+    final temporary = File('$path.part');
+    try {
+      await temporary.writeAsString(utf8Bom + csv, encoding: utf8, flush: true);
+      await temporary.rename(path);
+    } catch (_) {
+      if (await temporary.exists()) await temporary.delete();
+      rethrow;
+    }
   }
 
   @override

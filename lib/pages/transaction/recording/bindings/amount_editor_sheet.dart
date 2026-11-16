@@ -1551,7 +1551,11 @@ class AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
     }
     Future<void> camera() async {
       Navigator.pop(context);
-      final file = await service.takePhoto();
+      final picked = await service.takePhoto();
+      if (!mounted) return;
+      final cropped = await cropPickedAttachmentFiles(
+          context, ref, picked == null ? [] : [picked]);
+      final file = cropped.isEmpty ? null : cropped.first;
       if (file != null && mounted) {
         if (widget.editingTransactionId != null) {
           await service.saveAttachment(
@@ -1567,8 +1571,10 @@ class AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
 
     Future<void> gallery() async {
       Navigator.pop(context);
-      final files = await service.pickFromGallery(
+      final picked = await service.pickFromGallery(
           maxCount: 9 - _pendingAttachments.length);
+      if (!mounted) return;
+      final files = await cropPickedAttachmentFiles(context, ref, picked);
       if (files.isNotEmpty && mounted) {
         if (widget.editingTransactionId != null) {
           await service.saveAttachments(

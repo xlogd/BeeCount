@@ -60,7 +60,8 @@ class AIProviderFactory {
     );
 
     if (config == null || !config.isValid) {
-      throw AIException(resolveAppLocalizations(null).aiProviderNotConfiguredText);
+      throw AIException(
+          resolveAppLocalizations(null).aiProviderNotConfiguredText);
     }
 
     if (!config.supportsText) {
@@ -89,7 +90,8 @@ class AIProviderFactory {
       AICapabilityType.text,
     );
     if (config == null || !config.isValid || !config.supportsText) {
-      throw AIException(resolveAppLocalizations(null).aiProviderNotConfiguredTextUsable);
+      throw AIException(
+          resolveAppLocalizations(null).aiProviderNotConfiguredTextUsable);
     }
     logger.debug(logTag ?? 'AgentNativeTools',
         '发起原生工具流式对话 (${config.name}, 模型: ${config.textModel})');
@@ -445,7 +447,8 @@ class AIProviderFactory {
     );
 
     if (config == null || !config.isValid) {
-      throw AIException(resolveAppLocalizations(null).aiProviderNotConfiguredVision);
+      throw AIException(
+          resolveAppLocalizations(null).aiProviderNotConfiguredVision);
     }
 
     if (!config.supportsVision) {
@@ -477,7 +480,8 @@ class AIProviderFactory {
     );
 
     if (config == null || !config.isValid) {
-      throw AIException(resolveAppLocalizations(null).aiProviderNotConfiguredSpeech);
+      throw AIException(
+          resolveAppLocalizations(null).aiProviderNotConfiguredSpeech);
     }
 
     if (!config.supportsSpeech) {
@@ -1106,6 +1110,7 @@ class AIProviderFactory {
     final dio = _getDio(config);
 
     final imageBytes = await image.readAsBytes();
+    final mimeType = imageMimeType(imageBytes);
     final base64Image = base64Encode(imageBytes);
 
     logger.debug('AIFactory', '请求: ${config.baseUrl}/chat/completions');
@@ -1123,7 +1128,7 @@ class AIProviderFactory {
                 {
                   'type': 'image_url',
                   'image_url': {
-                    'url': 'data:image/jpeg;base64,$base64Image',
+                    'url': 'data:$mimeType;base64,$base64Image',
                   },
                 },
               ],

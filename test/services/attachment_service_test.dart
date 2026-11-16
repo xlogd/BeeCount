@@ -17,6 +17,7 @@ import 'package:beecount/ai/core/bill_info.dart';
 import 'package:beecount/ai/providers/ai_provider_config.dart';
 import 'package:beecount/ai/providers/ai_provider_manager.dart';
 import 'package:beecount/cloud/sync_service.dart';
+import 'package:beecount/cloud/sync/change_tracker.dart';
 import 'package:beecount/data/repositories/local/local_repository.dart';
 import 'package:beecount/providers.dart';
 import 'package:beecount/providers/ai_chat_providers.dart';
@@ -28,6 +29,20 @@ import 'package:beecount/services/automation/auto_billing_service.dart';
 class _MockImagePicker extends Mock implements ImagePicker {}
 
 class _MockBookkeeper extends Mock implements AiBookkeeper {}
+
+class _FailingTracker extends ChangeTracker {
+  _FailingTracker(super.db);
+  @override
+  Future<void> recordLedgerChange(
+      {required String entityType,
+      required int entityId,
+      required String entitySyncId,
+      required int ledgerId,
+      required String action,
+      String? payloadJson}) async {
+    throw StateError('Synthetic change tracking failure');
+  }
+}
 
 class _Compressor extends UnsupportedFlutterImageCompress {
   final Uint8List output;
@@ -377,6 +392,136 @@ void main() {
         originalBytes);
   });
 
+  test('cropping keeps attachment identity, order and a shared original intact',
+      () async {
+    await keepOriginal(true);
+    final service = container.read(attachmentServiceProvider);
+    final repo = container.read(repositoryProvider) as LocalRepository;
+    final original = (await service.saveAttachment(
+        transactionId: transactionId, sourceFile: source, index: 3))!;
+    await repo.updateAttachmentCloudRef(original.id,
+        cloudFileId: 'original-cloud-file', cloudSha256: 'old-cloud-hash');
+    final otherId = await db.into(db.transactions).insert(
+        TransactionsCompanion.insert(ledgerId: 1, type: 'expense', amount: 1));
+    final sharedId = await repo.createAttachment(
+        transactionId: otherId, fileName: original.fileName);
+    final oldFile = File(await service.getAttachmentPath(original.fileName));
+    final croppedBytes = await png(50, 75);
+    final cropped =
+        await File('${directory.path}/crop.png').writeAsBytes(croppedBytes);
+    final updated = await service.replaceAttachmentImage(
+        id: original.id,
+        expectedFileName: original.fileName,
+        sourceFile: cropped);
+    expect(updated!.id, original.id);
+    expect(updated.transactionId, original.transactionId);
+    expect(updated.sortOrder, 3);
+    expect(updated.originalName, original.originalName);
+    expect(updated.createdAt, original.createdAt);
+    expect((updated.width, updated.height, updated.fileSize),
+        (50, 75, croppedBytes.length));
+    expect(updated.cloudFileId, isNull);
+    expect(updated.cloudSha256, isNull);
+    expect(updated.fileName, isNot(original.fileName));
+    expect(
+        await File(await service.getAttachmentPath(updated.fileName))
+            .readAsBytes(),
+        croppedBytes);
+    expect(await oldFile.readAsBytes(), originalBytes);
+    expect(
+        (await repo.getAttachmentById(sharedId))!.fileName, original.fileName);
+    expect(await repo.getAttachmentsByTransaction(transactionId), hasLength(1));
+    expect(await source.readAsBytes(), originalBytes);
+  });
+
+  test('a stale crop cannot replace a newer attachment image', () async {
+    await keepOriginal(true);
+    final service = container.read(attachmentServiceProvider);
+    final original = (await service.saveAttachment(
+        transactionId: transactionId, sourceFile: source, index: 0))!;
+    final before =
+        await container.read(repositoryProvider).getAttachmentById(original.id);
+    final cropped = await File('${directory.path}/crop.png')
+        .writeAsBytes(await png(20, 30));
+    expect(
+        await service.replaceAttachmentImage(
+            id: original.id,
+            expectedFileName: 'stale.png',
+            sourceFile: cropped),
+        isNull);
+    expect(
+        await container.read(repositoryProvider).getAttachmentById(original.id),
+        before);
+  });
+
+  test(
+      'crop image replacement and parent change registration commit atomically',
+      () async {
+    await keepOriginal(true);
+    final service = container.read(attachmentServiceProvider);
+    final repo = container.read(repositoryProvider) as LocalRepository;
+    final original = (await service.saveAttachment(
+        transactionId: transactionId, sourceFile: source, index: 0))!;
+    await (db.update(db.transactions)
+          ..where((row) => row.id.equals(transactionId)))
+        .write(const TransactionsCompanion(syncId: Value('crop-parent-sync')));
+    repo.changeTracker = ChangeTracker(db);
+    final cropped = await File('${directory.path}/crop.png')
+        .writeAsBytes(await png(20, 30));
+    final updated = await service.replaceAttachmentImage(
+        id: original.id,
+        expectedFileName: original.fileName,
+        sourceFile: cropped);
+    expect(updated, isNotNull);
+    final changes = await db.select(db.localChanges).get();
+    expect(changes, hasLength(1));
+    expect((
+      changes.single.entityType,
+      changes.single.entityId,
+      changes.single.ledgerId,
+      changes.single.action
+    ), (
+      'transaction',
+      transactionId,
+      1,
+      'update'
+    ));
+  });
+
+  test(
+      'failed change registration rolls back metadata and removes the unused crop file',
+      () async {
+    await keepOriginal(true);
+    final service = container.read(attachmentServiceProvider);
+    final repo = container.read(repositoryProvider) as LocalRepository;
+    final original = (await service.saveAttachment(
+        transactionId: transactionId, sourceFile: source, index: 0))!;
+    await (db.update(db.transactions)
+          ..where((row) => row.id.equals(transactionId)))
+        .write(const TransactionsCompanion(syncId: Value('crop-parent-sync')));
+    repo.changeTracker = _FailingTracker(db);
+    final bytes = await png(20, 30);
+    final cropped =
+        await File('${directory.path}/crop.png').writeAsBytes(bytes);
+    expect(
+        await service.replaceAttachmentImage(
+            id: original.id,
+            expectedFileName: original.fileName,
+            sourceFile: cropped),
+        isNull);
+    expect(await repo.getAttachmentById(original.id), original);
+    expect(
+        await File(await service.getAttachmentPath(original.fileName))
+            .readAsBytes(),
+        originalBytes);
+    expect(
+        await File(await service
+                .getAttachmentPath('sha_${sha256.convert(bytes)}.png'))
+            .exists(),
+        isFalse);
+    expect(await db.select(db.localChanges).get(), isEmpty);
+  });
+
   for (final separateRecognition in [false, true]) {
     test(
         'automatic billing ${separateRecognition ? 'uses an AI copy' : 'receives shared or screenshot bytes'} while saving the source attachment',
@@ -394,6 +539,7 @@ void main() {
             billGuard: any(named: 'billGuard'),
             l10n: any(named: 'l10n'),
             onSaved: any(named: 'onSaved'),
+            sourceFingerprint: any(named: 'sourceFingerprint'),
           )).thenAnswer((call) async {
         final image = call.namedArguments[#image] as File;
         expect(await image.readAsBytes(),

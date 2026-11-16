@@ -5681,7 +5681,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportDescription.
   ///
   /// In en, this message translates to:
-  /// **'Supported export types:\n• Transactions (Income/Expense/Transfer)\n• Categories\n• Accounts\n\nClick the button below to select save location and export current ledger to CSV file.'**
+  /// **'Export current-ledger transactions as a UTF-8 CSV file. Filter by date range and transaction type, then choose the columns and their order. Column settings are remembered for the next export.'**
   String get exportDescription;
 
   /// No description provided for @exportButtonIOS.
@@ -17557,6 +17557,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This is taking a little longer. Processing is continuing.'**
   String get recordingProgressSlow;
+
+  /// No description provided for @exportColumnsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export columns'**
+  String get exportColumnsTitle;
+
+  /// No description provided for @exportColumnsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the columns to include. Expand column order to arrange the exported headers.'**
+  String get exportColumnsDescription;
+
+  /// Number of selected export columns
+  ///
+  /// In en, this message translates to:
+  /// **'Selected {selected} of {total} columns'**
+  String exportColumnsSelected(int selected, int total);
+
+  /// No description provided for @exportColumnsSelectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get exportColumnsSelectAll;
+
+  /// No description provided for @exportColumnsClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get exportColumnsClear;
+
+  /// No description provided for @exportColumnsReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore defaults'**
+  String get exportColumnsReset;
+
+  /// No description provided for @exportColumnsOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Column order and header preview'**
+  String get exportColumnsOrder;
+
+  /// No description provided for @exportColumnsMoveUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Move up'**
+  String get exportColumnsMoveUp;
+
+  /// No description provided for @exportColumnsMoveDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Move down'**
+  String get exportColumnsMoveDown;
+
+  /// No description provided for @exportColumnsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one column to export.'**
+  String get exportColumnsEmpty;
+
+  /// No description provided for @imageCropTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop image'**
+  String get imageCropTitle;
+
+  /// No description provided for @imageCropAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop'**
+  String get imageCropAction;
+
+  /// No description provided for @imageCropAvatarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop avatar'**
+  String get imageCropAvatarTitle;
+
+  /// No description provided for @imageCropDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Image cropped'**
+  String get imageCropDone;
+
+  /// No description provided for @imageCropFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not crop or save the image. Please try again.'**
+  String get imageCropFailed;
+
+  /// No description provided for @imageCropCurrentAvatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop current avatar'**
+  String get imageCropCurrentAvatar;
+
+  /// No description provided for @aiImageReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review image transactions'**
+  String get aiImageReviewTitle;
+
+  /// No description provided for @aiImageReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the amounts, dates and number of transactions. Suspected duplicates are unselected by default.'**
+  String get aiImageReviewHint;
+
+  /// No description provided for @aiImageReviewSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save {count}'**
+  String aiImageReviewSave(int count);
+
+  /// No description provided for @aiImageReviewDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Possible duplicate. Select only if this is a separate payment.'**
+  String get aiImageReviewDuplicate;
+
+  /// No description provided for @aiImageReviewAlreadySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Already recorded'**
+  String get aiImageReviewAlreadySaved;
+
+  /// No description provided for @aiImageReviewRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Possible duplicates detected. Open image billing to review before saving.'**
+  String get aiImageReviewRequired;
+
+  /// No description provided for @aiBillingSavedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions added: {count}'**
+  String aiBillingSavedCount(int count);
+
+  /// No description provided for @aiBillingAlreadySavedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already recorded and skipped: {count}'**
+  String aiBillingAlreadySavedCount(int count);
+
+  /// No description provided for @aiBillingFailedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Not saved: {count}. Retry the unfinished items.'**
+  String aiBillingFailedCount(int count);
+
+  /// No description provided for @aiBillingAttachmentFailedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachments were not saved for {count} transactions. Add them from transaction details.'**
+  String aiBillingAttachmentFailedCount(int count);
+
+  /// No description provided for @aiBillingPostProcessingPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions are saved. Refresh or sync has not completed yet.'**
+  String get aiBillingPostProcessingPending;
+
+  /// No description provided for @aiBillingBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Image billing is in progress. Please wait.'**
+  String get aiBillingBusy;
+
+  /// No description provided for @syncRestoreMissingIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'This backup has no reliable transaction identities. Restore stopped to prevent duplicate transactions.'**
+  String get syncRestoreMissingIdentity;
+
+  /// No description provided for @syncRestoreDuplicateIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'The backup contains duplicate transaction identities and cannot be restored safely.'**
+  String get syncRestoreDuplicateIdentity;
+
+  /// No description provided for @exportFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export scope'**
+  String get exportFiltersTitle;
+
+  /// No description provided for @exportDateRangeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date range'**
+  String get exportDateRangeLabel;
+
+  /// No description provided for @exportDateRangeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses transaction dates and includes both the start and end dates.'**
+  String get exportDateRangeHint;
+
+  /// No description provided for @exportAllDates.
+  ///
+  /// In en, this message translates to:
+  /// **'All dates'**
+  String get exportAllDates;
+
+  /// No description provided for @exportClearDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear date range'**
+  String get exportClearDates;
+
+  /// No description provided for @exportRecordTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction type'**
+  String get exportRecordTypeLabel;
+
+  /// No description provided for @exportAllTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'All types'**
+  String get exportAllTypes;
+
+  /// No description provided for @exportDateRangePickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select export date range'**
+  String get exportDateRangePickerTitle;
+
+  /// No description provided for @exportNoMatchingRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions match the selected dates and type. Adjust the filters and try again.'**
+  String get exportNoMatchingRecords;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

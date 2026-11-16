@@ -2991,7 +2991,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get exportTitle => '导出';
 
   @override
-  String get exportDescription => '支持导出的数据类型：\n• 交易记录（收入/支出/转账）\n• 分类信息\n• 账户信息\n\n点击下方按钮选择保存位置，开始导出当前账本为 CSV 文件。';
+  String get exportDescription => '将当前账本的交易记录导出为 UTF-8 CSV 文件。可按日期范围和交易类型筛选，并选择导出的列及顺序。列设置会保留供下次使用。';
 
   @override
   String get exportButtonIOS => '导出并分享';
@@ -9325,6 +9325,135 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get recordingProgressSlow => '这次处理时间稍长，仍在继续处理。';
+
+  @override
+  String get exportColumnsTitle => '导出列';
+
+  @override
+  String get exportColumnsDescription => '点选需要导出的列，展开列顺序可调整表头位置。';
+
+  @override
+  String exportColumnsSelected(int selected, int total) {
+    return '已选 $selected / $total 列';
+  }
+
+  @override
+  String get exportColumnsSelectAll => '全选';
+
+  @override
+  String get exportColumnsClear => '清空';
+
+  @override
+  String get exportColumnsReset => '恢复默认';
+
+  @override
+  String get exportColumnsOrder => '列顺序与表头预览';
+
+  @override
+  String get exportColumnsMoveUp => '上移';
+
+  @override
+  String get exportColumnsMoveDown => '下移';
+
+  @override
+  String get exportColumnsEmpty => '请至少选择一列再导出。';
+
+  @override
+  String get imageCropTitle => '裁剪图片';
+
+  @override
+  String get imageCropAction => '裁剪';
+
+  @override
+  String get imageCropAvatarTitle => '裁剪头像';
+
+  @override
+  String get imageCropDone => '裁剪完成';
+
+  @override
+  String get imageCropFailed => '裁剪或保存图片失败，请重试。';
+
+  @override
+  String get imageCropCurrentAvatar => '裁剪当前头像';
+
+  @override
+  String get aiImageReviewTitle => '核对图片账单';
+
+  @override
+  String get aiImageReviewHint => '请核对金额、时间和笔数。疑似重复的账单默认不选中。';
+
+  @override
+  String aiImageReviewSave(int count) {
+    return '保存 $count 笔';
+  }
+
+  @override
+  String get aiImageReviewDuplicate => '疑似重复，请确认这是一笔独立交易';
+
+  @override
+  String get aiImageReviewAlreadySaved => '此项已记账';
+
+  @override
+  String get aiImageReviewRequired => '识别结果可能重复，请在图片记账中核对后保存';
+
+  @override
+  String aiBillingSavedCount(int count) {
+    return '已新增 $count 笔';
+  }
+
+  @override
+  String aiBillingAlreadySavedCount(int count) {
+    return '已记过 $count 笔，已跳过';
+  }
+
+  @override
+  String aiBillingFailedCount(int count) {
+    return '未保存 $count 笔，可重试未完成项';
+  }
+
+  @override
+  String aiBillingAttachmentFailedCount(int count) {
+    return '有 $count 笔账单的附件未保存，可在账单中补充';
+  }
+
+  @override
+  String get aiBillingPostProcessingPending => '账单已保存，刷新或同步暂未完成';
+
+  @override
+  String get aiBillingBusy => '图片记账正在处理中，请稍候';
+
+  @override
+  String get syncRestoreMissingIdentity => '此备份缺少可靠的账单标识，已停止恢复以避免重复入账。';
+
+  @override
+  String get syncRestoreDuplicateIdentity => '备份中存在重复的账单标识，无法安全恢复。';
+
+  @override
+  String get exportFiltersTitle => '导出范围';
+
+  @override
+  String get exportDateRangeLabel => '日期范围';
+
+  @override
+  String get exportDateRangeHint => '按账单发生日期筛选，包含起止日期当天。';
+
+  @override
+  String get exportAllDates => '全部时间';
+
+  @override
+  String get exportClearDates => '清除日期限制';
+
+  @override
+  String get exportRecordTypeLabel => '交易类型';
+
+  @override
+  String get exportAllTypes => '全部';
+
+  @override
+  String get exportDateRangePickerTitle => '选择导出时间段';
+
+  @override
+  String get exportNoMatchingRecords => '没有符合所选时间与类型的记录，请调整筛选条件后再导出。';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).
@@ -12290,7 +12419,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get exportTitle => '匯出';
 
   @override
-  String get exportDescription => '支援匯出的資料類型：\n• 交易記錄（收入／支出／轉帳）\n• 分類資訊\n• 帳戶資訊\n\n點擊下方按鈕選擇儲存位置，開始匯出目前帳本為 CSV 檔案。';
+  String get exportDescription => '將目前帳本的交易紀錄匯出為 UTF-8 CSV 檔案。可依日期範圍和交易類型篩選，並選擇匯出的欄位及順序。欄位設定會保留供下次使用。';
 
   @override
   String get exportButtonIOS => '匯出並分享';
@@ -17930,4 +18059,133 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String logExportCount(int count) {
     return '日誌數量：$count';
   }
+
+  @override
+  String get exportColumnsTitle => '匯出欄位';
+
+  @override
+  String get exportColumnsDescription => '點選需要匯出的欄位，展開欄位順序可調整表頭位置。';
+
+  @override
+  String exportColumnsSelected(int selected, int total) {
+    return '已選 $selected / $total 欄';
+  }
+
+  @override
+  String get exportColumnsSelectAll => '全選';
+
+  @override
+  String get exportColumnsClear => '清空';
+
+  @override
+  String get exportColumnsReset => '還原預設';
+
+  @override
+  String get exportColumnsOrder => '欄位順序與表頭預覽';
+
+  @override
+  String get exportColumnsMoveUp => '上移';
+
+  @override
+  String get exportColumnsMoveDown => '下移';
+
+  @override
+  String get exportColumnsEmpty => '請至少選擇一個欄位再匯出。';
+
+  @override
+  String get imageCropTitle => '裁剪圖片';
+
+  @override
+  String get imageCropAction => '裁剪';
+
+  @override
+  String get imageCropAvatarTitle => '裁剪頭像';
+
+  @override
+  String get imageCropDone => '裁剪完成';
+
+  @override
+  String get imageCropFailed => '裁剪或儲存圖片失敗，請重試。';
+
+  @override
+  String get imageCropCurrentAvatar => '裁剪目前頭像';
+
+  @override
+  String get aiImageReviewTitle => '核對圖片帳單';
+
+  @override
+  String get aiImageReviewHint => '請核對金額、時間和筆數。疑似重複的帳單預設不選取。';
+
+  @override
+  String aiImageReviewSave(int count) {
+    return '儲存 $count 筆';
+  }
+
+  @override
+  String get aiImageReviewDuplicate => '疑似重複，請確認這是一筆獨立交易';
+
+  @override
+  String get aiImageReviewAlreadySaved => '此項已記帳';
+
+  @override
+  String get aiImageReviewRequired => '辨識結果可能重複，請在圖片記帳中核對後儲存';
+
+  @override
+  String aiBillingSavedCount(int count) {
+    return '已新增 $count 筆';
+  }
+
+  @override
+  String aiBillingAlreadySavedCount(int count) {
+    return '已記過 $count 筆，已略過';
+  }
+
+  @override
+  String aiBillingFailedCount(int count) {
+    return '未儲存 $count 筆，可重試未完成項目';
+  }
+
+  @override
+  String aiBillingAttachmentFailedCount(int count) {
+    return '有 $count 筆帳單的附件未儲存，可在帳單中補充';
+  }
+
+  @override
+  String get aiBillingPostProcessingPending => '帳單已儲存，重新整理或同步暫未完成';
+
+  @override
+  String get aiBillingBusy => '圖片記帳正在處理中，請稍候';
+
+  @override
+  String get syncRestoreMissingIdentity => '此備份缺少可靠的帳單識別碼，已停止還原以避免重複入帳。';
+
+  @override
+  String get syncRestoreDuplicateIdentity => '備份中存在重複的帳單識別碼，無法安全還原。';
+
+  @override
+  String get exportFiltersTitle => '匯出範圍';
+
+  @override
+  String get exportDateRangeLabel => '日期範圍';
+
+  @override
+  String get exportDateRangeHint => '依帳單發生日期篩選，包含起訖日期當天。';
+
+  @override
+  String get exportAllDates => '全部時間';
+
+  @override
+  String get exportClearDates => '清除日期限制';
+
+  @override
+  String get exportRecordTypeLabel => '交易類型';
+
+  @override
+  String get exportAllTypes => '全部';
+
+  @override
+  String get exportDateRangePickerTitle => '選擇匯出時間區間';
+
+  @override
+  String get exportNoMatchingRecords => '沒有符合所選時間與類型的紀錄，請調整篩選條件後再匯出。';
 }

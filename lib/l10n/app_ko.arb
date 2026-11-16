@@ -824,7 +824,7 @@
   "authErrorWeakPassword": "비밀번호가 너무 단순합니다. 영문과 숫자를 포함해 6자 이상 입력해 주세요.",
   "importSelectCsvFile": "가져올 파일을 선택하세요 (CSV/TSV/XLSX 지원)",
   "exportTitle": "내보내기",
-  "exportDescription": "지원되는 내보내기 유형:\n• 거래 (수입/지출/이체)\n• 카테고리\n• 계정\n\n아래 버튼을 눌러 저장 위치를 선택하면 현재 가계부를 CSV 파일로 내보냅니다.",
+  "exportDescription": "현재 장부의 거래를 UTF-8 CSV 파일로 내보냅니다. 날짜 범위와 거래 유형을 선택하고 열과 순서를 지정할 수 있습니다. 열 설정은 다음 내보내기에도 유지됩니다.",
   "exportButtonIOS": "내보내기 및 공유",
   "exportButtonAndroid": "데이터 내보내기",
   "exportSavedTo": "저장 위치: {path}",
@@ -2171,5 +2171,79 @@
   "txFlagExcludeFromStatsHint": "통계에서는 제외되지만 잔액에는 계속 반영됩니다",
   "txFlagExcludeFromBudgetHint": "예산에는 반영되지 않습니다",
   "txFlagExcludedTag": "제외됨",
-  "txFlagBudgetExcludedTag": "예산 제외"
+  "txFlagBudgetExcludedTag": "예산 제외",
+  "exportColumnsTitle": "내보낼 열",
+  "exportColumnsDescription": "포함할 열을 선택하세요. 열 순서를 펼쳐 헤더 위치를 조정할 수 있습니다.",
+  "exportColumnsSelected": "{total}개 열 중 {selected}개 선택",
+  "exportColumnsSelectAll": "전체 선택",
+  "exportColumnsClear": "선택 해제",
+  "exportColumnsReset": "기본값 복원",
+  "exportColumnsOrder": "열 순서 및 헤더 미리보기",
+  "exportColumnsMoveUp": "위로 이동",
+  "exportColumnsMoveDown": "아래로 이동",
+  "exportColumnsEmpty": "내보낼 열을 하나 이상 선택하세요.",
+  "imageCropTitle": "이미지 자르기",
+  "imageCropAction": "자르기",
+  "imageCropAvatarTitle": "프로필 사진 자르기",
+  "imageCropDone": "이미지를 잘랐어요",
+  "imageCropFailed": "이미지를 자르거나 저장하지 못했습니다. 다시 시도하세요.",
+  "imageCropCurrentAvatar": "현재 프로필 사진 자르기",
+  "aiImageReviewTitle": "이미지 거래 확인",
+  "aiImageReviewHint": "금액, 날짜, 거래 수를 확인하세요. 중복 의심 항목은 기본적으로 선택되지 않습니다.",
+  "aiImageReviewSave": "{count}건 저장",
+  "@aiImageReviewSave": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiImageReviewDuplicate": "중복이 의심됩니다. 별도 결제인 경우에만 선택하세요.",
+  "aiImageReviewAlreadySaved": "이미 기록됨",
+  "aiImageReviewRequired": "중복 의심 항목이 있습니다. 이미지 기록에서 확인한 후 저장하세요.",
+  "aiBillingSavedCount": "추가된 거래: {count}건",
+  "@aiBillingSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingAlreadySavedCount": "이미 기록되어 건너뜀: {count}건",
+  "@aiBillingAlreadySavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingFailedCount": "저장하지 못한 거래: {count}건. 미완료 항목을 다시 시도하세요.",
+  "@aiBillingFailedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingAttachmentFailedCount": "첨부 파일을 저장하지 못한 거래: {count}건. 거래 상세에서 추가할 수 있습니다.",
+  "@aiBillingAttachmentFailedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiBillingPostProcessingPending": "거래는 저장되었습니다. 새로고침 또는 동기화가 아직 완료되지 않았습니다.",
+  "aiBillingBusy": "이미지 기록을 처리 중입니다. 잠시 기다려 주세요.",
+  "syncRestoreMissingIdentity": "백업에 신뢰할 수 있는 거래 식별자가 없어 중복 기록을 방지하기 위해 복원을 중단했습니다.",
+  "syncRestoreDuplicateIdentity": "백업에 중복 거래 식별자가 있어 안전하게 복원할 수 없습니다.",
+  "exportFiltersTitle": "내보내기 범위",
+  "exportDateRangeLabel": "날짜 범위",
+  "exportDateRangeHint": "거래 발생일을 기준으로 시작일과 종료일을 모두 포함합니다.",
+  "exportAllDates": "전체 기간",
+  "exportClearDates": "날짜 제한 해제",
+  "exportRecordTypeLabel": "거래 유형",
+  "exportAllTypes": "전체",
+  "exportDateRangePickerTitle": "내보낼 기간 선택",
+  "exportNoMatchingRecords": "선택한 기간과 유형에 해당하는 거래가 없습니다. 조건을 변경한 후 다시 시도하세요."
 }

@@ -106,9 +106,10 @@ class LocalLedgerRepository implements LedgerRepository {
     List<Transaction>? transactions,
   }) async {
     // 如果没有传入 transactions，则查询
-    final rows = transactions ?? await (db.select(db.transactions)
-          ..where((t) => t.ledgerId.equals(ledgerId)))
-        .get();
+    final rows = transactions ??
+        await (db.select(db.transactions)
+              ..where((t) => t.ledgerId.equals(ledgerId)))
+            .get();
 
     // 交易数
     final transactionCount = rows.length;
@@ -185,6 +186,9 @@ class LocalLedgerRepository implements LedgerRepository {
   Future<void> deleteLedger(int id) async {
     // 先删除该账本下的所有交易，再删除账本本身
     await db.transaction(() async {
+      await (db.delete(db.imageBillingDrafts)
+            ..where((t) => t.ledgerId.equals(id)))
+          .go();
       await (db.delete(db.transactions)..where((t) => t.ledgerId.equals(id)))
           .go();
       await (db.delete(db.ledgers)..where((tbl) => tbl.id.equals(id))).go();
@@ -219,11 +223,14 @@ class LocalLedgerRepository implements LedgerRepository {
           ..where((l) => l.id.equals(toId)))
         .getSingleOrNull();
     if (existsTo != null) {
-      throw StateError(resolveAppLocalizations(null)
-          .ledgerTargetIdExists(toId.toString()));
+      throw StateError(
+          resolveAppLocalizations(null).ledgerTargetIdExists(toId.toString()));
     }
     await db.transaction(() async {
       // 先迁移子表中的外键引用
+      await (db.update(db.imageBillingDrafts)
+            ..where((t) => t.ledgerId.equals(fromId)))
+          .write(ImageBillingDraftsCompanion(ledgerId: d.Value(toId)));
       await db.customUpdate(
         'UPDATE accounts SET ledger_id = ?1 WHERE ledger_id = ?2',
         variables: [d.Variable<int>(toId), d.Variable<int>(fromId)],

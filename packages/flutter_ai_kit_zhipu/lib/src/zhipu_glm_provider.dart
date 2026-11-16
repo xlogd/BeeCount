@@ -62,12 +62,14 @@ class ZhipuGLMProvider implements AIProvider<String, String> {
     this.connectTimeout = const Duration(seconds: 30),
     this.receiveTimeout = const Duration(seconds: 60),
     this.sendTimeout = const Duration(seconds: 60),
+    Dio? client,
   }) {
-    _dio = Dio(BaseOptions(
-      connectTimeout: connectTimeout,
-      receiveTimeout: receiveTimeout,
-      sendTimeout: sendTimeout,
-    ));
+    _dio = client ??
+        Dio(BaseOptions(
+          connectTimeout: connectTimeout,
+          receiveTimeout: receiveTimeout,
+          sendTimeout: sendTimeout,
+        ));
   }
 
   @override
@@ -99,7 +101,8 @@ class ZhipuGLMProvider implements AIProvider<String, String> {
       if (audioFile != null) {
         messages.add({
           'role': 'system',
-          'content': '你是一个专业的账单信息提取助手。用户会提供语音输入和提取要求，你必须严格按照要求返回JSON格式的结果，不要返回其他任何文字或解释。'
+          'content':
+              '你是一个专业的账单信息提取助手。用户会提供语音输入和提取要求，你必须严格按照要求返回JSON格式的结果，不要返回其他任何文字或解释。'
         });
       }
 
@@ -119,7 +122,8 @@ class ZhipuGLMProvider implements AIProvider<String, String> {
         return {'role': m['role'], 'content': contentPreview};
       }).toList();
 
-      print('🔍 [GLM] 请求: model=$model, messages=${simplifiedMessages.length}条, temperature=$temperature');
+      print(
+          '🔍 [GLM] 请求: model=$model, messages=${simplifiedMessages.length}条, temperature=$temperature');
 
       final response = await _dio.post(
         'https://open.bigmodel.cn/api/paas/v4/chat/completions',
@@ -202,6 +206,8 @@ class ZhipuGLMProvider implements AIProvider<String, String> {
     if (audioFile != null) {
       try {
         final audioBytes = await audioFile!.readAsBytes();
+        if (audioBytes.isEmpty)
+          throw const FormatException('Audio file is empty');
         final base64Audio = base64Encode(audioBytes);
 
         // 检测音频格式（GLM API 支持 wav 和 mp3）
@@ -223,6 +229,7 @@ class ZhipuGLMProvider implements AIProvider<String, String> {
         });
       } catch (e) {
         print('⚠️ [GLM] 音频编码失败: $e');
+        rethrow;
       }
     }
 
@@ -232,16 +239,7 @@ class ZhipuGLMProvider implements AIProvider<String, String> {
         final imageBytes = await imageFile!.readAsBytes();
         final base64Image = base64Encode(imageBytes);
 
-        // 检测图片格式
-        final extension = imageFile!.path.split('.').last.toLowerCase();
-        String mimeType = 'image/jpeg'; // 默认
-        if (extension == 'png') {
-          mimeType = 'image/png';
-        } else if (extension == 'jpg' || extension == 'jpeg') {
-          mimeType = 'image/jpeg';
-        } else if (extension == 'webp') {
-          mimeType = 'image/webp';
-        }
+        final mimeType = imageMimeType(imageBytes);
 
         content.add({
           'type': 'image_url',
@@ -251,6 +249,7 @@ class ZhipuGLMProvider implements AIProvider<String, String> {
         });
       } catch (e) {
         print('⚠️ [GLM] 图片编码失败: $e');
+        rethrow;
       }
     }
 

@@ -1,5 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/material.dart';
+import '../image_crop_service.dart';
+import '../system/logger_service.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,12 +26,13 @@ class AvatarService {
     // 兼容旧版本存储的绝对路径
     if (relativePath.startsWith('/')) {
       // 尝试从绝对路径中提取相对路径并迁移
-      final match = RegExp(r'avatars/avatar_\d+\.\w+$').firstMatch(relativePath);
+      final match =
+          RegExp(r'avatars/avatar_\d+\.\w+$').firstMatch(relativePath);
       if (match != null) {
         final extracted = match.group(0)!;
         // 检查文件是否在新位置存在
         final appDir = await getApplicationDocumentsDirectory();
-        final newPath = p.join(appDir.path, extracted);
+        final newPath = p.normalize(p.join(appDir.path, extracted));
         if (await File(newPath).exists()) {
           // 迁移到相对路径
           await prefs.setString(_avatarPathKey, extracted);
@@ -42,7 +46,7 @@ class AvatarService {
 
     // 拼接完整路径
     final appDir = await getApplicationDocumentsDirectory();
-    final fullPath = p.join(appDir.path, relativePath);
+    final fullPath = p.normalize(p.join(appDir.path, relativePath));
 
     // 验证文件存在
     if (!await File(fullPath).exists()) {
@@ -53,107 +57,66 @@ class AvatarService {
     return fullPath;
   }
 
-  /// 选择并保存头像
-  static Future<String?> pickAndSaveAvatar() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 512,
-      maxHeight: 512,
-      imageQuality: 85,
-    );
+  /// Album/camera selections are committed only after crop confirmation.
+  static Future<String?> pickAndSaveAvatar(BuildContext context,
+          {ImagePicker? picker, ImageCropService? cropper}) =>
+      _pickCropAndSave(context, ImageSource.gallery,
+          picker: picker, cropper: cropper);
 
-    if (image == null) return null;
+  static Future<String?> takePhotoAndSaveAvatar(BuildContext context,
+          {ImagePicker? picker, ImageCropService? cropper}) =>
+      _pickCropAndSave(context, ImageSource.camera,
+          picker: picker, cropper: cropper);
 
-    // 删除旧头像（如果存在）
-    await _deleteOldAvatar();
-
-    // 获取应用文档目录
-    final appDir = await getApplicationDocumentsDirectory();
-    final avatarDir = Directory(p.join(appDir.path, 'avatars'));
-    if (!await avatarDir.exists()) {
-      await avatarDir.create(recursive: true);
-    }
-
-    // 生成新文件名（使用时间戳避免缓存问题）
-    final ext = p.extension(image.path);
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final fileName = 'avatar_$timestamp$ext';
-    final relativePath = 'avatars/$fileName';
-    final newPath = p.join(avatarDir.path, fileName);
-
-    // 复制文件
-    final file = File(image.path);
-    await file.copy(newPath);
-
-    // 保存相对路径到SharedPreferences（避免iOS更新后UUID变化导致路径失效）
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_avatarPathKey, relativePath);
-
-    return newPath;
+  static Future<String?> _pickCropAndSave(
+      BuildContext context, ImageSource source,
+      {ImagePicker? picker, ImageCropService? cropper}) async {
+    final selected = await (picker ?? ImagePicker()).pickImage(source: source);
+    if (selected == null || !context.mounted) return null;
+    final cropped = await (cropper ?? ImageCropService())
+        .crop(context, File(selected.path), purpose: ImageCropPurpose.avatar);
+    if (cropped == null || !context.mounted) return null;
+    return saveAvatarFromBytes(await cropped.readAsBytes(),
+        extension: p.extension(cropped.path));
   }
 
-  /// 拍照并保存头像
-  static Future<String?> takePhotoAndSaveAvatar() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(
-      source: ImageSource.camera,
-      maxWidth: 512,
-      maxHeight: 512,
-      imageQuality: 85,
-    );
-
-    if (image == null) return null;
-
-    // 删除旧头像（如果存在）
-    await _deleteOldAvatar();
-
-    // 获取应用文档目录
-    final appDir = await getApplicationDocumentsDirectory();
-    final avatarDir = Directory(p.join(appDir.path, 'avatars'));
-    if (!await avatarDir.exists()) {
-      await avatarDir.create(recursive: true);
-    }
-
-    // 生成新文件名（使用时间戳避免缓存问题）
-    final ext = p.extension(image.path);
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final fileName = 'avatar_$timestamp$ext';
-    final relativePath = 'avatars/$fileName';
-    final newPath = p.join(avatarDir.path, fileName);
-
-    // 复制文件
-    final file = File(image.path);
-    await file.copy(newPath);
-
-    // 保存相对路径到SharedPreferences（避免iOS更新后UUID变化导致路径失效）
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_avatarPathKey, relativePath);
-
-    return newPath;
-  }
-
-  /// 从字节流保存头像（初始同步从云端下载后用它落盘）。
-  static Future<String?> saveAvatarFromBytes(
-    Uint8List bytes, {
-    String extension = '.jpg',
-  }) async {
+  /// Remote downloads use the same safe commit without opening a crop UI.
+  static Future<String?> saveAvatarFromBytes(Uint8List bytes,
+      {String extension = '.jpg'}) async {
     if (bytes.isEmpty) return null;
-    await _deleteOldAvatar();
+    final oldPath = await getAvatarPath();
     final appDir = await getApplicationDocumentsDirectory();
     final avatarDir = Directory(p.join(appDir.path, 'avatars'));
-    if (!await avatarDir.exists()) {
-      await avatarDir.create(recursive: true);
-    }
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final ext = extension.startsWith('.') ? extension : '.$extension';
-    final fileName = 'avatar_$timestamp$ext';
+    await avatarDir.create(recursive: true);
+    var ext = extension.startsWith('.')
+        ? extension.toLowerCase()
+        : '.${extension.toLowerCase()}';
+    if (!RegExp(r'^\.[a-z0-9]+$').hasMatch(ext)) ext = '.jpg';
+    final fileName = 'avatar_${DateTime.now().microsecondsSinceEpoch}$ext';
     final relativePath = 'avatars/$fileName';
-    final newPath = p.join(avatarDir.path, fileName);
-    await File(newPath).writeAsBytes(bytes);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_avatarPathKey, relativePath);
-    return newPath;
+    final target = File(p.join(avatarDir.path, fileName));
+    try {
+      await target.writeAsBytes(bytes, flush: true);
+      final prefs = await SharedPreferences.getInstance();
+      if (!await prefs.setString(_avatarPathKey, relativePath)) {
+        throw StateError('Avatar preference was not saved');
+      }
+    } catch (_) {
+      try {
+        if (await target.exists()) await target.delete();
+      } catch (_) {}
+      rethrow;
+    }
+    if (oldPath != null && oldPath != target.path) {
+      try {
+        final old = File(oldPath);
+        if (await old.exists()) await old.delete();
+      } catch (error) {
+        logger.warning(
+            'AvatarService', 'Deferred previous avatar cleanup: $error');
+      }
+    }
+    return target.path;
   }
 
   /// 取上一次同步下来的远端头像版本（没同步过返回 null 或 0）。

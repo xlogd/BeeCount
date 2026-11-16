@@ -12,6 +12,7 @@ import '../../../../providers.dart';
 import '../../../../utils/format_money.dart';
 import '../../../../services/system/logger_service.dart';
 import '../../../../services/ui/avatar_service.dart';
+import '../../../../services/image_crop_service.dart';
 import '../../../../providers/avatar_providers.dart';
 import '../../../../providers/sync_providers.dart' as sp;
 import '../../../../l10n/app_localizations.dart';
@@ -141,6 +142,12 @@ class MineProfileBindingState extends ConsumerState<MineProfileBinding> {
             ),
             if (_avatarPath != null)
               BeeMenuRow(
+                leading: const BeeLineIcon('Crop', size: 19),
+                title: l10n.imageCropCurrentAvatar,
+                onTap: () => Navigator.pop(context, 'crop'),
+              ),
+            if (_avatarPath != null)
+              BeeMenuRow(
                 danger: true,
                 leading: const BeeLineIcon('Trash2', size: 19),
                 title: l10n.mineAvatarDelete,
@@ -166,14 +173,29 @@ class MineProfileBindingState extends ConsumerState<MineProfileBinding> {
 
     try {
       if (result == 'gallery') {
-        final path = await AvatarService.pickAndSaveAvatar();
+        final path = await AvatarService.pickAndSaveAvatar(context,
+            cropper: ref.read(imageCropServiceProvider));
         if (mounted && path != null) {
           setState(() => _avatarPath = path);
           ref.invalidate(avatarPathProvider);
           await _syncAvatarToCloud(path);
         }
       } else if (result == 'camera') {
-        final path = await AvatarService.takePhotoAndSaveAvatar();
+        final path = await AvatarService.takePhotoAndSaveAvatar(context,
+            cropper: ref.read(imageCropServiceProvider));
+        if (mounted && path != null) {
+          setState(() => _avatarPath = path);
+          ref.invalidate(avatarPathProvider);
+          await _syncAvatarToCloud(path);
+        }
+      } else if (result == 'crop' && _avatarPath != null) {
+        final cropped = await ref.read(imageCropServiceProvider).crop(
+            context, File(_avatarPath!),
+            purpose: ImageCropPurpose.avatar);
+        if (cropped == null || !mounted) return;
+        final path = await AvatarService.saveAvatarFromBytes(
+            await cropped.readAsBytes(),
+            extension: '.png');
         if (mounted && path != null) {
           setState(() => _avatarPath = path);
           ref.invalidate(avatarPathProvider);
@@ -188,7 +210,11 @@ class MineProfileBindingState extends ConsumerState<MineProfileBinding> {
       }
     } catch (e) {
       if (!mounted) return;
-      showBeeToast(context, '${AppLocalizations.of(context).commonError}: $e',
+      showBeeToast(
+          context,
+          result == 'delete'
+              ? AppLocalizations.of(context).commonError
+              : AppLocalizations.of(context).imageCropFailed,
           tone: BeeTone.error);
     }
   }

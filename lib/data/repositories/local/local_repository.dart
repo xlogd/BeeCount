@@ -32,6 +32,26 @@ const _balanceSettlementCategoryName = '平账';
 /// 基于 Drift 本地数据库实现所有 Repository 接口
 /// 使用委托模式，将具体实现委托给各个子 Repository
 class LocalRepository extends BaseRepository {
+  @override
+  Future<String?> getImageBillingDraft(String sourceKey) async =>
+      (await (db.select(db.imageBillingDrafts)
+                ..where((t) => t.sourceKey.equals(sourceKey)))
+              .getSingleOrNull())
+          ?.billsJson;
+
+  @override
+  Future<String> saveImageBillingDraft(
+          {required String sourceKey,
+          required int ledgerId,
+          required String billsJson}) =>
+      db.transaction(() async {
+        await db.into(db.imageBillingDrafts).insert(
+            ImageBillingDraftsCompanion.insert(
+                sourceKey: sourceKey, ledgerId: ledgerId, billsJson: billsJson),
+            mode: d.InsertMode.insertOrIgnore);
+        return (await getImageBillingDraft(sourceKey))!;
+      });
+
   /// 底层数据库实例
   /// 仅供需要直接数据库访问的场景使用（如数据库初始化、导入导出）
   final BeeDatabase db;
@@ -372,37 +392,54 @@ class LocalRepository extends BaseRepository {
       currencyCode: currencyCode,
       nativeAmount: nativeAmount,
     );
-    final id = await _transactionRepo.addTransaction(
-      ledgerId: ledgerId,
-      type: type,
-      amount: amount,
-      categoryId: categoryId,
-      accountId: accountId,
-      toAccountId: toAccountId,
-      happenedAt: happenedAt,
-      note: note,
-      syncId: syncId,
-      categorySyncIdOverride: categorySyncIdOverride,
-      accountSyncIdOverride: accountSyncIdOverride,
-      toAccountSyncIdOverride: toAccountSyncIdOverride,
-      excludeFromStats: excludeFromStats,
-      excludeFromBudget: excludeFromBudget,
-      currencyCode: cc,
-      nativeAmount: na,
-    );
-    if (changeTracker != null) {
-      final tx = await _transactionRepo.getTransactionById(id);
-      if (tx != null) {
-        await changeTracker!.recordLedgerChange(
-          entityType: 'transaction',
-          entityId: id,
-          entitySyncId: tx.syncId!,
-          ledgerId: ledgerId,
-          action: 'create',
-        );
+    // The financial row and its sync change must commit or roll back together.
+    // A caller-supplied identity also makes a retried source item idempotent.
+    return db.transaction(() async {
+      if (syncId != null) {
+        if (syncId.trim().isEmpty) throw ArgumentError.value(syncId, 'syncId');
+        final existing = await (db.select(db.transactions)
+              ..where((t) => t.syncId.equals(syncId))
+              ..limit(1))
+            .getSingleOrNull();
+        if (existing != null) {
+          if (existing.ledgerId != ledgerId) {
+            throw StateError('Transaction identity belongs to another ledger');
+          }
+          return existing.id;
+        }
       }
-    }
-    return id;
+      final id = await _transactionRepo.addTransaction(
+        ledgerId: ledgerId,
+        type: type,
+        amount: amount,
+        categoryId: categoryId,
+        accountId: accountId,
+        toAccountId: toAccountId,
+        happenedAt: happenedAt,
+        note: note,
+        syncId: syncId,
+        categorySyncIdOverride: categorySyncIdOverride,
+        accountSyncIdOverride: accountSyncIdOverride,
+        toAccountSyncIdOverride: toAccountSyncIdOverride,
+        excludeFromStats: excludeFromStats,
+        excludeFromBudget: excludeFromBudget,
+        currencyCode: cc,
+        nativeAmount: na,
+      );
+      if (changeTracker != null) {
+        final tx = await _transactionRepo.getTransactionById(id);
+        if (tx != null) {
+          await changeTracker!.recordLedgerChange(
+            entityType: 'transaction',
+            entityId: id,
+            entitySyncId: tx.syncId!,
+            ledgerId: ledgerId,
+            action: 'create',
+          );
+        }
+      }
+      return id;
+    });
   }
 
   @override
@@ -3033,6 +3070,30 @@ class LocalRepository extends BaseRepository {
       await _recordTransactionUpdateForAttachmentChange(row.transactionId);
     }
   }
+
+  @override
+  Future<TransactionAttachment?> replaceAttachmentImage({
+    required int id,
+    required String expectedFileName,
+    required String fileName,
+    required int fileSize,
+    int? width,
+    int? height,
+  }) =>
+      db.transaction(() async {
+        final updated = await _attachmentRepo.replaceAttachmentImage(
+            id: id,
+            expectedFileName: expectedFileName,
+            fileName: fileName,
+            fileSize: fileSize,
+            width: width,
+            height: height);
+        if (updated != null) {
+          await _recordTransactionUpdateForAttachmentChange(
+              updated.transactionId);
+        }
+        return updated;
+      });
 
   @override
   Future<void> deleteAttachmentsByTransaction(int transactionId) async {
