@@ -3659,7 +3659,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get recurringTransactionUsageTitle => '使用说明';
 
   @override
-  String get recurringTransactionUsageContent => '周期记账会在每次冷启动进入App时自动扫描并生成账单。设置日期后，系统会在该日期之后的冷启动时创建对应账单。例如：设置11月27日，则会在11月27日之后的首次启动时自动记账。';
+  String get recurringTransactionUsageContent => '打开或切回 App、保存规则时会自动检查并补齐到期账单。点击卡片可编辑规则并查看接下来 3 次记账日期。';
 
   @override
   String get ledgerSelectTitle => '选择账本';
@@ -9327,109 +9327,131 @@ class AppLocalizationsZh extends AppLocalizations {
   String get recordingProgressSlow => '这次处理时间稍长，仍在继续处理。';
 
   @override
-  String get exportColumnsTitle => '导出列';
+  String get v4RecurringNotGeneratedYet => '尚未生成';
 
   @override
-  String get exportColumnsDescription => '点选需要导出的列，展开列顺序可调整表头位置。';
-
-  @override
-  String exportColumnsSelected(int selected, int total) {
-    return '已选 $selected / $total 列';
+  String v4RecurringNextToday(String date) {
+    return '下次 $date · 今天';
   }
 
   @override
-  String get exportColumnsSelectAll => '全选';
+  String v4RecurringNextTomorrow(String date) {
+    return '下次 $date · 明天';
+  }
 
   @override
-  String get exportColumnsClear => '清空';
+  String v4RecurringNextInDays(String date, int days) {
+    return '下次 $date · $days天后';
+  }
 
   @override
-  String get exportColumnsReset => '恢复默认';
+  String get v4RecurringStatusPaused => '已暂停';
 
   @override
-  String get exportColumnsOrder => '列顺序与表头预览';
+  String get v4RecurringStatusCompleted => '已完结';
 
   @override
-  String get exportColumnsMoveUp => '上移';
+  String get v4RecurringStatusBlocked => '等待账户恢复';
 
   @override
-  String get exportColumnsMoveDown => '下移';
+  String v4RecurringAccountHiddenWarning(String account) {
+    return '关联账户「$account」已隐藏，暂停自动记账';
+  }
 
   @override
-  String get exportColumnsEmpty => '请至少选择一列再导出。';
+  String v4RecurringToAccountHiddenWarning(String account) {
+    return '转入账户「$account」已隐藏，暂停自动记账';
+  }
 
   @override
-  String get imageCropTitle => '裁剪图片';
+  String get v4RecurringAccountMissingWarning => '关联账户不存在，请重新选择账户';
 
   @override
-  String get imageCropAction => '裁剪';
+  String v4RecurringMonthlyOnDay(String freq, int day) {
+    return '$freq $day 日';
+  }
 
   @override
-  String get imageCropAvatarTitle => '裁剪头像';
+  String v4RecurringWithAnchor(String freq, String anchor) {
+    return '$freq · $anchor';
+  }
 
   @override
-  String get imageCropDone => '裁剪完成';
+  String get v4RecurringPreviewTitle => '接下来的记账日期';
 
   @override
-  String get imageCropFailed => '裁剪或保存图片失败，请重试。';
+  String v4RecurringPreviewCount(int count) {
+    return '接下来 $count 次';
+  }
 
   @override
-  String get imageCropCurrentAvatar => '裁剪当前头像';
+  String get v4RecurringPreviewEmptyEnded => '已超过结束日期，后续不再产生新的记账排期。';
 
   @override
-  String get aiImageReviewTitle => '核对图片账单';
+  String get v4RecurringPreviewPausedHint => '当前规则处于已暂停状态，开启后将按周期恢复自动记账。';
+
+  @override
+  String get v4RecurringPreviewDueToday => '今天 · 保存后立即生成';
+
+  @override
+  String get v4RecurringPreviewPendingCatchUp => '待补记 · 保存后立即生成';
+
+  @override
+  String get v4RecurringPreviewTomorrow => '明天';
+
+  @override
+  String v4RecurringPreviewInDays(int days) {
+    return '$days天后';
+  }
+
+  @override
+  String v4RecurringPreviewMonthEndTag(String when) {
+    return '$when · 月末对齐';
+  }
+
+  @override
+  String v4RecurringPreviewPreservedNote(String date) {
+    return '已保留上次进度（$date），修改金额或备注不会重复生成当期账单。';
+  }
+
+  @override
+  String v4RecurringPreviewMonthEndNote(int day) {
+    return '月末对齐：遇到天数不足的月份，自动在该月最后一天记账，次月恢复 $day 日。';
+  }
+
+  @override
+  String get v4RecurringAccountHiddenBadge => '（已隐藏）';
+
+  @override
+  String get v4RecurringAmountExpense => '每次支出';
+
+  @override
+  String get v4RecurringAmountIncome => '每次收入';
+
+  @override
+  String get v4RecurringAmountTransfer => '每次转账';
+
+  @override
+  String get v4RecurringAutomatic => '自动记账';
+
+  @override
+  String v4RecurringNextCaption(String when) {
+    return '下次记账 · $when';
+  }
+
+  @override
+  String get v4RecurringUsageSummary => '打开或回到 App 时，自动补记到期账单。点击卡片可编辑规则。';
+
+  @override
+  String get exportFiltersTitle => '导出范围';
 
   @override
   String get aiImageReviewHint => '请核对金额、时间和笔数。疑似重复的账单默认不选中。';
 
   @override
-  String aiImageReviewSave(int count) {
-    return '保存 $count 笔';
+  String exportColumnsSelected(int selected, int total) {
+    return '已选 $selected / $total 列';
   }
-
-  @override
-  String get aiImageReviewDuplicate => '疑似重复，请确认这是一笔独立交易';
-
-  @override
-  String get aiImageReviewAlreadySaved => '此项已记账';
-
-  @override
-  String get aiImageReviewRequired => '识别结果可能重复，请在图片记账中核对后保存';
-
-  @override
-  String aiBillingSavedCount(int count) {
-    return '已新增 $count 笔';
-  }
-
-  @override
-  String aiBillingAlreadySavedCount(int count) {
-    return '已记过 $count 笔，已跳过';
-  }
-
-  @override
-  String aiBillingFailedCount(int count) {
-    return '未保存 $count 笔，可重试未完成项';
-  }
-
-  @override
-  String aiBillingAttachmentFailedCount(int count) {
-    return '有 $count 笔账单的附件未保存，可在账单中补充';
-  }
-
-  @override
-  String get aiBillingPostProcessingPending => '账单已保存，刷新或同步暂未完成';
-
-  @override
-  String get aiBillingBusy => '图片记账正在处理中，请稍候';
-
-  @override
-  String get syncRestoreMissingIdentity => '此备份缺少可靠的账单标识，已停止恢复以避免重复入账。';
-
-  @override
-  String get syncRestoreDuplicateIdentity => '备份中存在重复的账单标识，无法安全恢复。';
-
-  @override
-  String get exportFiltersTitle => '导出范围';
 
   @override
   String get exportDateRangeLabel => '日期范围';
@@ -9438,22 +9460,116 @@ class AppLocalizationsZh extends AppLocalizations {
   String get exportDateRangeHint => '按账单发生日期筛选，包含起止日期当天。';
 
   @override
-  String get exportAllDates => '全部时间';
+  String aiBillingAlreadySavedCount(int count) {
+    return '已记过 $count 笔，已跳过';
+  }
 
   @override
-  String get exportClearDates => '清除日期限制';
+  String get aiBillingBusy => '图片记账正在处理中，请稍候';
 
   @override
-  String get exportRecordTypeLabel => '交易类型';
+  String get aiBillingPostProcessingPending => '账单已保存，刷新或同步暂未完成';
 
   @override
   String get exportAllTypes => '全部';
 
   @override
-  String get exportDateRangePickerTitle => '选择导出时间段';
+  String aiBillingFailedCount(int count) {
+    return '未保存 $count 笔，可重试未完成项';
+  }
+
+  @override
+  String get exportClearDates => '清除日期限制';
+
+  @override
+  String aiBillingAttachmentFailedCount(int count) {
+    return '有 $count 笔账单的附件未保存，可在账单中补充';
+  }
+
+  @override
+  String get syncRestoreDuplicateIdentity => '备份中存在重复的账单标识，无法安全恢复。';
 
   @override
   String get exportNoMatchingRecords => '没有符合所选时间与类型的记录，请调整筛选条件后再导出。';
+
+  @override
+  String get aiImageReviewTitle => '核对图片账单';
+
+  @override
+  String get exportColumnsSelectAll => '全选';
+
+  @override
+  String get exportColumnsClear => '清空';
+
+  @override
+  String get aiImageReviewAlreadySaved => '此项已记账';
+
+  @override
+  String get imageCropAvatarTitle => '裁剪头像';
+
+  @override
+  String aiImageReviewSave(int count) {
+    return '保存 $count 笔';
+  }
+
+  @override
+  String get imageCropCurrentAvatar => '裁剪当前头像';
+
+  @override
+  String aiBillingSavedCount(int count) {
+    return '已新增 $count 笔';
+  }
+
+  @override
+  String get exportColumnsMoveDown => '下移';
+
+  @override
+  String get syncRestoreMissingIdentity => '此备份缺少可靠的账单标识，已停止恢复以避免重复入账。';
+
+  @override
+  String get exportColumnsMoveUp => '上移';
+
+  @override
+  String get aiImageReviewRequired => '识别结果可能重复，请在图片记账中核对后保存';
+
+  @override
+  String get exportColumnsEmpty => '请至少选择一列再导出。';
+
+  @override
+  String get imageCropDone => '裁剪完成';
+
+  @override
+  String get imageCropTitle => '裁剪图片';
+
+  @override
+  String get exportColumnsOrder => '列顺序与表头预览';
+
+  @override
+  String get aiImageReviewDuplicate => '疑似重复，请确认这是一笔独立交易';
+
+  @override
+  String get exportColumnsReset => '恢复默认';
+
+  @override
+  String get exportColumnsDescription => '点选需要导出的列，展开列顺序可调整表头位置。';
+
+  @override
+  String get imageCropFailed => '裁剪或保存图片失败，请重试。';
+
+  @override
+  String get exportAllDates => '全部时间';
+
+  @override
+  String get imageCropAction => '裁剪';
+
+  @override
+  String get exportRecordTypeLabel => '交易类型';
+
+  @override
+  String get exportColumnsTitle => '导出列';
+
+  @override
+  String get exportDateRangePickerTitle => '选择导出时间段';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).
@@ -10185,6 +10301,27 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get splashSecurityFeature3 => '• 可選雲端同步，多裝置資料一致';
 
   @override
+  String get splashPreparingRecords => '正在準備你的記錄';
+
+  @override
+  String get splashSecuritySummary => '本機儲存 · 開源透明';
+
+  @override
+  String get splashSecurityCaption => '雲端同步由你選擇，資料始終由你掌握';
+
+  @override
+  String get splashSecurityLocalTitle => '資料本機儲存';
+
+  @override
+  String get splashSecurityOpenTitle => '開源程式碼透明';
+
+  @override
+  String get splashSecuritySyncTitle => '可選雲端同步';
+
+  @override
+  String get splashSecurityFootnote => '無需帳號也能開始記錄，雲端同步由你選擇。';
+
+  @override
   String get splashInitializing => '正在初始化資料...';
 
   @override
@@ -10198,7 +10335,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String ledgersClearMessage(Object name) {
-    return '將刪除該帳本下所有交易記錄，且不可復原。';
+    return '確定要清空帳本「$name」的所有帳單嗎？此操作不可復原。\n帳本本身會保留，僅刪除帳單資料。';
   }
 
   @override
@@ -11651,6 +11788,9 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String categoryDeleted(Object name) {
     return '分類\"$name\"已刪除';
   }
+
+  @override
+  String get categoryManageChildren => '管理';
 
   @override
   String get categorySubCategoryTitle => '二級分類';
@@ -17170,7 +17310,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get currencyBTN => '不丹努爾特魯姆';
 
   @override
-  String get currencyMVR => '马爾代夫拉菲亞';
+  String get currencyMVR => '馬爾地夫拉菲亞';
 
   @override
   String get currencyAFN => '阿富汗尼';
@@ -17182,7 +17322,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get currencyTJS => '塔吉克斯坦索莫尼';
 
   @override
-  String get currencyTMT => '土庫曼斯坦马納特';
+  String get currencyTMT => '土庫曼馬納特';
 
   @override
   String get currencyKGS => '吉爾吉斯斯坦索姆';
@@ -17224,10 +17364,10 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get currencyAMD => '亞美尼亞德拉姆';
 
   @override
-  String get currencyAZN => '阿塞拜疆马納特';
+  String get currencyAZN => '亞塞拜然馬納特';
 
   @override
-  String get currencyRON => '羅马尼亞列伊';
+  String get currencyRON => '羅馬尼亞列伊';
 
   @override
   String get currencyBGN => '保加利亞列弗';
@@ -17236,7 +17376,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get currencyRSD => '塞爾維亞第納爾';
 
   @override
-  String get currencyISK => '冰岛克朗';
+  String get currencyISK => '冰島克朗';
 
   @override
   String get currencyMDL => '摩爾多瓦列伊';
@@ -17245,16 +17385,16 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get currencyALL => '阿爾巴尼亞列克';
 
   @override
-  String get currencyMKD => '北马其顿第納爾';
+  String get currencyMKD => '北馬其頓第納爾';
 
   @override
-  String get currencyBAM => '波黑可兑換马克';
+  String get currencyBAM => '波赫可兌換馬克';
 
   @override
   String get currencyGIP => '直布羅陀鎊';
 
   @override
-  String get currencyGTQ => '危地马拉格查爾';
+  String get currencyGTQ => '瓜地馬拉格查爾';
 
   @override
   String get currencyHNL => '洪都拉斯伦皮拉';
@@ -17266,7 +17406,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get currencyCRC => '哥斯達黎加科朗';
 
   @override
-  String get currencyPAB => '巴拿马巴波亞';
+  String get currencyPAB => '巴拿馬巴波亞';
 
   @override
   String get currencyDOP => '多米尼加比索';
@@ -17281,7 +17421,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get currencyTTD => '特立尼達和多巴哥元';
 
   @override
-  String get currencyBSD => '巴哈马元';
+  String get currencyBSD => '巴哈馬元';
 
   @override
   String get currencyBBD => '巴巴多斯元';
@@ -17293,10 +17433,10 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get currencyHTG => '海地古德';
 
   @override
-  String get currencyXCD => '东加勒比元';
+  String get currencyXCD => '東加勒比元';
 
   @override
-  String get currencyKYD => '开曼群岛元';
+  String get currencyKYD => '開曼群島元';
 
   @override
   String get currencyAWG => '阿魯巴弗羅林';
@@ -17332,7 +17472,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get currencyPGK => '巴布亞新幾內亞基那';
 
   @override
-  String get currencySBD => '所羅門群岛元';
+  String get currencySBD => '所羅門群島元';
 
   @override
   String get currencyTOP => '湯加潘加';
@@ -17395,7 +17535,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get currencyZMW => '贊比亞克瓦查';
 
   @override
-  String get currencyMWK => '马拉維克瓦查';
+  String get currencyMWK => '馬拉威乖查';
 
   @override
   String get currencyMZN => '莫桑比克梅蒂卡爾';
@@ -17425,7 +17565,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get currencySSP => '南蘇丹鎊';
 
   @override
-  String get currencySOS => '索马里先令';
+  String get currencySOS => '索馬利亞先令';
 
   @override
   String get currencyDJF => '吉布提法郎';
@@ -17455,7 +17595,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get currencySZL => '斯威士蘭里蘭吉尼';
 
   @override
-  String get currencyMGA => '马達加斯加阿里亞里';
+  String get currencyMGA => '馬達加斯加阿里亞里';
 
   @override
   String get currencyMRU => '毛里塔尼亞烏吉亞';
@@ -18061,109 +18201,732 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   }
 
   @override
-  String get exportColumnsTitle => '匯出欄位';
+  String get creditCardOverpayment => '溢繳款';
 
   @override
-  String get exportColumnsDescription => '點選需要匯出的欄位，展開欄位順序可調整表頭位置。';
+  String get creditCardDebtHint => '填寫目前總欠款，輸入正數；沒有欠款填 0。';
 
   @override
-  String exportColumnsSelected(int selected, int total) {
-    return '已選 $selected / $total 欄';
+  String get creditCardOverpaymentHint => '填寫多還後留在信用卡裡的金額，輸入正數。';
+
+  @override
+  String get creditCardAmountInvalid => '請輸入有效金額；信用卡欠款或溢繳款請填寫非負數。';
+
+  @override
+  String get creditCardReminderDueRequired => '開啟提醒前，請填寫繳款日。';
+
+  @override
+  String get creditCardEstimateHint => '按已記流水估算，實際可用金額以銀行為準。';
+
+  @override
+  String get accountAllFlows => '全部流水';
+
+  @override
+  String get accountOutflows => '支出與轉出';
+
+  @override
+  String get accountInflows => '收入與轉入';
+
+  @override
+  String get positiveAssetBalance => '正餘額資產';
+
+  @override
+  String get negativeAssetBalanceHint => '帳戶負餘額已從總資產扣減。';
+
+  @override
+  String get importAccountCurrencyPreview => '確認帳戶幣種';
+
+  @override
+  String get importAccountCurrencyPreviewHint => '根據帳單幣種建立或複用帳戶；同名多幣種及已有帳戶衝突會按幣種拆分，不修改舊帳戶。缺失幣種繼承已有帳戶，否則使用可確定的帳戶幣種或帳本幣種。';
+
+  @override
+  String get importCurrencyInvalid => '幣種無效，請修正對應行：';
+
+  @override
+  String get transactionReceiptAction => '產生小票';
+
+  @override
+  String get transactionReceiptTitle => '記帳小票';
+
+  @override
+  String get transactionReceiptFields => '選擇小票中展示的資訊';
+
+  @override
+  String get transactionReceiptLedger => '帳本';
+
+  @override
+  String get transactionReceiptTags => '標籤';
+
+  @override
+  String get transactionReceiptFooter => '認真記錄，好好生活';
+
+  @override
+  String get transactionReceiptUnavailable => '無法產生小票，請檢查這筆交易是否仍然存在。';
+
+  @override
+  String get transactionReceiptShareFailed => '分享失敗，請重試。';
+
+  @override
+  String get v4RecordingMoreCategories => '更多分類';
+
+  @override
+  String get v4RecordingCalculationHint => '支援 + − × ÷ 四則運算';
+
+  @override
+  String get v4RecordingSaveNext => '再記一筆';
+
+  @override
+  String get v4RecordingClearAmount => '清空金額';
+
+  @override
+  String get v4RecordingSelectCategory => '請選擇分類';
+
+  @override
+  String get v4RecordingSaveFailed => '儲存失敗，請重試';
+
+  @override
+  String get v4RecordingCategoriesFailed => '分類載入失敗';
+
+  @override
+  String get v4RecordingRetry => '重試';
+
+  @override
+  String get v4RecordingDiscardTitle => '放棄本次記帳？';
+
+  @override
+  String get v4RecordingDiscardMessage => '尚未儲存的金額、備註和選擇將被清除。';
+
+  @override
+  String get v4RateInvalid => '請輸入大於 0 的有效匯率';
+
+  @override
+  String v4RecordingConvertedLabel(String currency) {
+    return '折合 $currency';
   }
 
   @override
-  String get exportColumnsSelectAll => '全選';
+  String get v4CategoryToolsTitle => '分類工具';
 
   @override
-  String get exportColumnsClear => '清空';
+  String get v4CategoryToolsHint => '排序、匯入、分享與預設分類';
 
   @override
-  String get exportColumnsReset => '還原預設';
+  String get v4AttachmentPending => '待儲存';
 
   @override
-  String get exportColumnsOrder => '欄位順序與表頭預覽';
+  String get v4ClearSelection => '清空選擇';
 
   @override
-  String get exportColumnsMoveUp => '上移';
+  String get v4HomeAllTransactions => '全部明細';
 
   @override
-  String get exportColumnsMoveDown => '下移';
+  String get v4HomeBatch => '批次';
 
   @override
-  String get exportColumnsEmpty => '請至少選擇一個欄位再匯出。';
+  String get v4HomeMonthShare => '月帳單分享';
 
   @override
-  String get imageCropTitle => '裁剪圖片';
+  String get v4HomeBrandShow => '顯示蜜蜂記帳品牌';
 
   @override
-  String get imageCropAction => '裁剪';
+  String get v4HomeBrandHide => '隱藏蜜蜂記帳品牌';
 
   @override
-  String get imageCropAvatarTitle => '裁剪頭像';
+  String get v4HomeMonthExpense => '本月支出';
 
   @override
-  String get imageCropDone => '裁剪完成';
+  String get v4HomeMonthIncome => '本月收入';
 
   @override
-  String get imageCropFailed => '裁剪或儲存圖片失敗，請重試。';
+  String get v4HomeMonthBalance => '本月結餘';
 
   @override
-  String get imageCropCurrentAvatar => '裁剪目前頭像';
+  String get v4AmountsShow => '顯示金額';
 
   @override
-  String get aiImageReviewTitle => '核對圖片帳單';
+  String get v4AmountsHide => '隱藏金額';
+
+  @override
+  String get v4SearchTitle => '帳單搜尋';
+
+  @override
+  String get v4SearchRecent => '最近搜尋';
+
+  @override
+  String get v4SearchClearHistory => '清除搜尋紀錄';
+
+  @override
+  String get v4SearchInvert => '反選';
+
+  @override
+  String get v4SearchScope => '調整範圍';
+
+  @override
+  String get v4SearchOriginalAmount => '原幣金額';
+
+  @override
+  String get v4SearchLedgerAmount => '折算金額';
+
+  @override
+  String get v4SearchInvalidRange => '請填寫有效的非負金額，並確認起止範圍正確';
+
+  @override
+  String get v4SearchSetTags => '設定標籤';
+
+  @override
+  String get v4SearchTagsSaved => '所選帳單的標籤已更新';
+
+  @override
+  String get v4SearchAll => '全部';
+
+  @override
+  String get v4SearchHint => '搜尋備註、分類、金額、標籤';
+
+  @override
+  String get v4SearchFilterActive => '已套用篩選';
+
+  @override
+  String v4SearchSelected(int count) {
+    return '已選擇 $count 筆';
+  }
+
+  @override
+  String get v4DetailMonth => '本月';
+
+  @override
+  String get v4DetailYear => '本年';
+
+  @override
+  String get v4DetailCumulative => '累計';
+
+  @override
+  String get v4DetailCustom => '指定週期';
+
+  @override
+  String get v4DetailTrend => '累計金額趨勢';
+
+  @override
+  String get v4DetailShare => '佔比';
+
+  @override
+  String get v4DetailMissingCategory => '分類已不存在';
+
+  @override
+  String get v4DetailRecent => '近期帳單';
+
+  @override
+  String get v4DetailCollapse => '收起明細';
+
+  @override
+  String v4DetailCategoryChildren(int count) {
+    return '一級分類 · $count 個二級分類';
+  }
+
+  @override
+  String v4DetailAmountLabel(String period, String kind) {
+    return '$period$kind';
+  }
+
+  @override
+  String v4DetailAllTransactions(int count) {
+    return '檢視全部 $count 筆';
+  }
+
+  @override
+  String v4DetailRecord(String name) {
+    return '記一筆 · $name';
+  }
+
+  @override
+  String get v4MineCloudGroup => '雲端服務與同步';
+
+  @override
+  String get v4MineFeaturesGroup => '功能管理';
+
+  @override
+  String get v4MineHelpGroup => '幫助與資訊';
+
+  @override
+  String get v4MineSupportGroup => '支持我們';
+
+  @override
+  String get v4ConfigImportWarning => '匯入將覆蓋現有設定，建議先備份目前設定。';
+
+  @override
+  String get v4CategoryPresetIcons => '預設圖示';
+
+  @override
+  String get v4CategoryCommonIcons => '常用';
+
+  @override
+  String get v4CategoryImageHint => '保留圖片原色與透明背景，選擇後裁切為正方形。';
+
+  @override
+  String get welcomePreferencesLater => '這些偏好之後都可以修改。';
+
+  @override
+  String get welcomeRestoreTitle => '歡迎回來。';
+
+  @override
+  String get welcomeRestoreDescription => '恢復熟悉的帳本，接著記錄你的日常。';
+
+  @override
+  String get welcomeReadyDescription => '放心記下日常，資料始終由你掌控。';
+
+  @override
+  String get welcomeCloudLater => '無需現在設定。進入後可在「我的 · 雲端服務」中開啟。';
+
+  @override
+  String get welcomeSelectBackup => '選擇備份檔案';
+
+  @override
+  String get welcomeRestoreContinue => '匯入設定並繼續';
+
+  @override
+  String get welcomeRestoreLedgersAccounts => '帳本與帳戶';
+
+  @override
+  String get welcomeRestoreCategoriesTags => '分類與標籤';
+
+  @override
+  String get welcomeRestoreSettings => '應用設定與偏好';
+
+  @override
+  String get welcomeAttachmentRestoreTitle => '把回憶也帶回來。';
+
+  @override
+  String get welcomeAttachmentRestoreDescription => '恢復票據與帳單的關聯，也可以稍後再匯入。';
+
+  @override
+  String get welcomeAttachmentBackupDescription => 'TAR.GZ · 票據、截圖等附件';
+
+  @override
+  String get welcomeImportAttachmentsContinue => '匯入附件並完成';
+
+  @override
+  String get v4QuickAddSlideHint => '長按後滑向目標，放開進入';
+
+  @override
+  String get v4AccountDetailTitle => '帳戶詳情';
+
+  @override
+  String get v4AmountInvalid => '請輸入有效金額';
+
+  @override
+  String get v4TagCategories => '關聯分類';
+
+  @override
+  String get v4TagRecord => '使用此標籤記一筆';
+
+  @override
+  String get v4TagDistribution => '分類分佈';
+
+  @override
+  String get v4TagOriginalLedgerTotals => '按原帳本金額彙總';
+
+  @override
+  String get v4TagToolsTitle => '標籤工具';
+
+  @override
+  String get v4TagToolsHint => '新增、匯入、預設產生與清理';
+
+  @override
+  String get v4TrendClosing => '期末金額';
+
+  @override
+  String get v4TrendOpening => '期初金額';
+
+  @override
+  String get v4TrendChange => '期間變化';
+
+  @override
+  String get v4TrendChangeRate => '變化比例';
+
+  @override
+  String get v4DataBills => '帳單資料';
+
+  @override
+  String get v4DataCategories => '分類與標籤';
+
+  @override
+  String get v4DataConfiguration => '應用設定與空間';
+
+  @override
+  String get v4DataAttachments => '帳單附件';
+
+  @override
+  String get v4CustomIcons => '自訂圖示';
+
+  @override
+  String get v4AnalyticsTrend => '收支趨勢';
+
+  @override
+  String get v4AnalyticsShowRanking => '顯示分類排行';
+
+  @override
+  String get v4AnalyticsShowPie => '顯示分類環圖';
+
+  @override
+  String get v4AnalyticsView => '統計視角';
+
+  @override
+  String get v4AnalyticsRecalculate => '補折算';
+
+  @override
+  String get aiProviderShowKey => '顯示密鑰';
+
+  @override
+  String get aiProviderHideKey => '隱藏密鑰';
+
+  @override
+  String get aiPromptShare => '分享提示詞';
+
+  @override
+  String get aiPromptPaste => '貼上提示詞';
+
+  @override
+  String get v4AIChatSend => '傳送訊息';
+
+  @override
+  String get v4RecurringLastGeneratedLabel => '最近產生';
+
+  @override
+  String get v4TransactionDetailTitle => '帳單詳情';
+
+  @override
+  String get v4TransactionDetailSnapshot => '歷史折算';
+
+  @override
+  String get v4TransactionDetailSnapshotRate => '記帳時匯率';
+
+  @override
+  String v4DetailConvertedScope(String currency) {
+    return '已按目前帳本幣種 $currency 彙總';
+  }
+
+  @override
+  String v4DetailMissingConversion(int count, String currencies) {
+    return '$count 筆未折算 · $currencies，暫不顯示彙總金額';
+  }
+
+  @override
+  String v4DetailRateDate(String date) {
+    return '匯率日期 $date';
+  }
+
+  @override
+  String v4DetailRatesStale(String date) {
+    return '匯率已超過 7 天 · $date';
+  }
+
+  @override
+  String get v4ShareCardTitle => '分享卡片';
+
+  @override
+  String get v4ShareCardProfile => '我的檔案';
+
+  @override
+  String get v4InsightsCategoryShare => '分類佔比';
+
+  @override
+  String get v4InsightsShareHint => '點選分類，檢視它在總額中的佔比';
+
+  @override
+  String get v4InsightsTapBar => '點柱形，檢視對應收支';
+
+  @override
+  String get v4InsightsAverageTitle => '平均值怎麼算';
+
+  @override
+  String get v4InsightsAverageDays => '按本週期截至今天已發生的天數計算，沒有記帳的日期也計入；不包含未來日期。';
+
+  @override
+  String get v4InsightsAverageMonths => '按本年度截至今天已發生的月份計算，沒有記帳的月份也計入；不包含未來月份。';
+
+  @override
+  String get v4InsightsAverageYears => '按帳本記錄跨越的年份計算，沒有記帳的年份也計入；不包含未來年份。';
+
+  @override
+  String get v4InsightsDaysUnit => '天';
+
+  @override
+  String get v4InsightsMonthsUnit => '個月';
+
+  @override
+  String get v4InsightsYearsUnit => '年';
+
+  @override
+  String get v4InsightsBalanceComposition => '收支構成';
+
+  @override
+  String get v4InsightsBalanceEquation => '結餘 = 收入 − 支出';
+
+  @override
+  String get v4InsightsPreviousPeriod => '上一期';
+
+  @override
+  String get v4InsightsNextPeriod => '下一期';
+
+  @override
+  String get v4InsightsOtherCategories => '其他分類';
+
+  @override
+  String get v4InsightsSortedByAmount => '按金額排序';
+
+  @override
+  String get v4InsightsNoData => '換個統計週期，或點上方 Tab 切換收支視角。';
+
+  @override
+  String v4InsightsTrendTitle(String type) {
+    return '$type趨勢';
+  }
+
+  @override
+  String v4InsightsAmountUnit(String currency) {
+    return '單位：$currency';
+  }
+
+  @override
+  String get v4InsightsCollapseCategories => '收起分類';
+
+  @override
+  String v4InsightsAllCategories(int count) {
+    return '全部 $count 個分類';
+  }
+
+  @override
+  String get v4AssetsAllAccounts => '全部帳戶';
+
+  @override
+  String get v4AssetsByCurrency => '按幣種檢視';
+
+  @override
+  String get v4AssetsUnifiedConversion => '統一折算';
+
+  @override
+  String get v4AssetsCurrencyView => '金額顯示方式';
+
+  @override
+  String get v4AssetsHiddenIncluded => '隱藏帳戶仍計入淨資產';
+
+  @override
+  String v4AssetsIncludesHidden(int count) {
+    return '含 $count 個隱藏帳戶';
+  }
+
+  @override
+  String get v4AssetsOrder => '帳戶排序';
+
+  @override
+  String get v4AssetsOrderHint => '在同一帳戶類型內調整順序，不改變餘額。';
+
+  @override
+  String get v4AssetsSeparateCurrencyHint => '分別檢視各幣種，不混合相加。';
+
+  @override
+  String get v4AssetsOriginal => '原幣';
+
+  @override
+  String get v4AssetsDefaultExpense => '預設支出';
+
+  @override
+  String get v4AssetsDefaultIncome => '預設收入';
+
+  @override
+  String get v4AssetsTrend => '趨勢';
+
+  @override
+  String get v4AssetsComposition => '構成';
+
+  @override
+  String get v4TransactionRowFieldsTitle => '完整帳單欄位';
+
+  @override
+  String v4TransactionRowMoreFields(int count) {
+    return '更多$count項';
+  }
+
+  @override
+  String get v4TransactionRowReadOnly => '唯讀';
+
+  @override
+  String get v4TransactionRowAccess => '存取狀態';
+
+  @override
+  String get v4SharePosterProfileEyebrow => '這是我的記帳日常';
+
+  @override
+  String get v4SharePosterDayCaption => '天，把生活認真記下。';
+
+  @override
+  String get v4SharePosterProfileJourney => '把記錄，變成一個小習慣。';
+
+  @override
+  String get v4SharePosterPromoInvite => '一起，把日子記下來。';
+
+  @override
+  String get v4SharePosterOpenSourceBody => '資料由你掌握，程式碼向你開放。\n和社群一起，讓記帳保持簡單。';
+
+  @override
+  String get v4SharePosterOpenSourceAction => '了解開源';
+
+  @override
+  String get v4SharePosterRecommend => '推薦給朋友';
+
+  @override
+  String get v4SharePosterTopIncome => 'TOP 3 收入';
+
+  @override
+  String get v4SharePosterAverageRecords => '日均記帳';
+
+  @override
+  String get v4ResourceParent => '上級';
+
+  @override
+  String get v4AccountNetWorthLabel => '計入淨資產';
+
+  @override
+  String get v4AccountIncluded => '已計入';
+
+  @override
+  String get v4AccountLinkedBooks => '關聯帳本';
+
+  @override
+  String get v4AccountCashflow => '帳戶收支';
+
+  @override
+  String get v4AccountNetFlow => '淨流入';
+
+  @override
+  String get v4AccountFlowRules => '含轉入與轉出 · 按收支計入規則彙總';
+
+  @override
+  String get v4AccountBalanceRangeNote => '目前餘額不隨時間範圍改變。';
+
+  @override
+  String get v4AccountNoTrend => '目前範圍暫無歷史記錄';
+
+  @override
+  String get v4AccountNoPeer => '請先新增另一個同幣種帳戶，再進行轉帳。';
+
+  @override
+  String get v4AccountActions => '帳戶操作';
+
+  @override
+  String get v4DetailAllTime => '全部時間';
+
+  @override
+  String v4AccountLedgerCount(int count) {
+    return '$count 個帳本';
+  }
+
+  @override
+  String get appearanceCardMaterial => '面板卡片材質';
+
+  @override
+  String get appearanceCardMaterialDescription => '調整面板上卡片的透明度和磨砂。列表行共用外層卡片，底部導覽保持清晰。';
+
+  @override
+  String get appearanceCardTransparency => '卡片透明度';
+
+  @override
+  String get appearanceCardOpaque => '不透明';
+
+  @override
+  String get appearanceCardTransparent => '更透明';
+
+  @override
+  String get appearanceCardBlur => '磨砂強度';
+
+  @override
+  String get appearanceCardBlurOff => '關閉';
+
+  @override
+  String get appearanceCardBlurStrong => '更強';
+
+  @override
+  String get appearanceCardMaterialReset => '恢復預設材質';
+
+  @override
+  String get appearanceCardMaterialPreview => '即時預覽';
+
+  @override
+  String get appearanceCardMaterialPreviewBody => '卡片文字與圖示保持清晰';
+
+  @override
+  String appearanceCardMaterialSummary(int transparency, int blur) {
+    return '透明度 $transparency% · 磨砂 $blur';
+  }
+
+  @override
+  String get aboutBrandStatement => '記下生活，也把資料留給自己。';
+
+  @override
+  String get aboutHelpSupport => '幫助與支援';
+
+  @override
+  String get aboutProductDetails => '了解這款產品';
+
+  @override
+  String get v4HomeBudgetAvailable => '預算可用';
+
+  @override
+  String get v4HomeUseCompactSummary => '切換為精簡彙總';
+
+  @override
+  String get v4HomeUseStandardSummary => '切換為完整彙總';
+
+  @override
+  String get v4HomeBudgetExceeded => '超支';
+
+  @override
+  String get recordingProgressSaving => '正在記帳';
+
+  @override
+  String get recordingProgressRecognizing => '正在辨識帳單';
+
+  @override
+  String get recordingProgressRecognizingDetail => '整理金額、分類與備註';
+
+  @override
+  String get recordingProgressSavingDetail => '正在儲存本次辨識的記錄';
+
+  @override
+  String get recordingProgressSlow => '這次處理時間稍長，仍在繼續處理。';
+
+  @override
+  String get v4RecurringPreviewTitle => '接下來的記帳日期';
+
+  @override
+  String get v4RecurringAmountExpense => '每次支出';
+
+  @override
+  String get v4RecurringAmountIncome => '每次收入';
+
+  @override
+  String get v4RecurringAmountTransfer => '每次轉帳';
+
+  @override
+  String get v4RecurringAutomatic => '自動記帳';
+
+  @override
+  String v4RecurringNextCaption(String when) {
+    return '下次記帳 · $when';
+  }
+
+  @override
+  String get v4RecurringUsageSummary => '開啟或回到 App 時，自動補記到期帳單。點擊卡片可編輯規則。';
+
+  @override
+  String get exportFiltersTitle => '匯出範圍';
 
   @override
   String get aiImageReviewHint => '請核對金額、時間和筆數。疑似重複的帳單預設不選取。';
 
   @override
-  String aiImageReviewSave(int count) {
-    return '儲存 $count 筆';
+  String exportColumnsSelected(int selected, int total) {
+    return '已選 $selected / $total 欄';
   }
-
-  @override
-  String get aiImageReviewDuplicate => '疑似重複，請確認這是一筆獨立交易';
-
-  @override
-  String get aiImageReviewAlreadySaved => '此項已記帳';
-
-  @override
-  String get aiImageReviewRequired => '辨識結果可能重複，請在圖片記帳中核對後儲存';
-
-  @override
-  String aiBillingSavedCount(int count) {
-    return '已新增 $count 筆';
-  }
-
-  @override
-  String aiBillingAlreadySavedCount(int count) {
-    return '已記過 $count 筆，已略過';
-  }
-
-  @override
-  String aiBillingFailedCount(int count) {
-    return '未儲存 $count 筆，可重試未完成項目';
-  }
-
-  @override
-  String aiBillingAttachmentFailedCount(int count) {
-    return '有 $count 筆帳單的附件未儲存，可在帳單中補充';
-  }
-
-  @override
-  String get aiBillingPostProcessingPending => '帳單已儲存，重新整理或同步暫未完成';
-
-  @override
-  String get aiBillingBusy => '圖片記帳正在處理中，請稍候';
-
-  @override
-  String get syncRestoreMissingIdentity => '此備份缺少可靠的帳單識別碼，已停止還原以避免重複入帳。';
-
-  @override
-  String get syncRestoreDuplicateIdentity => '備份中存在重複的帳單識別碼，無法安全還原。';
-
-  @override
-  String get exportFiltersTitle => '匯出範圍';
 
   @override
   String get exportDateRangeLabel => '日期範圍';
@@ -18172,20 +18935,114 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get exportDateRangeHint => '依帳單發生日期篩選，包含起訖日期當天。';
 
   @override
-  String get exportAllDates => '全部時間';
+  String aiBillingAlreadySavedCount(int count) {
+    return '已記過 $count 筆，已略過';
+  }
 
   @override
-  String get exportClearDates => '清除日期限制';
+  String get aiBillingBusy => '圖片記帳正在處理中，請稍候';
 
   @override
-  String get exportRecordTypeLabel => '交易類型';
+  String get aiBillingPostProcessingPending => '帳單已儲存，重新整理或同步暫未完成';
 
   @override
   String get exportAllTypes => '全部';
 
   @override
-  String get exportDateRangePickerTitle => '選擇匯出時間區間';
+  String aiBillingFailedCount(int count) {
+    return '未儲存 $count 筆，可重試未完成項目';
+  }
+
+  @override
+  String get exportClearDates => '清除日期限制';
+
+  @override
+  String aiBillingAttachmentFailedCount(int count) {
+    return '有 $count 筆帳單的附件未儲存，可在帳單中補充';
+  }
+
+  @override
+  String get syncRestoreDuplicateIdentity => '備份中存在重複的帳單識別碼，無法安全還原。';
 
   @override
   String get exportNoMatchingRecords => '沒有符合所選時間與類型的紀錄，請調整篩選條件後再匯出。';
+
+  @override
+  String get aiImageReviewTitle => '核對圖片帳單';
+
+  @override
+  String get exportColumnsSelectAll => '全選';
+
+  @override
+  String get exportColumnsClear => '清空';
+
+  @override
+  String get aiImageReviewAlreadySaved => '此項已記帳';
+
+  @override
+  String get imageCropAvatarTitle => '裁剪頭像';
+
+  @override
+  String aiImageReviewSave(int count) {
+    return '儲存 $count 筆';
+  }
+
+  @override
+  String get imageCropCurrentAvatar => '裁剪目前頭像';
+
+  @override
+  String aiBillingSavedCount(int count) {
+    return '已新增 $count 筆';
+  }
+
+  @override
+  String get exportColumnsMoveDown => '下移';
+
+  @override
+  String get syncRestoreMissingIdentity => '此備份缺少可靠的帳單識別碼，已停止還原以避免重複入帳。';
+
+  @override
+  String get exportColumnsMoveUp => '上移';
+
+  @override
+  String get aiImageReviewRequired => '辨識結果可能重複，請在圖片記帳中核對後儲存';
+
+  @override
+  String get exportColumnsEmpty => '請至少選擇一個欄位再匯出。';
+
+  @override
+  String get imageCropDone => '裁剪完成';
+
+  @override
+  String get imageCropTitle => '裁剪圖片';
+
+  @override
+  String get exportColumnsOrder => '欄位順序與表頭預覽';
+
+  @override
+  String get aiImageReviewDuplicate => '疑似重複，請確認這是一筆獨立交易';
+
+  @override
+  String get exportColumnsReset => '還原預設';
+
+  @override
+  String get exportColumnsDescription => '點選需要匯出的欄位，展開欄位順序可調整表頭位置。';
+
+  @override
+  String get imageCropFailed => '裁剪或儲存圖片失敗，請重試。';
+
+  @override
+  String get exportAllDates => '全部時間';
+
+  @override
+  String get imageCropAction => '裁剪';
+
+  @override
+  String get exportRecordTypeLabel => '交易類型';
+
+  @override
+  String get exportColumnsTitle => '匯出欄位';
+
+  @override
+  String get exportDateRangePickerTitle => '選擇匯出時間區間';
 }

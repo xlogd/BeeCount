@@ -1649,7 +1649,7 @@
     }
   },
   "recurringTransactionUsageTitle": "Usage Guide",
-  "recurringTransactionUsageContent": "Recurring transactions are automatically scanned and generated when the app cold starts. After setting a date, the system will create corresponding bills on the first startup after that date. For example: if set to Nov 27, bills will be auto-recorded on the first launch after Nov 27.",
+  "recurringTransactionUsageContent": "Due recurring bills are automatically checked and recorded when opening or resuming the app, or upon saving a rule. Tap a card to edit and preview the next 3 scheduled dates.",
   "ledgerSelectTitle": "Select Ledger",
   "ledgerSelect": "Select Ledger",
   "syncNotConfiguredMessage": "Cloud not configured",
@@ -4725,16 +4725,175 @@
   "recordingProgressRecognizingDetail": "Organizing amounts, categories and notes",
   "recordingProgressSavingDetail": "Saving the entries from this recognition",
   "recordingProgressSlow": "This is taking a little longer. Processing is continuing.",
-  "exportColumnsTitle": "Export columns",
-  "exportColumnsDescription": "Select the columns to include. Expand column order to arrange the exported headers.",
+  "v4RecurringNotGeneratedYet": "Not generated yet",
+  "v4RecurringNextToday": "Next {date} · Today",
+  "@v4RecurringNextToday": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "v4RecurringNextTomorrow": "Next {date} · Tomorrow",
+  "@v4RecurringNextTomorrow": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "v4RecurringNextInDays": "Next {date} · in {days}d",
+  "@v4RecurringNextInDays": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "v4RecurringStatusPaused": "Paused",
+  "v4RecurringStatusCompleted": "Ended",
+  "v4RecurringStatusBlocked": "Account unavailable",
+  "v4RecurringAccountHiddenWarning": "Account \"{account}\" is hidden; auto-recording is paused",
+  "@v4RecurringAccountHiddenWarning": {
+    "placeholders": {
+      "account": {
+        "type": "String"
+      }
+    }
+  },
+  "v4RecurringToAccountHiddenWarning": "Target account \"{account}\" is hidden; auto-recording is paused",
+  "@v4RecurringToAccountHiddenWarning": {
+    "placeholders": {
+      "account": {
+        "type": "String"
+      }
+    }
+  },
+  "v4RecurringAccountMissingWarning": "Linked account is missing; please reselect",
+  "v4RecurringMonthlyOnDay": "{freq} · Day {day}",
+  "@v4RecurringMonthlyOnDay": {
+    "placeholders": {
+      "freq": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "v4RecurringWithAnchor": "{freq} · {anchor}",
+  "@v4RecurringWithAnchor": {
+    "placeholders": {
+      "freq": {
+        "type": "String"
+      },
+      "anchor": {
+        "type": "String"
+      }
+    }
+  },
+  "v4RecurringPreviewTitle": "Upcoming dates",
+  "v4RecurringPreviewCount": "Next {count}",
+  "@v4RecurringPreviewCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "v4RecurringPreviewEmptyEnded": "Past the end date; no further bills will be scheduled.",
+  "v4RecurringPreviewPausedHint": "This rule is paused; enable it to resume automatic recording.",
+  "v4RecurringPreviewDueToday": "Today · Generates on save",
+  "v4RecurringPreviewPendingCatchUp": "Overdue · Generates on save",
+  "v4RecurringPreviewTomorrow": "Tomorrow",
+  "v4RecurringPreviewInDays": "in {days}d",
+  "@v4RecurringPreviewInDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "v4RecurringPreviewMonthEndTag": "{when} · Month-end",
+  "@v4RecurringPreviewMonthEndTag": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "v4RecurringPreviewPreservedNote": "Progress ({date}) is preserved; editing amount or note will not duplicate the current period.",
+  "@v4RecurringPreviewPreservedNote": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "v4RecurringPreviewMonthEndNote": "Month-end alignment: shorter months record on their last day, then resume on day {day}.",
+  "@v4RecurringPreviewMonthEndNote": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "v4RecurringAccountHiddenBadge": "(Hidden)",
+  "v4RecurringAmountExpense": "Per expense",
+  "v4RecurringAmountIncome": "Per income",
+  "v4RecurringAmountTransfer": "Per transfer",
+  "v4RecurringAutomatic": "Auto-recording",
+  "v4RecurringNextCaption": "Next bill · {when}",
+  "v4RecurringUsageSummary": "Due bills are recorded when you open or return to the app. Tap a rule to edit its schedule.",
+  "@v4RecurringNextCaption": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "exportFiltersTitle": "Export scope",
+  "aiImageReviewHint": "Check the amounts, dates and number of transactions. Suspected duplicates are unselected by default.",
   "exportColumnsSelected": "Selected {selected} of {total} columns",
+  "exportDateRangeLabel": "Date range",
+  "exportDateRangeHint": "Uses transaction dates and includes both the start and end dates.",
+  "aiBillingAlreadySavedCount": "Already recorded and skipped: {count}",
+  "aiBillingBusy": "Image billing is in progress. Please wait.",
+  "aiBillingPostProcessingPending": "Transactions are saved. Refresh or sync has not completed yet.",
+  "exportAllTypes": "All types",
+  "aiBillingFailedCount": "Not saved: {count}. Retry the unfinished items.",
+  "exportClearDates": "Clear date range",
+  "aiBillingAttachmentFailedCount": "Attachments were not saved for {count} transactions. Add them from transaction details.",
+  "syncRestoreDuplicateIdentity": "The backup contains duplicate transaction identities and cannot be restored safely.",
+  "exportNoMatchingRecords": "No transactions match the selected dates and type. Adjust the filters and try again.",
+  "aiImageReviewTitle": "Review image transactions",
   "exportColumnsSelectAll": "Select all",
   "exportColumnsClear": "Clear",
-  "exportColumnsReset": "Restore defaults",
-  "exportColumnsOrder": "Column order and header preview",
-  "exportColumnsMoveUp": "Move up",
-  "exportColumnsMoveDown": "Move down",
-  "exportColumnsEmpty": "Select at least one column to export.",
+  "@aiBillingSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiImageReviewAlreadySaved": "Already recorded",
+  "@aiBillingAttachmentFailedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@aiImageReviewSave": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "@exportColumnsSelected": {
     "description": "Number of selected export columns",
     "placeholders": {
@@ -4746,42 +4905,18 @@
       }
     }
   },
-  "imageCropTitle": "Crop image",
-  "imageCropAction": "Crop",
   "imageCropAvatarTitle": "Crop avatar",
-  "imageCropDone": "Image cropped",
-  "imageCropFailed": "Could not crop or save the image. Please try again.",
-  "imageCropCurrentAvatar": "Crop current avatar",
-  "aiImageReviewTitle": "Review image transactions",
-  "aiImageReviewHint": "Check the amounts, dates and number of transactions. Suspected duplicates are unselected by default.",
   "aiImageReviewSave": "Save {count}",
-  "@aiImageReviewSave": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "aiImageReviewDuplicate": "Possible duplicate. Select only if this is a separate payment.",
-  "aiImageReviewAlreadySaved": "Already recorded",
-  "aiImageReviewRequired": "Possible duplicates detected. Open image billing to review before saving.",
+  "imageCropCurrentAvatar": "Crop current avatar",
   "aiBillingSavedCount": "Transactions added: {count}",
-  "@aiBillingSavedCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "aiBillingAlreadySavedCount": "Already recorded and skipped: {count}",
-  "@aiBillingAlreadySavedCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "aiBillingFailedCount": "Not saved: {count}. Retry the unfinished items.",
+  "exportColumnsMoveDown": "Move down",
+  "syncRestoreMissingIdentity": "This backup has no reliable transaction identities. Restore stopped to prevent duplicate transactions.",
+  "exportColumnsMoveUp": "Move up",
+  "aiImageReviewRequired": "Possible duplicates detected. Open image billing to review before saving.",
+  "exportColumnsEmpty": "Select at least one column to export.",
+  "imageCropDone": "Image cropped",
+  "imageCropTitle": "Crop image",
+  "exportColumnsOrder": "Column order and header preview",
   "@aiBillingFailedCount": {
     "placeholders": {
       "count": {
@@ -4789,25 +4924,20 @@
       }
     }
   },
-  "aiBillingAttachmentFailedCount": "Attachments were not saved for {count} transactions. Add them from transaction details.",
-  "@aiBillingAttachmentFailedCount": {
+  "aiImageReviewDuplicate": "Possible duplicate. Select only if this is a separate payment.",
+  "@aiBillingAlreadySavedCount": {
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
-  "aiBillingPostProcessingPending": "Transactions are saved. Refresh or sync has not completed yet.",
-  "aiBillingBusy": "Image billing is in progress. Please wait.",
-  "syncRestoreMissingIdentity": "This backup has no reliable transaction identities. Restore stopped to prevent duplicate transactions.",
-  "syncRestoreDuplicateIdentity": "The backup contains duplicate transaction identities and cannot be restored safely.",
-  "exportFiltersTitle": "Export scope",
-  "exportDateRangeLabel": "Date range",
-  "exportDateRangeHint": "Uses transaction dates and includes both the start and end dates.",
+  "exportColumnsReset": "Restore defaults",
+  "exportColumnsDescription": "Select the columns to include. Expand column order to arrange the exported headers.",
+  "imageCropFailed": "Could not crop or save the image. Please try again.",
   "exportAllDates": "All dates",
-  "exportClearDates": "Clear date range",
+  "imageCropAction": "Crop",
   "exportRecordTypeLabel": "Transaction type",
-  "exportAllTypes": "All types",
-  "exportDateRangePickerTitle": "Select export date range",
-  "exportNoMatchingRecords": "No transactions match the selected dates and type. Adjust the filters and try again."
+  "exportColumnsTitle": "Export columns",
+  "exportDateRangePickerTitle": "Select export date range"
 }

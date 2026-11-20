@@ -9335,109 +9335,131 @@ class AppLocalizationsKo extends AppLocalizations {
   String get recordingProgressSlow => 'This is taking a little longer. Processing is continuing.';
 
   @override
-  String get exportColumnsTitle => '내보낼 열';
+  String get v4RecurringNotGeneratedYet => 'Not generated yet';
 
   @override
-  String get exportColumnsDescription => '포함할 열을 선택하세요. 열 순서를 펼쳐 헤더 위치를 조정할 수 있습니다.';
-
-  @override
-  String exportColumnsSelected(int selected, int total) {
-    return '$total개 열 중 $selected개 선택';
+  String v4RecurringNextToday(String date) {
+    return 'Next $date · Today';
   }
 
   @override
-  String get exportColumnsSelectAll => '전체 선택';
+  String v4RecurringNextTomorrow(String date) {
+    return 'Next $date · Tomorrow';
+  }
 
   @override
-  String get exportColumnsClear => '선택 해제';
+  String v4RecurringNextInDays(String date, int days) {
+    return 'Next $date · in ${days}d';
+  }
 
   @override
-  String get exportColumnsReset => '기본값 복원';
+  String get v4RecurringStatusPaused => 'Paused';
 
   @override
-  String get exportColumnsOrder => '열 순서 및 헤더 미리보기';
+  String get v4RecurringStatusCompleted => 'Ended';
 
   @override
-  String get exportColumnsMoveUp => '위로 이동';
+  String get v4RecurringStatusBlocked => 'Account unavailable';
 
   @override
-  String get exportColumnsMoveDown => '아래로 이동';
+  String v4RecurringAccountHiddenWarning(String account) {
+    return 'Account \"$account\" is hidden; auto-recording is paused';
+  }
 
   @override
-  String get exportColumnsEmpty => '내보낼 열을 하나 이상 선택하세요.';
+  String v4RecurringToAccountHiddenWarning(String account) {
+    return 'Target account \"$account\" is hidden; auto-recording is paused';
+  }
 
   @override
-  String get imageCropTitle => '이미지 자르기';
+  String get v4RecurringAccountMissingWarning => 'Linked account is missing; please reselect';
 
   @override
-  String get imageCropAction => '자르기';
+  String v4RecurringMonthlyOnDay(String freq, int day) {
+    return '$freq · Day $day';
+  }
 
   @override
-  String get imageCropAvatarTitle => '프로필 사진 자르기';
+  String v4RecurringWithAnchor(String freq, String anchor) {
+    return '$freq · $anchor';
+  }
 
   @override
-  String get imageCropDone => '이미지를 잘랐어요';
+  String get v4RecurringPreviewTitle => '예정된 기록 날짜';
 
   @override
-  String get imageCropFailed => '이미지를 자르거나 저장하지 못했습니다. 다시 시도하세요.';
+  String v4RecurringPreviewCount(int count) {
+    return 'Next $count';
+  }
 
   @override
-  String get imageCropCurrentAvatar => '현재 프로필 사진 자르기';
+  String get v4RecurringPreviewEmptyEnded => 'Past the end date; no further bills will be scheduled.';
 
   @override
-  String get aiImageReviewTitle => '이미지 거래 확인';
+  String get v4RecurringPreviewPausedHint => 'This rule is paused; enable it to resume automatic recording.';
+
+  @override
+  String get v4RecurringPreviewDueToday => 'Today · Generates on save';
+
+  @override
+  String get v4RecurringPreviewPendingCatchUp => 'Overdue · Generates on save';
+
+  @override
+  String get v4RecurringPreviewTomorrow => 'Tomorrow';
+
+  @override
+  String v4RecurringPreviewInDays(int days) {
+    return 'in ${days}d';
+  }
+
+  @override
+  String v4RecurringPreviewMonthEndTag(String when) {
+    return '$when · Month-end';
+  }
+
+  @override
+  String v4RecurringPreviewPreservedNote(String date) {
+    return 'Progress ($date) is preserved; editing amount or note will not duplicate the current period.';
+  }
+
+  @override
+  String v4RecurringPreviewMonthEndNote(int day) {
+    return 'Month-end alignment: shorter months record on their last day, then resume on day $day.';
+  }
+
+  @override
+  String get v4RecurringAccountHiddenBadge => '(Hidden)';
+
+  @override
+  String get v4RecurringAmountExpense => '매회 지출';
+
+  @override
+  String get v4RecurringAmountIncome => '매회 수입';
+
+  @override
+  String get v4RecurringAmountTransfer => '매회 이체';
+
+  @override
+  String get v4RecurringAutomatic => '자동 기록';
+
+  @override
+  String v4RecurringNextCaption(String when) {
+    return '다음 기록 · $when';
+  }
+
+  @override
+  String get v4RecurringUsageSummary => '앱을 열거나 돌아오면 예정된 거래가 자동으로 기록됩니다. 규칙을 눌러 일정을 수정하세요.';
+
+  @override
+  String get exportFiltersTitle => '내보내기 범위';
 
   @override
   String get aiImageReviewHint => '금액, 날짜, 거래 수를 확인하세요. 중복 의심 항목은 기본적으로 선택되지 않습니다.';
 
   @override
-  String aiImageReviewSave(int count) {
-    return '$count건 저장';
+  String exportColumnsSelected(int selected, int total) {
+    return '$total개 열 중 $selected개 선택';
   }
-
-  @override
-  String get aiImageReviewDuplicate => '중복이 의심됩니다. 별도 결제인 경우에만 선택하세요.';
-
-  @override
-  String get aiImageReviewAlreadySaved => '이미 기록됨';
-
-  @override
-  String get aiImageReviewRequired => '중복 의심 항목이 있습니다. 이미지 기록에서 확인한 후 저장하세요.';
-
-  @override
-  String aiBillingSavedCount(int count) {
-    return '추가된 거래: $count건';
-  }
-
-  @override
-  String aiBillingAlreadySavedCount(int count) {
-    return '이미 기록되어 건너뜀: $count건';
-  }
-
-  @override
-  String aiBillingFailedCount(int count) {
-    return '저장하지 못한 거래: $count건. 미완료 항목을 다시 시도하세요.';
-  }
-
-  @override
-  String aiBillingAttachmentFailedCount(int count) {
-    return '첨부 파일을 저장하지 못한 거래: $count건. 거래 상세에서 추가할 수 있습니다.';
-  }
-
-  @override
-  String get aiBillingPostProcessingPending => '거래는 저장되었습니다. 새로고침 또는 동기화가 아직 완료되지 않았습니다.';
-
-  @override
-  String get aiBillingBusy => '이미지 기록을 처리 중입니다. 잠시 기다려 주세요.';
-
-  @override
-  String get syncRestoreMissingIdentity => '백업에 신뢰할 수 있는 거래 식별자가 없어 중복 기록을 방지하기 위해 복원을 중단했습니다.';
-
-  @override
-  String get syncRestoreDuplicateIdentity => '백업에 중복 거래 식별자가 있어 안전하게 복원할 수 없습니다.';
-
-  @override
-  String get exportFiltersTitle => '내보내기 범위';
 
   @override
   String get exportDateRangeLabel => '날짜 범위';
@@ -9446,20 +9468,114 @@ class AppLocalizationsKo extends AppLocalizations {
   String get exportDateRangeHint => '거래 발생일을 기준으로 시작일과 종료일을 모두 포함합니다.';
 
   @override
-  String get exportAllDates => '전체 기간';
+  String aiBillingAlreadySavedCount(int count) {
+    return '이미 기록되어 건너뜀: $count건';
+  }
 
   @override
-  String get exportClearDates => '날짜 제한 해제';
+  String get aiBillingBusy => '이미지 기록을 처리 중입니다. 잠시 기다려 주세요.';
 
   @override
-  String get exportRecordTypeLabel => '거래 유형';
+  String get aiBillingPostProcessingPending => '거래는 저장되었습니다. 새로고침 또는 동기화가 아직 완료되지 않았습니다.';
 
   @override
   String get exportAllTypes => '전체';
 
   @override
-  String get exportDateRangePickerTitle => '내보낼 기간 선택';
+  String aiBillingFailedCount(int count) {
+    return '저장하지 못한 거래: $count건. 미완료 항목을 다시 시도하세요.';
+  }
+
+  @override
+  String get exportClearDates => '날짜 제한 해제';
+
+  @override
+  String aiBillingAttachmentFailedCount(int count) {
+    return '첨부 파일을 저장하지 못한 거래: $count건. 거래 상세에서 추가할 수 있습니다.';
+  }
+
+  @override
+  String get syncRestoreDuplicateIdentity => '백업에 중복 거래 식별자가 있어 안전하게 복원할 수 없습니다.';
 
   @override
   String get exportNoMatchingRecords => '선택한 기간과 유형에 해당하는 거래가 없습니다. 조건을 변경한 후 다시 시도하세요.';
+
+  @override
+  String get aiImageReviewTitle => '이미지 거래 확인';
+
+  @override
+  String get exportColumnsSelectAll => '전체 선택';
+
+  @override
+  String get exportColumnsClear => '선택 해제';
+
+  @override
+  String get aiImageReviewAlreadySaved => '이미 기록됨';
+
+  @override
+  String get imageCropAvatarTitle => '프로필 사진 자르기';
+
+  @override
+  String aiImageReviewSave(int count) {
+    return '$count건 저장';
+  }
+
+  @override
+  String get imageCropCurrentAvatar => '현재 프로필 사진 자르기';
+
+  @override
+  String aiBillingSavedCount(int count) {
+    return '추가된 거래: $count건';
+  }
+
+  @override
+  String get exportColumnsMoveDown => '아래로 이동';
+
+  @override
+  String get syncRestoreMissingIdentity => '백업에 신뢰할 수 있는 거래 식별자가 없어 중복 기록을 방지하기 위해 복원을 중단했습니다.';
+
+  @override
+  String get exportColumnsMoveUp => '위로 이동';
+
+  @override
+  String get aiImageReviewRequired => '중복 의심 항목이 있습니다. 이미지 기록에서 확인한 후 저장하세요.';
+
+  @override
+  String get exportColumnsEmpty => '내보낼 열을 하나 이상 선택하세요.';
+
+  @override
+  String get imageCropDone => '이미지를 잘랐어요';
+
+  @override
+  String get imageCropTitle => '이미지 자르기';
+
+  @override
+  String get exportColumnsOrder => '열 순서 및 헤더 미리보기';
+
+  @override
+  String get aiImageReviewDuplicate => '중복이 의심됩니다. 별도 결제인 경우에만 선택하세요.';
+
+  @override
+  String get exportColumnsReset => '기본값 복원';
+
+  @override
+  String get exportColumnsDescription => '포함할 열을 선택하세요. 열 순서를 펼쳐 헤더 위치를 조정할 수 있습니다.';
+
+  @override
+  String get imageCropFailed => '이미지를 자르거나 저장하지 못했습니다. 다시 시도하세요.';
+
+  @override
+  String get exportAllDates => '전체 기간';
+
+  @override
+  String get imageCropAction => '자르기';
+
+  @override
+  String get exportRecordTypeLabel => '거래 유형';
+
+  @override
+  String get exportColumnsTitle => '내보낼 열';
+
+  @override
+  String get exportDateRangePickerTitle => '내보낼 기간 선택';
 }

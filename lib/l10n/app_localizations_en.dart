@@ -3659,7 +3659,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recurringTransactionUsageTitle => 'Usage Guide';
 
   @override
-  String get recurringTransactionUsageContent => 'Recurring transactions are automatically scanned and generated when the app cold starts. After setting a date, the system will create corresponding bills on the first startup after that date. For example: if set to Nov 27, bills will be auto-recorded on the first launch after Nov 27.';
+  String get recurringTransactionUsageContent => 'Due recurring bills are automatically checked and recorded when opening or resuming the app, or upon saving a rule. Tap a card to edit and preview the next 3 scheduled dates.';
 
   @override
   String get ledgerSelectTitle => 'Select Ledger';
@@ -9335,109 +9335,131 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordingProgressSlow => 'This is taking a little longer. Processing is continuing.';
 
   @override
-  String get exportColumnsTitle => 'Export columns';
+  String get v4RecurringNotGeneratedYet => 'Not generated yet';
 
   @override
-  String get exportColumnsDescription => 'Select the columns to include. Expand column order to arrange the exported headers.';
-
-  @override
-  String exportColumnsSelected(int selected, int total) {
-    return 'Selected $selected of $total columns';
+  String v4RecurringNextToday(String date) {
+    return 'Next $date · Today';
   }
 
   @override
-  String get exportColumnsSelectAll => 'Select all';
+  String v4RecurringNextTomorrow(String date) {
+    return 'Next $date · Tomorrow';
+  }
 
   @override
-  String get exportColumnsClear => 'Clear';
+  String v4RecurringNextInDays(String date, int days) {
+    return 'Next $date · in ${days}d';
+  }
 
   @override
-  String get exportColumnsReset => 'Restore defaults';
+  String get v4RecurringStatusPaused => 'Paused';
 
   @override
-  String get exportColumnsOrder => 'Column order and header preview';
+  String get v4RecurringStatusCompleted => 'Ended';
 
   @override
-  String get exportColumnsMoveUp => 'Move up';
+  String get v4RecurringStatusBlocked => 'Account unavailable';
 
   @override
-  String get exportColumnsMoveDown => 'Move down';
+  String v4RecurringAccountHiddenWarning(String account) {
+    return 'Account \"$account\" is hidden; auto-recording is paused';
+  }
 
   @override
-  String get exportColumnsEmpty => 'Select at least one column to export.';
+  String v4RecurringToAccountHiddenWarning(String account) {
+    return 'Target account \"$account\" is hidden; auto-recording is paused';
+  }
 
   @override
-  String get imageCropTitle => 'Crop image';
+  String get v4RecurringAccountMissingWarning => 'Linked account is missing; please reselect';
 
   @override
-  String get imageCropAction => 'Crop';
+  String v4RecurringMonthlyOnDay(String freq, int day) {
+    return '$freq · Day $day';
+  }
 
   @override
-  String get imageCropAvatarTitle => 'Crop avatar';
+  String v4RecurringWithAnchor(String freq, String anchor) {
+    return '$freq · $anchor';
+  }
 
   @override
-  String get imageCropDone => 'Image cropped';
+  String get v4RecurringPreviewTitle => 'Upcoming dates';
 
   @override
-  String get imageCropFailed => 'Could not crop or save the image. Please try again.';
+  String v4RecurringPreviewCount(int count) {
+    return 'Next $count';
+  }
 
   @override
-  String get imageCropCurrentAvatar => 'Crop current avatar';
+  String get v4RecurringPreviewEmptyEnded => 'Past the end date; no further bills will be scheduled.';
 
   @override
-  String get aiImageReviewTitle => 'Review image transactions';
+  String get v4RecurringPreviewPausedHint => 'This rule is paused; enable it to resume automatic recording.';
+
+  @override
+  String get v4RecurringPreviewDueToday => 'Today · Generates on save';
+
+  @override
+  String get v4RecurringPreviewPendingCatchUp => 'Overdue · Generates on save';
+
+  @override
+  String get v4RecurringPreviewTomorrow => 'Tomorrow';
+
+  @override
+  String v4RecurringPreviewInDays(int days) {
+    return 'in ${days}d';
+  }
+
+  @override
+  String v4RecurringPreviewMonthEndTag(String when) {
+    return '$when · Month-end';
+  }
+
+  @override
+  String v4RecurringPreviewPreservedNote(String date) {
+    return 'Progress ($date) is preserved; editing amount or note will not duplicate the current period.';
+  }
+
+  @override
+  String v4RecurringPreviewMonthEndNote(int day) {
+    return 'Month-end alignment: shorter months record on their last day, then resume on day $day.';
+  }
+
+  @override
+  String get v4RecurringAccountHiddenBadge => '(Hidden)';
+
+  @override
+  String get v4RecurringAmountExpense => 'Per expense';
+
+  @override
+  String get v4RecurringAmountIncome => 'Per income';
+
+  @override
+  String get v4RecurringAmountTransfer => 'Per transfer';
+
+  @override
+  String get v4RecurringAutomatic => 'Auto-recording';
+
+  @override
+  String v4RecurringNextCaption(String when) {
+    return 'Next bill · $when';
+  }
+
+  @override
+  String get v4RecurringUsageSummary => 'Due bills are recorded when you open or return to the app. Tap a rule to edit its schedule.';
+
+  @override
+  String get exportFiltersTitle => 'Export scope';
 
   @override
   String get aiImageReviewHint => 'Check the amounts, dates and number of transactions. Suspected duplicates are unselected by default.';
 
   @override
-  String aiImageReviewSave(int count) {
-    return 'Save $count';
+  String exportColumnsSelected(int selected, int total) {
+    return 'Selected $selected of $total columns';
   }
-
-  @override
-  String get aiImageReviewDuplicate => 'Possible duplicate. Select only if this is a separate payment.';
-
-  @override
-  String get aiImageReviewAlreadySaved => 'Already recorded';
-
-  @override
-  String get aiImageReviewRequired => 'Possible duplicates detected. Open image billing to review before saving.';
-
-  @override
-  String aiBillingSavedCount(int count) {
-    return 'Transactions added: $count';
-  }
-
-  @override
-  String aiBillingAlreadySavedCount(int count) {
-    return 'Already recorded and skipped: $count';
-  }
-
-  @override
-  String aiBillingFailedCount(int count) {
-    return 'Not saved: $count. Retry the unfinished items.';
-  }
-
-  @override
-  String aiBillingAttachmentFailedCount(int count) {
-    return 'Attachments were not saved for $count transactions. Add them from transaction details.';
-  }
-
-  @override
-  String get aiBillingPostProcessingPending => 'Transactions are saved. Refresh or sync has not completed yet.';
-
-  @override
-  String get aiBillingBusy => 'Image billing is in progress. Please wait.';
-
-  @override
-  String get syncRestoreMissingIdentity => 'This backup has no reliable transaction identities. Restore stopped to prevent duplicate transactions.';
-
-  @override
-  String get syncRestoreDuplicateIdentity => 'The backup contains duplicate transaction identities and cannot be restored safely.';
-
-  @override
-  String get exportFiltersTitle => 'Export scope';
 
   @override
   String get exportDateRangeLabel => 'Date range';
@@ -9446,20 +9468,114 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportDateRangeHint => 'Uses transaction dates and includes both the start and end dates.';
 
   @override
-  String get exportAllDates => 'All dates';
+  String aiBillingAlreadySavedCount(int count) {
+    return 'Already recorded and skipped: $count';
+  }
 
   @override
-  String get exportClearDates => 'Clear date range';
+  String get aiBillingBusy => 'Image billing is in progress. Please wait.';
 
   @override
-  String get exportRecordTypeLabel => 'Transaction type';
+  String get aiBillingPostProcessingPending => 'Transactions are saved. Refresh or sync has not completed yet.';
 
   @override
   String get exportAllTypes => 'All types';
 
   @override
-  String get exportDateRangePickerTitle => 'Select export date range';
+  String aiBillingFailedCount(int count) {
+    return 'Not saved: $count. Retry the unfinished items.';
+  }
+
+  @override
+  String get exportClearDates => 'Clear date range';
+
+  @override
+  String aiBillingAttachmentFailedCount(int count) {
+    return 'Attachments were not saved for $count transactions. Add them from transaction details.';
+  }
+
+  @override
+  String get syncRestoreDuplicateIdentity => 'The backup contains duplicate transaction identities and cannot be restored safely.';
 
   @override
   String get exportNoMatchingRecords => 'No transactions match the selected dates and type. Adjust the filters and try again.';
+
+  @override
+  String get aiImageReviewTitle => 'Review image transactions';
+
+  @override
+  String get exportColumnsSelectAll => 'Select all';
+
+  @override
+  String get exportColumnsClear => 'Clear';
+
+  @override
+  String get aiImageReviewAlreadySaved => 'Already recorded';
+
+  @override
+  String get imageCropAvatarTitle => 'Crop avatar';
+
+  @override
+  String aiImageReviewSave(int count) {
+    return 'Save $count';
+  }
+
+  @override
+  String get imageCropCurrentAvatar => 'Crop current avatar';
+
+  @override
+  String aiBillingSavedCount(int count) {
+    return 'Transactions added: $count';
+  }
+
+  @override
+  String get exportColumnsMoveDown => 'Move down';
+
+  @override
+  String get syncRestoreMissingIdentity => 'This backup has no reliable transaction identities. Restore stopped to prevent duplicate transactions.';
+
+  @override
+  String get exportColumnsMoveUp => 'Move up';
+
+  @override
+  String get aiImageReviewRequired => 'Possible duplicates detected. Open image billing to review before saving.';
+
+  @override
+  String get exportColumnsEmpty => 'Select at least one column to export.';
+
+  @override
+  String get imageCropDone => 'Image cropped';
+
+  @override
+  String get imageCropTitle => 'Crop image';
+
+  @override
+  String get exportColumnsOrder => 'Column order and header preview';
+
+  @override
+  String get aiImageReviewDuplicate => 'Possible duplicate. Select only if this is a separate payment.';
+
+  @override
+  String get exportColumnsReset => 'Restore defaults';
+
+  @override
+  String get exportColumnsDescription => 'Select the columns to include. Expand column order to arrange the exported headers.';
+
+  @override
+  String get imageCropFailed => 'Could not crop or save the image. Please try again.';
+
+  @override
+  String get exportAllDates => 'All dates';
+
+  @override
+  String get imageCropAction => 'Crop';
+
+  @override
+  String get exportRecordTypeLabel => 'Transaction type';
+
+  @override
+  String get exportColumnsTitle => 'Export columns';
+
+  @override
+  String get exportDateRangePickerTitle => 'Select export date range';
 }

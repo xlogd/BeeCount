@@ -25,13 +25,17 @@
   "productPromoEmailSubject": "申請內測 - {productName}",
   "@productPromoEmailSubject": {
     "placeholders": {
-      "productName": { "type": "String" }
+      "productName": {
+        "type": "String"
+      }
     }
   },
   "productPromoEmailBody": "你好,\n\n我希望加入「{productName}」的 Google Play 內測,我的 Google 帳號信箱是:\n\n(請填寫你的 Gmail / Google 帳號信箱)\n\n謝謝!",
   "@productPromoEmailBody": {
     "placeholders": {
-      "productName": { "type": "String" }
+      "productName": {
+        "type": "String"
+      }
     }
   },
   "aboutDeveloperStoryTitle": "開發者的話",
@@ -181,23 +185,43 @@
   "autoBillingNotifyProcessFailedTitle": "❌ 處理失敗",
   "autoBillingNotifyProcessFailedBody": "錯誤：{error}",
   "@autoBillingNotifyProcessFailedBody": {
-    "placeholders": { "error": { "type": "String" } }
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
   },
   "autoBillingNotifySuccessSingleTitle": "✅ 自動記帳成功 ¥{amount}",
   "@autoBillingNotifySuccessSingleTitle": {
-    "placeholders": { "amount": { "type": "String" } }
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
   },
   "autoBillingNotifySuccessMultiTitle": "✅ 自動記帳成功 {count} 筆",
   "@autoBillingNotifySuccessMultiTitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "autoBillingNotifySuccessMultiBody": "合計 ¥{amount}",
   "@autoBillingNotifySuccessMultiBody": {
-    "placeholders": { "amount": { "type": "String" } }
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
   },
   "autoBillingNotifySuccessSingleBodyNote": "備註：{note}",
   "@autoBillingNotifySuccessSingleBodyNote": {
-    "placeholders": { "note": { "type": "String" } }
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
   },
   "autoBillingNotifySuccessSingleBodyDefault": "已自動建立記錄",
   "aiOcrNoLedger": "未找到帳本",
@@ -770,7 +794,9 @@
   "categoryGenerateDefaultSuccess": "已產生 {count} 個預設分類",
   "@categoryGenerateDefaultSuccess": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "categoryGenerateDefaultNoChanges": "預設分類已存在，無需產生",
@@ -968,8 +994,12 @@
   "cloudSyncComplete": "同步完成：推送 {pushed} 條，拉取 {pulled} 條",
   "@cloudSyncComplete": {
     "placeholders": {
-      "pushed": {"type": "int"},
-      "pulled": {"type": "int"}
+      "pushed": {
+        "type": "int"
+      },
+      "pulled": {
+        "type": "int"
+      }
     }
   },
   "cloudAutoSyncHint": "資料變更後自動同步到雲端",
@@ -1411,7 +1441,7 @@
   "ledgersBalance": "餘額：{balance}",
   "ledgersCannotDeleteLastOne": "無法刪除最後一個帳本",
   "ledgersClear": "清空當前帳本",
-  "ledgersClearMessage": "將刪除該帳本下所有交易記錄，且不可復原。",
+  "ledgersClearMessage": "確定要清空帳本「{name}」的所有帳單嗎？此操作不可復原。\n帳本本身會保留，僅刪除帳單資料。",
   "ledgersClearSuccess": "帳本已清空",
   "ledgersClearTitle": "清空帳本",
   "ledgersConflictDownload": "下載到本地",
@@ -1580,7 +1610,11 @@
   "headerSkinFixedPalette": "自帶配色",
   "personalizeLockedBySkin": "目前皮膚「{skin}」自帶配色,主題色已隨皮膚設定,暫不可更改。換回其它皮膚即可恢復你原來的顏色。",
   "@personalizeLockedBySkin": {
-    "placeholders": { "skin": { "type": "String" } }
+    "placeholders": {
+      "skin": {
+        "type": "String"
+      }
+    }
   },
   "personalizeFixedSkinAction": "換皮膚",
   "headerSkinAurora": "極光",
@@ -2375,10 +2409,10 @@
   "widgetConsumptionRhythmStable": "消費很均勻",
   "widgetConsumptionRhythmIncrease": "比上週更快",
   "widgetConsumptionRhythmDecrease": "比上週更穩",
-  "widgetConsumptionRhythmEmpty": "近 30 天還沒有支出",
+  "widgetConsumptionRhythmEmpty": "本月還沒有支出",
   "widgetBeeTrailTitle": "記帳連續蜂跡",
   "widgetBeeTrailStreakSuffix": "天",
-  "widgetBeeTrailCompletion": "近 28 天完成率",
+  "widgetBeeTrailCompletion": "本月完成率",
   "widgetBeeTrailEmpty": "今天記一筆，點亮第一格",
   "widgetGalleryConsumptionRhythmDesc": "近 30 天消費節奏一眼看清",
   "widgetGalleryBeeTrailDesc": "用蜂巢格養成每日記帳習慣",
@@ -2386,16 +2420,6 @@
   "widgetSizeMedium": "中號",
   "widgetSizeLarge": "大號",
   "widgetTodayExpense": "今日支出",
-  "widgetConsumptionRhythmTitle": "消費節奏",
-  "widgetConsumptionRhythmRange": "近 30 天",
-  "widgetConsumptionRhythmStable": "消費很均勻",
-  "widgetConsumptionRhythmIncrease": "比上週更快",
-  "widgetConsumptionRhythmDecrease": "比上週更穩",
-  "widgetConsumptionRhythmEmpty": "本月還沒有支出",
-  "widgetBeeTrailTitle": "記帳連續蜂跡",
-  "widgetBeeTrailStreakSuffix": "天",
-  "widgetBeeTrailCompletion": "本月完成率",
-  "widgetBeeTrailEmpty": "今天記一筆，點亮第一格",
   "widgetTodayIncome": "今日收入",
   "widgetToday": "今日",
   "widgetQuickAddLabel": "記一筆",
@@ -2597,8 +2621,6 @@
   "budgetManagementDesc": "設置月度預算，控制支出",
   "budgetSetupHint": "設置預算，輕鬆掌控每月開支",
   "budgetSetupAction": "去設置",
-
-
   "syncHealthTitle": "同步狀態",
   "cloudSyncHelpTitle": "同步說明 · 為什麼有時同步不動？",
   "cloudSyncHelpModesTitle": "三種同步方式",
@@ -2613,7 +2635,9 @@
   "syncHealthCheckFailed": "檢測失敗：{msg}",
   "@syncHealthCheckFailed": {
     "placeholders": {
-      "msg": { "type": "String" }
+      "msg": {
+        "type": "String"
+      }
     }
   },
   "syncHealthHasDiff": "偵測到差異，已自動同步",
@@ -2631,17 +2655,22 @@
   "syncHealthValue": "本地 {local} · 雲端 {remote}",
   "@syncHealthValue": {
     "placeholders": {
-      "local": { "type": "int" },
-      "remote": { "type": "int" }
+      "local": {
+        "type": "int"
+      },
+      "remote": {
+        "type": "int"
+      }
     }
   },
   "syncHealthValueRemoteMissing": "本地 {local} · 雲端 —",
   "@syncHealthValueRemoteMissing": {
     "placeholders": {
-      "local": { "type": "int" }
+      "local": {
+        "type": "int"
+      }
     }
   },
-
   "twofaChallengeTitle": "二次驗證",
   "twofaMethodTotp": "動態碼",
   "twofaMethodRecovery": "恢復碼",
@@ -2652,7 +2681,9 @@
   "twofaCountdown": "剩餘時間 {time}",
   "@twofaCountdown": {
     "placeholders": {
-      "time": { "type": "String" }
+      "time": {
+        "type": "String"
+      }
     }
   },
   "twofaVerifyButton": "驗證",
@@ -2662,7 +2693,9 @@
   "twofaStatusEnabledAt": "啟用於 {date}",
   "@twofaStatusEnabledAt": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
   "twofaStatusManageHint": "請前往 Web 端管理(啟用 / 禁用 / 重新生成恢復碼)",
@@ -2679,17 +2712,53 @@
   "sharedJoinPreviewButton": "驗證邀請碼",
   "sharedJoinAcceptButton": "加入帳本",
   "sharedJoinInvitedBy": "{name} 邀請你加入",
-  "@sharedJoinInvitedBy": { "placeholders": { "name": { "type": "String" } } },
+  "@sharedJoinInvitedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "sharedJoinRoleLine": "角色:{role}",
-  "@sharedJoinRoleLine": { "placeholders": { "role": { "type": "String" } } },
+  "@sharedJoinRoleLine": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
   "sharedJoinExpiresInMinutes": "有效期還剩 {n} 分鐘",
-  "@sharedJoinExpiresInMinutes": { "placeholders": { "n": { "type": "int" } } },
+  "@sharedJoinExpiresInMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "sharedJoinExpiresInHours": "有效期還剩 {n} 小時",
-  "@sharedJoinExpiresInHours": { "placeholders": { "n": { "type": "int" } } },
+  "@sharedJoinExpiresInHours": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "sharedJoinExpiresInDays": "有效期還剩 {n} 天",
-  "@sharedJoinExpiresInDays": { "placeholders": { "n": { "type": "int" } } },
+  "@sharedJoinExpiresInDays": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "sharedJoinSuccess": "已加入「{name}」",
-  "@sharedJoinSuccess": { "placeholders": { "name": { "type": "String" } } },
+  "@sharedJoinSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "sharedJoinCodeFormatError": "邀請碼格式不對,請輸入 6 位字母數字",
   "sharedJoinInvalidOrExpired": "邀請碼無效或已過期,請向邀請人索取新碼",
   "sharedJoinAlreadyMember": "你已經是該帳本成員",
@@ -2698,24 +2767,48 @@
   "sharedInviteFormRole": "角色",
   "sharedInviteFormExpiry": "有效期",
   "sharedInviteExpiryHours": "{n} 小時",
-  "@sharedInviteExpiryHours": { "placeholders": { "n": { "type": "int" } } },
+  "@sharedInviteExpiryHours": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "sharedInviteExpiryDays": "{n} 天",
-  "@sharedInviteExpiryDays": { "placeholders": { "n": { "type": "int" } } },
+  "@sharedInviteExpiryDays": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "sharedInviteGenerate": "生成邀請碼",
   "sharedInviteGenerateAnother": "生成另一個邀請碼",
   "sharedInviteCopyCode": "複製邀請碼",
   "sharedInviteCopyLink": "複製連結",
   "sharedInviteShareLink": "分享給好友",
   "sharedInviteExpiresAt": "邀請將在 {dt} 失效",
-  "@sharedInviteExpiresAt": { "placeholders": { "dt": { "type": "String" } } },
+  "@sharedInviteExpiresAt": {
+    "placeholders": {
+      "dt": {
+        "type": "String"
+      }
+    }
+  },
   "sharedInviteWarning": "⚠️ 不要把邀請碼發到公開群 / 朋友圈。拿到碼的任何人都可加入帳本;洩漏後請到成員管理頁撤銷並重新生成。",
   "sharedInviteInstruction": "把邀請碼或短連結發給對方。對方裝上 BeeCount 後,點擊連結或在「我的 → 加入共享帳本」輸入碼即可加入。",
   "sharedInviteShareText": "邀請你加入 BeeCount 共享帳本「{ledger}」\n\n邀請碼:{code}\n連結:{url}\n\n點擊連結或在 BeeCount → 我的 → 加入共享帳本輸入此碼即可。",
   "@sharedInviteShareText": {
     "placeholders": {
-      "ledger": { "type": "String" },
-      "code": { "type": "String" },
-      "url": { "type": "String" }
+      "ledger": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      },
+      "url": {
+        "type": "String"
+      }
     }
   },
   "sharedMembersPageTitle": "成員管理",
@@ -2724,27 +2817,69 @@
   "sharedMembersLeaveCta": "退出帳本",
   "sharedMembersLeaveTitle": "退出帳本",
   "sharedMembersLeaveConfirm": "退出「{name}」後將無法再訪問其中的交易。確定繼續嗎?",
-  "@sharedMembersLeaveConfirm": { "placeholders": { "name": { "type": "String" } } },
+  "@sharedMembersLeaveConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "sharedMembersLeaveDone": "已退出帳本",
   "sharedMembersRemoveTitle": "移除成員",
   "sharedMembersRemoveCta": "移除該成員",
   "sharedMembersRemoveConfirm": "確定移除 {name}?ta 將立即失去對該帳本的訪問。",
-  "@sharedMembersRemoveConfirm": { "placeholders": { "name": { "type": "String" } } },
+  "@sharedMembersRemoveConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "sharedMembersRemoved": "已移除成員",
   "sharedMembersTransferTitle": "轉讓所有權",
   "sharedMembersTransferTo": "轉讓給該成員",
   "sharedMembersTransferConfirm": "把帳本所有權轉給 {name}?你將變為編輯者,無法再邀請人 / 改帳本名 / 刪帳本。",
-  "@sharedMembersTransferConfirm": { "placeholders": { "name": { "type": "String" } } },
+  "@sharedMembersTransferConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "sharedMembersTransferConfirmCta": "確認轉讓",
   "sharedMembersTransferDone": "已轉讓所有權",
   "sharedTxRecordedBy": "{name} 記的",
-  "@sharedTxRecordedBy": { "placeholders": { "name": { "type": "String" } } },
+  "@sharedTxRecordedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "sharedTxCreatedBy": "{name} 建立",
-  "@sharedTxCreatedBy": { "placeholders": { "name": { "type": "String" } } },
+  "@sharedTxCreatedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "sharedTxEditedBy": "{name} 最後編輯",
-  "@sharedTxEditedBy": { "placeholders": { "name": { "type": "String" } } },
+  "@sharedTxEditedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "sharedTxCreatedAndEditedBy": "{name} 建立並編輯",
-  "@sharedTxCreatedAndEditedBy": { "placeholders": { "name": { "type": "String" } } },
+  "@sharedTxCreatedAndEditedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "sharedRequiresCloudSync": "請先啟用雲端同步",
   "sharedMembersStatsTitle": "成員收支",
   "sharedMembersStatsEmpty": "本期暫無記帳",
@@ -2752,7 +2887,13 @@
   "sharedMembersStatsIncome": "總收入",
   "sharedMembersStatsExpense": "總支出",
   "sharedMembersStatsTxCount": "{count}筆",
-  "@sharedMembersStatsTxCount": { "placeholders": { "count": { "type": "int" } } },
+  "@sharedMembersStatsTxCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "maintenanceOrphanCleanupTitle": "資料清理",
   "maintenanceOrphanCleanupSubtitle": "檢查並清理本地孤兒資料",
   "maintenanceOrphanRescan": "重新掃描",
@@ -2761,27 +2902,81 @@
   "maintenanceOrphanGroupFile": "磁碟檔案孤兒",
   "maintenanceOrphanGroupSync": "同步狀態孤兒",
   "maintenanceOrphanSummary": "發現 {count} 項異常",
-  "@maintenanceOrphanSummary": { "placeholders": { "count": { "type": "int" } } },
+  "@maintenanceOrphanSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "maintenanceOrphanSummarySize": "可釋放空間約 {size}",
-  "@maintenanceOrphanSummarySize": { "placeholders": { "size": { "type": "String" } } },
+  "@maintenanceOrphanSummarySize": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
   "maintenanceOrphanSelectAll": "全選",
   "maintenanceOrphanDeselectAll": "取消全選",
   "maintenanceOrphanDeleteOne": "刪除此項",
   "maintenanceOrphanSelectedHint": "已選 {count} 項",
-  "@maintenanceOrphanSelectedHint": { "placeholders": { "count": { "type": "int" } } },
+  "@maintenanceOrphanSelectedHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "maintenanceOrphanCleanSelected": "清理已選",
   "maintenanceOrphanConfirmTitle": "確認清理",
   "maintenanceOrphanConfirmDeleteOne": "確定清理「{title}」嗎？操作不可撤銷。",
-  "@maintenanceOrphanConfirmDeleteOne": { "placeholders": { "title": { "type": "String" } } },
+  "@maintenanceOrphanConfirmDeleteOne": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
   "maintenanceOrphanConfirmDeleteBatch": "確定清理選中的 {count} 項嗎？操作不可撤銷。",
-  "@maintenanceOrphanConfirmDeleteBatch": { "placeholders": { "count": { "type": "int" } } },
+  "@maintenanceOrphanConfirmDeleteBatch": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "maintenanceOrphanCleanSuccess": "已清理 {count} 項",
-  "@maintenanceOrphanCleanSuccess": { "placeholders": { "count": { "type": "int" } } },
+  "@maintenanceOrphanCleanSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "maintenanceOrphanCleanPartial": "成功 {ok} 項,失敗 {fail} 項",
-  "@maintenanceOrphanCleanPartial": { "placeholders": { "ok": { "type": "int" }, "fail": { "type": "int" } } },
+  "@maintenanceOrphanCleanPartial": {
+    "placeholders": {
+      "ok": {
+        "type": "int"
+      },
+      "fail": {
+        "type": "int"
+      }
+    }
+  },
   "syncProgressTitle": "正在同步",
   "syncProgressCount": "{applied} / {total} 條",
-  "@syncProgressCount": { "placeholders": { "applied": { "type": "int" }, "total": { "type": "int" } } },
+  "@syncProgressCount": {
+    "placeholders": {
+      "applied": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "exchangeRatePageTitle": "匯率管理",
   "exchangeRateEntrySubtitle": "自動取得匯率，支援手動修正",
   "baseCurrencyLabel": "主幣種",
@@ -2825,20 +3020,37 @@
   "txCurrencyLabel": "幣種",
   "txRateLabel": "匯率",
   "txConvertedPreview": "≈ {amount} {currency}",
-  "@txConvertedPreview": { "placeholders": { "amount": {}, "currency": {} } },
+  "@txConvertedPreview": {
+    "placeholders": {
+      "amount": {},
+      "currency": {}
+    }
+  },
   "txRateMissingHint": "請手動填寫本筆匯率後儲存",
   "txCrossCurrencyTransferBlocked": "暫不支援跨幣種轉帳,請分別記兩筆或使用同幣種帳戶",
   "ledgerBaseCurrencyLabel": "主幣種",
   "statsConvertedFootnote": "含外幣,已按各筆記帳時匯率折算為 {currency}",
-  "@statsConvertedFootnote": { "placeholders": { "currency": {} } },
+  "@statsConvertedFootnote": {
+    "placeholders": {
+      "currency": {}
+    }
+  },
   "ledgerCurrencyChangeRecalcHint": "修改本位幣將按當前匯率重算全部歷史交易的折算值",
   "recalcForeignTxBanner": "偵測到該帳本有未折算的外幣交易",
   "recalcForeignTxAction": "按當前匯率重算折算",
   "recalcForeignTxDone": "已重算 {count} 筆外幣交易的折算值",
-  "@recalcForeignTxDone": { "placeholders": { "count": {} } },
+  "@recalcForeignTxDone": {
+    "placeholders": {
+      "count": {}
+    }
+  },
   "txCurrencyPickerTitle": "選擇幣種",
   "recalcSyncCountHint": "將重算並同步 {count} 筆交易",
-  "@recalcSyncCountHint": { "placeholders": { "count": {} } },
+  "@recalcSyncCountHint": {
+    "placeholders": {
+      "count": {}
+    }
+  },
   "exportCsvHeaderCurrency": "幣種",
   "importFieldCurrency": "幣種",
   "currencyMOP": "澳門元",
@@ -2849,11 +3061,11 @@
   "currencyBND": "文萊元",
   "currencyNPR": "尼泊爾盧比",
   "currencyBTN": "不丹努爾特魯姆",
-  "currencyMVR": "马爾代夫拉菲亞",
+  "currencyMVR": "馬爾地夫拉菲亞",
   "currencyAFN": "阿富汗尼",
   "currencyUZS": "烏茲別克斯坦索姆",
   "currencyTJS": "塔吉克斯坦索莫尼",
-  "currencyTMT": "土庫曼斯坦马納特",
+  "currencyTMT": "土庫曼馬納特",
   "currencyKGS": "吉爾吉斯斯坦索姆",
   "currencyQAR": "卡塔爾里亞爾",
   "currencyKWD": "科威特第納爾",
@@ -2867,31 +3079,31 @@
   "currencySYP": "敘利亞鎊",
   "currencyGEL": "格魯吉亞拉里",
   "currencyAMD": "亞美尼亞德拉姆",
-  "currencyAZN": "阿塞拜疆马納特",
-  "currencyRON": "羅马尼亞列伊",
+  "currencyAZN": "亞塞拜然馬納特",
+  "currencyRON": "羅馬尼亞列伊",
   "currencyBGN": "保加利亞列弗",
   "currencyRSD": "塞爾維亞第納爾",
-  "currencyISK": "冰岛克朗",
+  "currencyISK": "冰島克朗",
   "currencyMDL": "摩爾多瓦列伊",
   "currencyALL": "阿爾巴尼亞列克",
-  "currencyMKD": "北马其顿第納爾",
-  "currencyBAM": "波黑可兑換马克",
+  "currencyMKD": "北馬其頓第納爾",
+  "currencyBAM": "波赫可兌換馬克",
   "currencyGIP": "直布羅陀鎊",
-  "currencyGTQ": "危地马拉格查爾",
+  "currencyGTQ": "瓜地馬拉格查爾",
   "currencyHNL": "洪都拉斯伦皮拉",
   "currencyNIO": "尼加拉瓜科多巴",
   "currencyCRC": "哥斯達黎加科朗",
-  "currencyPAB": "巴拿马巴波亞",
+  "currencyPAB": "巴拿馬巴波亞",
   "currencyDOP": "多米尼加比索",
   "currencyCUP": "古巴比索",
   "currencyJMD": "牙買加元",
   "currencyTTD": "特立尼達和多巴哥元",
-  "currencyBSD": "巴哈马元",
+  "currencyBSD": "巴哈馬元",
   "currencyBBD": "巴巴多斯元",
   "currencyBZD": "伯利茲元",
   "currencyHTG": "海地古德",
-  "currencyXCD": "东加勒比元",
-  "currencyKYD": "开曼群岛元",
+  "currencyXCD": "東加勒比元",
+  "currencyKYD": "開曼群島元",
   "currencyAWG": "阿魯巴弗羅林",
   "currencyANG": "荷屬安的列斯盾",
   "currencyBMD": "百慕大元",
@@ -2903,7 +3115,7 @@
   "currencySRD": "蘇里南元",
   "currencyFJD": "斐濟元",
   "currencyPGK": "巴布亞新幾內亞基那",
-  "currencySBD": "所羅門群岛元",
+  "currencySBD": "所羅門群島元",
   "currencyTOP": "湯加潘加",
   "currencyVUV": "瓦努阿圖瓦圖",
   "currencyWST": "薩摩亞塔拉",
@@ -2924,7 +3136,7 @@
   "currencyBWP": "博茨瓦納普拉",
   "currencyNAD": "納米比亞元",
   "currencyZMW": "贊比亞克瓦查",
-  "currencyMWK": "马拉維克瓦查",
+  "currencyMWK": "馬拉威乖查",
   "currencyMZN": "莫桑比克梅蒂卡爾",
   "currencyAOA": "安哥拉宽扎",
   "currencyCDF": "剛果法郎",
@@ -2934,7 +3146,7 @@
   "currencySLE": "塞拉利昂利昂",
   "currencySDG": "蘇丹鎊",
   "currencySSP": "南蘇丹鎊",
-  "currencySOS": "索马里先令",
+  "currencySOS": "索馬利亞先令",
   "currencyDJF": "吉布提法郎",
   "currencyERN": "厄立特里亞納克法",
   "currencyBIF": "布隆迪法郎",
@@ -2944,7 +3156,7 @@
   "currencyKMF": "科摩羅法郎",
   "currencyLSL": "萊索托洛蒂",
   "currencySZL": "斯威士蘭里蘭吉尼",
-  "currencyMGA": "马達加斯加阿里亞里",
+  "currencyMGA": "馬達加斯加阿里亞里",
   "currencyMRU": "毛里塔尼亞烏吉亞",
   "annualReportInsightsTitle": "年度洞察",
   "annualReportInsightsSubtitle": "從資料中發現你的消費習慣",
@@ -3270,7 +3482,6 @@
   "donationUnknownError": "未知錯誤",
   "donationVerificationFailed": "購買驗證失敗",
   "donationRestoreFailed": "恢復購買失敗：{error}",
-  "updateDownloadComplete": "下載完成",
   "updateDownloadDone": "完成",
   "attachmentArchiveMissing": "附件歸檔檔案不存在",
   "attachmentArchiveInvalidFormat": "附件歸檔格式錯誤：缺少 metadata.json",
@@ -3290,36 +3501,258 @@
   "logExportTitle": "=== BeeCount 日誌匯出 ===",
   "logExportTime": "匯出時間：{time}",
   "logExportCount": "日誌數量：{count}",
-  "exportColumnsTitle": "匯出欄位",
-  "exportColumnsDescription": "點選需要匯出的欄位，展開欄位順序可調整表頭位置。",
+  "aboutBrandStatement": "記下生活，也把資料留給自己。",
+  "aboutHelpSupport": "幫助與支援",
+  "aboutProductDetails": "了解這款產品",
+  "accountAllFlows": "全部流水",
+  "accountInflows": "收入與轉入",
+  "accountOutflows": "支出與轉出",
+  "aiPromptPaste": "貼上提示詞",
+  "aiPromptShare": "分享提示詞",
+  "aiProviderHideKey": "隱藏密鑰",
+  "aiProviderShowKey": "顯示密鑰",
+  "appearanceCardBlur": "磨砂強度",
+  "appearanceCardBlurOff": "關閉",
+  "appearanceCardBlurStrong": "更強",
+  "appearanceCardMaterial": "面板卡片材質",
+  "appearanceCardMaterialDescription": "調整面板上卡片的透明度和磨砂。列表行共用外層卡片，底部導覽保持清晰。",
+  "appearanceCardMaterialPreview": "即時預覽",
+  "appearanceCardMaterialPreviewBody": "卡片文字與圖示保持清晰",
+  "appearanceCardMaterialReset": "恢復預設材質",
+  "appearanceCardMaterialSummary": "透明度 {transparency}% · 磨砂 {blur}",
+  "appearanceCardOpaque": "不透明",
+  "appearanceCardTransparency": "卡片透明度",
+  "appearanceCardTransparent": "更透明",
+  "categoryManageChildren": "管理",
+  "creditCardAmountInvalid": "請輸入有效金額；信用卡欠款或溢繳款請填寫非負數。",
+  "creditCardDebtHint": "填寫目前總欠款，輸入正數；沒有欠款填 0。",
+  "creditCardEstimateHint": "按已記流水估算，實際可用金額以銀行為準。",
+  "creditCardOverpayment": "溢繳款",
+  "creditCardOverpaymentHint": "填寫多還後留在信用卡裡的金額，輸入正數。",
+  "creditCardReminderDueRequired": "開啟提醒前，請填寫繳款日。",
+  "importAccountCurrencyPreview": "確認帳戶幣種",
+  "importAccountCurrencyPreviewHint": "根據帳單幣種建立或複用帳戶；同名多幣種及已有帳戶衝突會按幣種拆分，不修改舊帳戶。缺失幣種繼承已有帳戶，否則使用可確定的帳戶幣種或帳本幣種。",
+  "importCurrencyInvalid": "幣種無效，請修正對應行：",
+  "negativeAssetBalanceHint": "帳戶負餘額已從總資產扣減。",
+  "positiveAssetBalance": "正餘額資產",
+  "recordingProgressRecognizing": "正在辨識帳單",
+  "recordingProgressRecognizingDetail": "整理金額、分類與備註",
+  "recordingProgressSaving": "正在記帳",
+  "recordingProgressSavingDetail": "正在儲存本次辨識的記錄",
+  "recordingProgressSlow": "這次處理時間稍長，仍在繼續處理。",
+  "splashPreparingRecords": "正在準備你的記錄",
+  "splashSecurityCaption": "雲端同步由你選擇，資料始終由你掌握",
+  "splashSecurityFootnote": "無需帳號也能開始記錄，雲端同步由你選擇。",
+  "splashSecurityLocalTitle": "資料本機儲存",
+  "splashSecurityOpenTitle": "開源程式碼透明",
+  "splashSecuritySummary": "本機儲存 · 開源透明",
+  "splashSecuritySyncTitle": "可選雲端同步",
+  "transactionReceiptAction": "產生小票",
+  "transactionReceiptFields": "選擇小票中展示的資訊",
+  "transactionReceiptFooter": "認真記錄，好好生活",
+  "transactionReceiptLedger": "帳本",
+  "transactionReceiptShareFailed": "分享失敗，請重試。",
+  "transactionReceiptTags": "標籤",
+  "transactionReceiptTitle": "記帳小票",
+  "transactionReceiptUnavailable": "無法產生小票，請檢查這筆交易是否仍然存在。",
+  "v4AIChatSend": "傳送訊息",
+  "v4AccountActions": "帳戶操作",
+  "v4AccountBalanceRangeNote": "目前餘額不隨時間範圍改變。",
+  "v4AccountCashflow": "帳戶收支",
+  "v4AccountDetailTitle": "帳戶詳情",
+  "v4AccountFlowRules": "含轉入與轉出 · 按收支計入規則彙總",
+  "v4AccountIncluded": "已計入",
+  "v4AccountLedgerCount": "{count} 個帳本",
+  "v4AccountLinkedBooks": "關聯帳本",
+  "v4AccountNetFlow": "淨流入",
+  "v4AccountNetWorthLabel": "計入淨資產",
+  "v4AccountNoPeer": "請先新增另一個同幣種帳戶，再進行轉帳。",
+  "v4AccountNoTrend": "目前範圍暫無歷史記錄",
+  "v4AmountInvalid": "請輸入有效金額",
+  "v4AmountsHide": "隱藏金額",
+  "v4AmountsShow": "顯示金額",
+  "v4AnalyticsRecalculate": "補折算",
+  "v4AnalyticsShowPie": "顯示分類環圖",
+  "v4AnalyticsShowRanking": "顯示分類排行",
+  "v4AnalyticsTrend": "收支趨勢",
+  "v4AnalyticsView": "統計視角",
+  "v4AssetsAllAccounts": "全部帳戶",
+  "v4AssetsByCurrency": "按幣種檢視",
+  "v4AssetsComposition": "構成",
+  "v4AssetsCurrencyView": "金額顯示方式",
+  "v4AssetsDefaultExpense": "預設支出",
+  "v4AssetsDefaultIncome": "預設收入",
+  "v4AssetsHiddenIncluded": "隱藏帳戶仍計入淨資產",
+  "v4AssetsIncludesHidden": "含 {count} 個隱藏帳戶",
+  "v4AssetsOrder": "帳戶排序",
+  "v4AssetsOrderHint": "在同一帳戶類型內調整順序，不改變餘額。",
+  "v4AssetsOriginal": "原幣",
+  "v4AssetsSeparateCurrencyHint": "分別檢視各幣種，不混合相加。",
+  "v4AssetsTrend": "趨勢",
+  "v4AssetsUnifiedConversion": "統一折算",
+  "v4AttachmentPending": "待儲存",
+  "v4CategoryCommonIcons": "常用",
+  "v4CategoryImageHint": "保留圖片原色與透明背景，選擇後裁切為正方形。",
+  "v4CategoryPresetIcons": "預設圖示",
+  "v4CategoryToolsHint": "排序、匯入、分享與預設分類",
+  "v4CategoryToolsTitle": "分類工具",
+  "v4ClearSelection": "清空選擇",
+  "v4ConfigImportWarning": "匯入將覆蓋現有設定，建議先備份目前設定。",
+  "v4CustomIcons": "自訂圖示",
+  "v4DataAttachments": "帳單附件",
+  "v4DataBills": "帳單資料",
+  "v4DataCategories": "分類與標籤",
+  "v4DataConfiguration": "應用設定與空間",
+  "v4DetailAllTime": "全部時間",
+  "v4DetailAllTransactions": "檢視全部 {count} 筆",
+  "v4DetailAmountLabel": "{period}{kind}",
+  "v4DetailCategoryChildren": "一級分類 · {count} 個二級分類",
+  "v4DetailCollapse": "收起明細",
+  "v4DetailConvertedScope": "已按目前帳本幣種 {currency} 彙總",
+  "v4DetailCumulative": "累計",
+  "v4DetailCustom": "指定週期",
+  "v4DetailMissingCategory": "分類已不存在",
+  "v4DetailMissingConversion": "{count} 筆未折算 · {currencies}，暫不顯示彙總金額",
+  "v4DetailMonth": "本月",
+  "v4DetailRateDate": "匯率日期 {date}",
+  "v4DetailRatesStale": "匯率已超過 7 天 · {date}",
+  "v4DetailRecent": "近期帳單",
+  "v4DetailRecord": "記一筆 · {name}",
+  "v4DetailShare": "佔比",
+  "v4DetailTrend": "累計金額趨勢",
+  "v4DetailYear": "本年",
+  "v4HomeAllTransactions": "全部明細",
+  "v4HomeBatch": "批次",
+  "v4HomeBrandHide": "隱藏蜜蜂記帳品牌",
+  "v4HomeBrandShow": "顯示蜜蜂記帳品牌",
+  "v4HomeBudgetAvailable": "預算可用",
+  "v4HomeBudgetExceeded": "超支",
+  "v4HomeMonthBalance": "本月結餘",
+  "v4HomeMonthExpense": "本月支出",
+  "v4HomeMonthIncome": "本月收入",
+  "v4HomeMonthShare": "月帳單分享",
+  "v4HomeUseCompactSummary": "切換為精簡彙總",
+  "v4HomeUseStandardSummary": "切換為完整彙總",
+  "v4InsightsAllCategories": "全部 {count} 個分類",
+  "v4InsightsAmountUnit": "單位：{currency}",
+  "v4InsightsAverageDays": "按本週期截至今天已發生的天數計算，沒有記帳的日期也計入；不包含未來日期。",
+  "v4InsightsAverageMonths": "按本年度截至今天已發生的月份計算，沒有記帳的月份也計入；不包含未來月份。",
+  "v4InsightsAverageTitle": "平均值怎麼算",
+  "v4InsightsAverageYears": "按帳本記錄跨越的年份計算，沒有記帳的年份也計入；不包含未來年份。",
+  "v4InsightsBalanceComposition": "收支構成",
+  "v4InsightsBalanceEquation": "結餘 = 收入 − 支出",
+  "v4InsightsCategoryShare": "分類佔比",
+  "v4InsightsCollapseCategories": "收起分類",
+  "v4InsightsDaysUnit": "天",
+  "v4InsightsMonthsUnit": "個月",
+  "v4InsightsNextPeriod": "下一期",
+  "v4InsightsNoData": "換個統計週期，或點上方 Tab 切換收支視角。",
+  "v4InsightsOtherCategories": "其他分類",
+  "v4InsightsPreviousPeriod": "上一期",
+  "v4InsightsShareHint": "點選分類，檢視它在總額中的佔比",
+  "v4InsightsSortedByAmount": "按金額排序",
+  "v4InsightsTapBar": "點柱形，檢視對應收支",
+  "v4InsightsTrendTitle": "{type}趨勢",
+  "v4InsightsYearsUnit": "年",
+  "v4MineCloudGroup": "雲端服務與同步",
+  "v4MineFeaturesGroup": "功能管理",
+  "v4MineHelpGroup": "幫助與資訊",
+  "v4MineSupportGroup": "支持我們",
+  "v4QuickAddSlideHint": "長按後滑向目標，放開進入",
+  "v4RateInvalid": "請輸入大於 0 的有效匯率",
+  "v4RecordingCalculationHint": "支援 + − × ÷ 四則運算",
+  "v4RecordingCategoriesFailed": "分類載入失敗",
+  "v4RecordingClearAmount": "清空金額",
+  "v4RecordingConvertedLabel": "折合 {currency}",
+  "v4RecordingDiscardMessage": "尚未儲存的金額、備註和選擇將被清除。",
+  "v4RecordingDiscardTitle": "放棄本次記帳？",
+  "v4RecordingMoreCategories": "更多分類",
+  "v4RecordingRetry": "重試",
+  "v4RecordingSaveFailed": "儲存失敗，請重試",
+  "v4RecordingSaveNext": "再記一筆",
+  "v4RecordingSelectCategory": "請選擇分類",
+  "v4RecurringLastGeneratedLabel": "最近產生",
+  "v4ResourceParent": "上級",
+  "v4SearchAll": "全部",
+  "v4SearchClearHistory": "清除搜尋紀錄",
+  "v4SearchFilterActive": "已套用篩選",
+  "v4SearchHint": "搜尋備註、分類、金額、標籤",
+  "v4SearchInvalidRange": "請填寫有效的非負金額，並確認起止範圍正確",
+  "v4SearchInvert": "反選",
+  "v4SearchLedgerAmount": "折算金額",
+  "v4SearchOriginalAmount": "原幣金額",
+  "v4SearchRecent": "最近搜尋",
+  "v4SearchScope": "調整範圍",
+  "v4SearchSelected": "已選擇 {count} 筆",
+  "v4SearchSetTags": "設定標籤",
+  "v4SearchTagsSaved": "所選帳單的標籤已更新",
+  "v4SearchTitle": "帳單搜尋",
+  "v4ShareCardProfile": "我的檔案",
+  "v4ShareCardTitle": "分享卡片",
+  "v4SharePosterAverageRecords": "日均記帳",
+  "v4SharePosterDayCaption": "天，把生活認真記下。",
+  "v4SharePosterOpenSourceAction": "了解開源",
+  "v4SharePosterOpenSourceBody": "資料由你掌握，程式碼向你開放。\n和社群一起，讓記帳保持簡單。",
+  "v4SharePosterProfileEyebrow": "這是我的記帳日常",
+  "v4SharePosterProfileJourney": "把記錄，變成一個小習慣。",
+  "v4SharePosterPromoInvite": "一起，把日子記下來。",
+  "v4SharePosterRecommend": "推薦給朋友",
+  "v4SharePosterTopIncome": "TOP 3 收入",
+  "v4TagCategories": "關聯分類",
+  "v4TagDistribution": "分類分佈",
+  "v4TagOriginalLedgerTotals": "按原帳本金額彙總",
+  "v4TagRecord": "使用此標籤記一筆",
+  "v4TagToolsHint": "新增、匯入、預設產生與清理",
+  "v4TagToolsTitle": "標籤工具",
+  "v4TransactionDetailSnapshot": "歷史折算",
+  "v4TransactionDetailSnapshotRate": "記帳時匯率",
+  "v4TransactionDetailTitle": "帳單詳情",
+  "v4TransactionRowAccess": "存取狀態",
+  "v4TransactionRowFieldsTitle": "完整帳單欄位",
+  "v4TransactionRowMoreFields": "更多{count}項",
+  "v4TransactionRowReadOnly": "唯讀",
+  "v4TrendChange": "期間變化",
+  "v4TrendChangeRate": "變化比例",
+  "v4TrendClosing": "期末金額",
+  "v4TrendOpening": "期初金額",
+  "welcomeAttachmentBackupDescription": "TAR.GZ · 票據、截圖等附件",
+  "welcomeAttachmentRestoreDescription": "恢復票據與帳單的關聯，也可以稍後再匯入。",
+  "welcomeAttachmentRestoreTitle": "把回憶也帶回來。",
+  "welcomeCloudLater": "無需現在設定。進入後可在「我的 · 雲端服務」中開啟。",
+  "welcomeImportAttachmentsContinue": "匯入附件並完成",
+  "welcomePreferencesLater": "這些偏好之後都可以修改。",
+  "welcomeReadyDescription": "放心記下日常，資料始終由你掌控。",
+  "welcomeRestoreCategoriesTags": "分類與標籤",
+  "welcomeRestoreContinue": "匯入設定並繼續",
+  "welcomeRestoreDescription": "恢復熟悉的帳本，接著記錄你的日常。",
+  "welcomeRestoreLedgersAccounts": "帳本與帳戶",
+  "welcomeRestoreSettings": "應用設定與偏好",
+  "welcomeRestoreTitle": "歡迎回來。",
+  "welcomeSelectBackup": "選擇備份檔案",
+  "v4RecurringAmountExpense": "每次支出",
+  "v4RecurringAmountIncome": "每次收入",
+  "v4RecurringAmountTransfer": "每次轉帳",
+  "v4RecurringAutomatic": "自動記帳",
+  "v4RecurringNextCaption": "下次記帳 · {when}",
+  "v4RecurringUsageSummary": "開啟或回到 App 時，自動補記到期帳單。點擊卡片可編輯規則。",
+  "v4RecurringPreviewTitle": "接下來的記帳日期",
+  "exportFiltersTitle": "匯出範圍",
+  "aiImageReviewHint": "請核對金額、時間和筆數。疑似重複的帳單預設不選取。",
   "exportColumnsSelected": "已選 {selected} / {total} 欄",
+  "exportDateRangeLabel": "日期範圍",
+  "exportDateRangeHint": "依帳單發生日期篩選，包含起訖日期當天。",
+  "aiBillingAlreadySavedCount": "已記過 {count} 筆，已略過",
+  "aiBillingBusy": "圖片記帳正在處理中，請稍候",
+  "aiBillingPostProcessingPending": "帳單已儲存，重新整理或同步暫未完成",
+  "exportAllTypes": "全部",
+  "aiBillingFailedCount": "未儲存 {count} 筆，可重試未完成項目",
+  "exportClearDates": "清除日期限制",
+  "aiBillingAttachmentFailedCount": "有 {count} 筆帳單的附件未儲存，可在帳單中補充",
+  "syncRestoreDuplicateIdentity": "備份中存在重複的帳單識別碼，無法安全還原。",
+  "exportNoMatchingRecords": "沒有符合所選時間與類型的紀錄，請調整篩選條件後再匯出。",
+  "aiImageReviewTitle": "核對圖片帳單",
   "exportColumnsSelectAll": "全選",
   "exportColumnsClear": "清空",
-  "exportColumnsReset": "還原預設",
-  "exportColumnsOrder": "欄位順序與表頭預覽",
-  "exportColumnsMoveUp": "上移",
-  "exportColumnsMoveDown": "下移",
-  "exportColumnsEmpty": "請至少選擇一個欄位再匯出。",
-  "imageCropTitle": "裁剪圖片",
-  "imageCropAction": "裁剪",
-  "imageCropAvatarTitle": "裁剪頭像",
-  "imageCropDone": "裁剪完成",
-  "imageCropFailed": "裁剪或儲存圖片失敗，請重試。",
-  "imageCropCurrentAvatar": "裁剪目前頭像",
-  "aiImageReviewTitle": "核對圖片帳單",
-  "aiImageReviewHint": "請核對金額、時間和筆數。疑似重複的帳單預設不選取。",
-  "aiImageReviewSave": "儲存 {count} 筆",
-  "@aiImageReviewSave": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "aiImageReviewDuplicate": "疑似重複，請確認這是一筆獨立交易",
-  "aiImageReviewAlreadySaved": "此項已記帳",
-  "aiImageReviewRequired": "辨識結果可能重複，請在圖片記帳中核對後儲存",
-  "aiBillingSavedCount": "已新增 {count} 筆",
   "@aiBillingSavedCount": {
     "placeholders": {
       "count": {
@@ -3327,23 +3760,7 @@
       }
     }
   },
-  "aiBillingAlreadySavedCount": "已記過 {count} 筆，已略過",
-  "@aiBillingAlreadySavedCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "aiBillingFailedCount": "未儲存 {count} 筆，可重試未完成項目",
-  "@aiBillingFailedCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "aiBillingAttachmentFailedCount": "有 {count} 筆帳單的附件未儲存，可在帳單中補充",
+  "aiImageReviewAlreadySaved": "此項已記帳",
   "@aiBillingAttachmentFailedCount": {
     "placeholders": {
       "count": {
@@ -3351,17 +3768,46 @@
       }
     }
   },
-  "aiBillingPostProcessingPending": "帳單已儲存，重新整理或同步暫未完成",
-  "aiBillingBusy": "圖片記帳正在處理中，請稍候",
+  "@aiImageReviewSave": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "imageCropAvatarTitle": "裁剪頭像",
+  "aiImageReviewSave": "儲存 {count} 筆",
+  "imageCropCurrentAvatar": "裁剪目前頭像",
+  "aiBillingSavedCount": "已新增 {count} 筆",
+  "exportColumnsMoveDown": "下移",
   "syncRestoreMissingIdentity": "此備份缺少可靠的帳單識別碼，已停止還原以避免重複入帳。",
-  "syncRestoreDuplicateIdentity": "備份中存在重複的帳單識別碼，無法安全還原。",
-  "exportFiltersTitle": "匯出範圍",
-  "exportDateRangeLabel": "日期範圍",
-  "exportDateRangeHint": "依帳單發生日期篩選，包含起訖日期當天。",
+  "exportColumnsMoveUp": "上移",
+  "aiImageReviewRequired": "辨識結果可能重複，請在圖片記帳中核對後儲存",
+  "exportColumnsEmpty": "請至少選擇一個欄位再匯出。",
+  "imageCropDone": "裁剪完成",
+  "imageCropTitle": "裁剪圖片",
+  "exportColumnsOrder": "欄位順序與表頭預覽",
+  "@aiBillingFailedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aiImageReviewDuplicate": "疑似重複，請確認這是一筆獨立交易",
+  "@aiBillingAlreadySavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exportColumnsReset": "還原預設",
+  "exportColumnsDescription": "點選需要匯出的欄位，展開欄位順序可調整表頭位置。",
+  "imageCropFailed": "裁剪或儲存圖片失敗，請重試。",
   "exportAllDates": "全部時間",
-  "exportClearDates": "清除日期限制",
+  "imageCropAction": "裁剪",
   "exportRecordTypeLabel": "交易類型",
-  "exportAllTypes": "全部",
-  "exportDateRangePickerTitle": "選擇匯出時間區間",
-  "exportNoMatchingRecords": "沒有符合所選時間與類型的紀錄，請調整篩選條件後再匯出。"
+  "exportColumnsTitle": "匯出欄位",
+  "exportDateRangePickerTitle": "選擇匯出時間區間"
 }

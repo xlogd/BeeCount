@@ -6929,7 +6929,7 @@ abstract class AppLocalizations {
   /// No description provided for @recurringTransactionUsageContent.
   ///
   /// In en, this message translates to:
-  /// **'Recurring transactions are automatically scanned and generated when the app cold starts. After setting a date, the system will create corresponding bills on the first startup after that date. For example: if set to Nov 27, bills will be auto-recorded on the first launch after Nov 27.'**
+  /// **'Due recurring bills are automatically checked and recorded when opening or resuming the app, or upon saving a rule. Tap a card to edit and preview the next 3 scheduled dates.'**
   String get recurringTransactionUsageContent;
 
   /// No description provided for @ledgerSelectTitle.
@@ -17558,107 +17558,191 @@ abstract class AppLocalizations {
   /// **'This is taking a little longer. Processing is continuing.'**
   String get recordingProgressSlow;
 
-  /// No description provided for @exportColumnsTitle.
+  /// No description provided for @v4RecurringNotGeneratedYet.
   ///
   /// In en, this message translates to:
-  /// **'Export columns'**
-  String get exportColumnsTitle;
+  /// **'Not generated yet'**
+  String get v4RecurringNotGeneratedYet;
 
-  /// No description provided for @exportColumnsDescription.
+  /// No description provided for @v4RecurringNextToday.
   ///
   /// In en, this message translates to:
-  /// **'Select the columns to include. Expand column order to arrange the exported headers.'**
-  String get exportColumnsDescription;
+  /// **'Next {date} · Today'**
+  String v4RecurringNextToday(String date);
 
-  /// Number of selected export columns
+  /// No description provided for @v4RecurringNextTomorrow.
   ///
   /// In en, this message translates to:
-  /// **'Selected {selected} of {total} columns'**
-  String exportColumnsSelected(int selected, int total);
+  /// **'Next {date} · Tomorrow'**
+  String v4RecurringNextTomorrow(String date);
 
-  /// No description provided for @exportColumnsSelectAll.
+  /// No description provided for @v4RecurringNextInDays.
   ///
   /// In en, this message translates to:
-  /// **'Select all'**
-  String get exportColumnsSelectAll;
+  /// **'Next {date} · in {days}d'**
+  String v4RecurringNextInDays(String date, int days);
 
-  /// No description provided for @exportColumnsClear.
+  /// No description provided for @v4RecurringStatusPaused.
   ///
   /// In en, this message translates to:
-  /// **'Clear'**
-  String get exportColumnsClear;
+  /// **'Paused'**
+  String get v4RecurringStatusPaused;
 
-  /// No description provided for @exportColumnsReset.
+  /// No description provided for @v4RecurringStatusCompleted.
   ///
   /// In en, this message translates to:
-  /// **'Restore defaults'**
-  String get exportColumnsReset;
+  /// **'Ended'**
+  String get v4RecurringStatusCompleted;
 
-  /// No description provided for @exportColumnsOrder.
+  /// No description provided for @v4RecurringStatusBlocked.
   ///
   /// In en, this message translates to:
-  /// **'Column order and header preview'**
-  String get exportColumnsOrder;
+  /// **'Account unavailable'**
+  String get v4RecurringStatusBlocked;
 
-  /// No description provided for @exportColumnsMoveUp.
+  /// No description provided for @v4RecurringAccountHiddenWarning.
   ///
   /// In en, this message translates to:
-  /// **'Move up'**
-  String get exportColumnsMoveUp;
+  /// **'Account \"{account}\" is hidden; auto-recording is paused'**
+  String v4RecurringAccountHiddenWarning(String account);
 
-  /// No description provided for @exportColumnsMoveDown.
+  /// No description provided for @v4RecurringToAccountHiddenWarning.
   ///
   /// In en, this message translates to:
-  /// **'Move down'**
-  String get exportColumnsMoveDown;
+  /// **'Target account \"{account}\" is hidden; auto-recording is paused'**
+  String v4RecurringToAccountHiddenWarning(String account);
 
-  /// No description provided for @exportColumnsEmpty.
+  /// No description provided for @v4RecurringAccountMissingWarning.
   ///
   /// In en, this message translates to:
-  /// **'Select at least one column to export.'**
-  String get exportColumnsEmpty;
+  /// **'Linked account is missing; please reselect'**
+  String get v4RecurringAccountMissingWarning;
 
-  /// No description provided for @imageCropTitle.
+  /// No description provided for @v4RecurringMonthlyOnDay.
   ///
   /// In en, this message translates to:
-  /// **'Crop image'**
-  String get imageCropTitle;
+  /// **'{freq} · Day {day}'**
+  String v4RecurringMonthlyOnDay(String freq, int day);
 
-  /// No description provided for @imageCropAction.
+  /// No description provided for @v4RecurringWithAnchor.
   ///
   /// In en, this message translates to:
-  /// **'Crop'**
-  String get imageCropAction;
+  /// **'{freq} · {anchor}'**
+  String v4RecurringWithAnchor(String freq, String anchor);
 
-  /// No description provided for @imageCropAvatarTitle.
+  /// No description provided for @v4RecurringPreviewTitle.
   ///
   /// In en, this message translates to:
-  /// **'Crop avatar'**
-  String get imageCropAvatarTitle;
+  /// **'Upcoming dates'**
+  String get v4RecurringPreviewTitle;
 
-  /// No description provided for @imageCropDone.
+  /// No description provided for @v4RecurringPreviewCount.
   ///
   /// In en, this message translates to:
-  /// **'Image cropped'**
-  String get imageCropDone;
+  /// **'Next {count}'**
+  String v4RecurringPreviewCount(int count);
 
-  /// No description provided for @imageCropFailed.
+  /// No description provided for @v4RecurringPreviewEmptyEnded.
   ///
   /// In en, this message translates to:
-  /// **'Could not crop or save the image. Please try again.'**
-  String get imageCropFailed;
+  /// **'Past the end date; no further bills will be scheduled.'**
+  String get v4RecurringPreviewEmptyEnded;
 
-  /// No description provided for @imageCropCurrentAvatar.
+  /// No description provided for @v4RecurringPreviewPausedHint.
   ///
   /// In en, this message translates to:
-  /// **'Crop current avatar'**
-  String get imageCropCurrentAvatar;
+  /// **'This rule is paused; enable it to resume automatic recording.'**
+  String get v4RecurringPreviewPausedHint;
 
-  /// No description provided for @aiImageReviewTitle.
+  /// No description provided for @v4RecurringPreviewDueToday.
   ///
   /// In en, this message translates to:
-  /// **'Review image transactions'**
-  String get aiImageReviewTitle;
+  /// **'Today · Generates on save'**
+  String get v4RecurringPreviewDueToday;
+
+  /// No description provided for @v4RecurringPreviewPendingCatchUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue · Generates on save'**
+  String get v4RecurringPreviewPendingCatchUp;
+
+  /// No description provided for @v4RecurringPreviewTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get v4RecurringPreviewTomorrow;
+
+  /// No description provided for @v4RecurringPreviewInDays.
+  ///
+  /// In en, this message translates to:
+  /// **'in {days}d'**
+  String v4RecurringPreviewInDays(int days);
+
+  /// No description provided for @v4RecurringPreviewMonthEndTag.
+  ///
+  /// In en, this message translates to:
+  /// **'{when} · Month-end'**
+  String v4RecurringPreviewMonthEndTag(String when);
+
+  /// No description provided for @v4RecurringPreviewPreservedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress ({date}) is preserved; editing amount or note will not duplicate the current period.'**
+  String v4RecurringPreviewPreservedNote(String date);
+
+  /// No description provided for @v4RecurringPreviewMonthEndNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Month-end alignment: shorter months record on their last day, then resume on day {day}.'**
+  String v4RecurringPreviewMonthEndNote(int day);
+
+  /// No description provided for @v4RecurringAccountHiddenBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'(Hidden)'**
+  String get v4RecurringAccountHiddenBadge;
+
+  /// No description provided for @v4RecurringAmountExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Per expense'**
+  String get v4RecurringAmountExpense;
+
+  /// No description provided for @v4RecurringAmountIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Per income'**
+  String get v4RecurringAmountIncome;
+
+  /// No description provided for @v4RecurringAmountTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Per transfer'**
+  String get v4RecurringAmountTransfer;
+
+  /// No description provided for @v4RecurringAutomatic.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-recording'**
+  String get v4RecurringAutomatic;
+
+  /// No description provided for @v4RecurringNextCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Next bill · {when}'**
+  String v4RecurringNextCaption(String when);
+
+  /// No description provided for @v4RecurringUsageSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Due bills are recorded when you open or return to the app. Tap a rule to edit its schedule.'**
+  String get v4RecurringUsageSummary;
+
+  /// No description provided for @exportFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export scope'**
+  String get exportFiltersTitle;
 
   /// No description provided for @aiImageReviewHint.
   ///
@@ -17666,83 +17750,11 @@ abstract class AppLocalizations {
   /// **'Check the amounts, dates and number of transactions. Suspected duplicates are unselected by default.'**
   String get aiImageReviewHint;
 
-  /// No description provided for @aiImageReviewSave.
+  /// Number of selected export columns
   ///
   /// In en, this message translates to:
-  /// **'Save {count}'**
-  String aiImageReviewSave(int count);
-
-  /// No description provided for @aiImageReviewDuplicate.
-  ///
-  /// In en, this message translates to:
-  /// **'Possible duplicate. Select only if this is a separate payment.'**
-  String get aiImageReviewDuplicate;
-
-  /// No description provided for @aiImageReviewAlreadySaved.
-  ///
-  /// In en, this message translates to:
-  /// **'Already recorded'**
-  String get aiImageReviewAlreadySaved;
-
-  /// No description provided for @aiImageReviewRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Possible duplicates detected. Open image billing to review before saving.'**
-  String get aiImageReviewRequired;
-
-  /// No description provided for @aiBillingSavedCount.
-  ///
-  /// In en, this message translates to:
-  /// **'Transactions added: {count}'**
-  String aiBillingSavedCount(int count);
-
-  /// No description provided for @aiBillingAlreadySavedCount.
-  ///
-  /// In en, this message translates to:
-  /// **'Already recorded and skipped: {count}'**
-  String aiBillingAlreadySavedCount(int count);
-
-  /// No description provided for @aiBillingFailedCount.
-  ///
-  /// In en, this message translates to:
-  /// **'Not saved: {count}. Retry the unfinished items.'**
-  String aiBillingFailedCount(int count);
-
-  /// No description provided for @aiBillingAttachmentFailedCount.
-  ///
-  /// In en, this message translates to:
-  /// **'Attachments were not saved for {count} transactions. Add them from transaction details.'**
-  String aiBillingAttachmentFailedCount(int count);
-
-  /// No description provided for @aiBillingPostProcessingPending.
-  ///
-  /// In en, this message translates to:
-  /// **'Transactions are saved. Refresh or sync has not completed yet.'**
-  String get aiBillingPostProcessingPending;
-
-  /// No description provided for @aiBillingBusy.
-  ///
-  /// In en, this message translates to:
-  /// **'Image billing is in progress. Please wait.'**
-  String get aiBillingBusy;
-
-  /// No description provided for @syncRestoreMissingIdentity.
-  ///
-  /// In en, this message translates to:
-  /// **'This backup has no reliable transaction identities. Restore stopped to prevent duplicate transactions.'**
-  String get syncRestoreMissingIdentity;
-
-  /// No description provided for @syncRestoreDuplicateIdentity.
-  ///
-  /// In en, this message translates to:
-  /// **'The backup contains duplicate transaction identities and cannot be restored safely.'**
-  String get syncRestoreDuplicateIdentity;
-
-  /// No description provided for @exportFiltersTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Export scope'**
-  String get exportFiltersTitle;
+  /// **'Selected {selected} of {total} columns'**
+  String exportColumnsSelected(int selected, int total);
 
   /// No description provided for @exportDateRangeLabel.
   ///
@@ -17756,23 +17768,23 @@ abstract class AppLocalizations {
   /// **'Uses transaction dates and includes both the start and end dates.'**
   String get exportDateRangeHint;
 
-  /// No description provided for @exportAllDates.
+  /// No description provided for @aiBillingAlreadySavedCount.
   ///
   /// In en, this message translates to:
-  /// **'All dates'**
-  String get exportAllDates;
+  /// **'Already recorded and skipped: {count}'**
+  String aiBillingAlreadySavedCount(int count);
 
-  /// No description provided for @exportClearDates.
+  /// No description provided for @aiBillingBusy.
   ///
   /// In en, this message translates to:
-  /// **'Clear date range'**
-  String get exportClearDates;
+  /// **'Image billing is in progress. Please wait.'**
+  String get aiBillingBusy;
 
-  /// No description provided for @exportRecordTypeLabel.
+  /// No description provided for @aiBillingPostProcessingPending.
   ///
   /// In en, this message translates to:
-  /// **'Transaction type'**
-  String get exportRecordTypeLabel;
+  /// **'Transactions are saved. Refresh or sync has not completed yet.'**
+  String get aiBillingPostProcessingPending;
 
   /// No description provided for @exportAllTypes.
   ///
@@ -17780,17 +17792,185 @@ abstract class AppLocalizations {
   /// **'All types'**
   String get exportAllTypes;
 
-  /// No description provided for @exportDateRangePickerTitle.
+  /// No description provided for @aiBillingFailedCount.
   ///
   /// In en, this message translates to:
-  /// **'Select export date range'**
-  String get exportDateRangePickerTitle;
+  /// **'Not saved: {count}. Retry the unfinished items.'**
+  String aiBillingFailedCount(int count);
+
+  /// No description provided for @exportClearDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear date range'**
+  String get exportClearDates;
+
+  /// No description provided for @aiBillingAttachmentFailedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachments were not saved for {count} transactions. Add them from transaction details.'**
+  String aiBillingAttachmentFailedCount(int count);
+
+  /// No description provided for @syncRestoreDuplicateIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'The backup contains duplicate transaction identities and cannot be restored safely.'**
+  String get syncRestoreDuplicateIdentity;
 
   /// No description provided for @exportNoMatchingRecords.
   ///
   /// In en, this message translates to:
   /// **'No transactions match the selected dates and type. Adjust the filters and try again.'**
   String get exportNoMatchingRecords;
+
+  /// No description provided for @aiImageReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review image transactions'**
+  String get aiImageReviewTitle;
+
+  /// No description provided for @exportColumnsSelectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get exportColumnsSelectAll;
+
+  /// No description provided for @exportColumnsClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get exportColumnsClear;
+
+  /// No description provided for @aiImageReviewAlreadySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Already recorded'**
+  String get aiImageReviewAlreadySaved;
+
+  /// No description provided for @imageCropAvatarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop avatar'**
+  String get imageCropAvatarTitle;
+
+  /// No description provided for @aiImageReviewSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save {count}'**
+  String aiImageReviewSave(int count);
+
+  /// No description provided for @imageCropCurrentAvatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop current avatar'**
+  String get imageCropCurrentAvatar;
+
+  /// No description provided for @aiBillingSavedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions added: {count}'**
+  String aiBillingSavedCount(int count);
+
+  /// No description provided for @exportColumnsMoveDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Move down'**
+  String get exportColumnsMoveDown;
+
+  /// No description provided for @syncRestoreMissingIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'This backup has no reliable transaction identities. Restore stopped to prevent duplicate transactions.'**
+  String get syncRestoreMissingIdentity;
+
+  /// No description provided for @exportColumnsMoveUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Move up'**
+  String get exportColumnsMoveUp;
+
+  /// No description provided for @aiImageReviewRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Possible duplicates detected. Open image billing to review before saving.'**
+  String get aiImageReviewRequired;
+
+  /// No description provided for @exportColumnsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one column to export.'**
+  String get exportColumnsEmpty;
+
+  /// No description provided for @imageCropDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Image cropped'**
+  String get imageCropDone;
+
+  /// No description provided for @imageCropTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop image'**
+  String get imageCropTitle;
+
+  /// No description provided for @exportColumnsOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Column order and header preview'**
+  String get exportColumnsOrder;
+
+  /// No description provided for @aiImageReviewDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Possible duplicate. Select only if this is a separate payment.'**
+  String get aiImageReviewDuplicate;
+
+  /// No description provided for @exportColumnsReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore defaults'**
+  String get exportColumnsReset;
+
+  /// No description provided for @exportColumnsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the columns to include. Expand column order to arrange the exported headers.'**
+  String get exportColumnsDescription;
+
+  /// No description provided for @imageCropFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not crop or save the image. Please try again.'**
+  String get imageCropFailed;
+
+  /// No description provided for @exportAllDates.
+  ///
+  /// In en, this message translates to:
+  /// **'All dates'**
+  String get exportAllDates;
+
+  /// No description provided for @imageCropAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop'**
+  String get imageCropAction;
+
+  /// No description provided for @exportRecordTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction type'**
+  String get exportRecordTypeLabel;
+
+  /// No description provided for @exportColumnsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export columns'**
+  String get exportColumnsTitle;
+
+  /// No description provided for @exportDateRangePickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select export date range'**
+  String get exportDateRangePickerTitle;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
