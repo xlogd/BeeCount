@@ -16,6 +16,7 @@ import '../../../../utils/account_type_utils.dart';
 /// transfers require a same-currency pair, independent of the ledger currency.
 class TransferForm extends ConsumerStatefulWidget {
   final bool initialExcludeFromStats, initialExcludeFromBudget;
+  final bool initialInvoicePending;
   final String? initialCurrencyCode;
   final double? initialNativeAmount;
   final VoidCallback onTransferComplete;
@@ -30,6 +31,7 @@ class TransferForm extends ConsumerStatefulWidget {
       {super.key,
       this.initialExcludeFromStats = false,
       this.initialExcludeFromBudget = false,
+      this.initialInvoicePending = false,
       this.initialCurrencyCode,
       this.initialNativeAmount,
       required this.onTransferComplete,
@@ -47,6 +49,10 @@ class TransferForm extends ConsumerStatefulWidget {
 }
 
 class TransferFormState extends ConsumerState<TransferForm> {
+  void showRecordingOptions() {
+    _editorKey.currentState?.showRecordingOptions();
+  }
+
   int? _fromAccountId, _toAccountId, _retryTransactionId;
   late final int _ledgerId;
   late DateTime _initialDate;
@@ -237,6 +243,7 @@ class TransferFormState extends ConsumerState<TransferForm> {
           transactionKind: 'transfer',
           initialExcludeFromStats: widget.initialExcludeFromStats,
           initialExcludeFromBudget: widget.initialExcludeFromBudget,
+          initialInvoicePending: !_reset && widget.initialInvoicePending,
           initialCurrencyCode: _reset ? null : widget.initialCurrencyCode,
           initialNativeAmount: _reset ? null : widget.initialNativeAmount,
           fixedCurrencyCode: currency,

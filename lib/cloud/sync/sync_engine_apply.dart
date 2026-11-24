@@ -206,6 +206,7 @@ extension SyncEngineApplyExt on SyncEngine {
     final excludeBudget = payload.containsKey('excludeFromBudget')
         ? (payload['excludeFromBudget'] as bool? ?? false)
         : null;
+    final invoicePending = payload['invoicePending'];
 
     // v30 交易级多币种:payload 带键 → 用 payload 值;缺键(旧 App 的 change,
     // sync_changes 存的是原始 push payload,不经 server merge)→ 快照保护
@@ -259,6 +260,9 @@ extension SyncEngineApplyExt on SyncEngine {
         excludeFromBudget: excludeBudget == null
             ? const d.Value.absent()
             : d.Value(excludeBudget),
+        invoicePending: invoicePending is bool
+            ? d.Value(invoicePending)
+            : const d.Value.absent(),
         currencyCode: hasCurrencyKey
             ? d.Value(payloadCurrency)
             : const d.Value.absent(), // 缺键保留本地币种
@@ -288,6 +292,8 @@ extension SyncEngineApplyExt on SyncEngine {
               toAccountSyncIdOverride: d.Value(toAccountSyncIdOverride),
               excludeFromStats: d.Value(excludeStats ?? false),
               excludeFromBudget: d.Value(excludeBudget ?? false),
+              invoicePending:
+                  d.Value(invoicePending is bool ? invoicePending : false),
               // 缺键的旧 payload:nativeAmount = amount(隐含汇率 1,与 v30
               // 迁移回填同口径,外币账户交易由 L11 检测捞回);currencyCode
               // 留 NULL(检测端 LEFT JOIN 账户币种兜底)。

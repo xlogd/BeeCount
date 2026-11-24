@@ -31,6 +31,7 @@ import '../../../shared/currency/currency_flag.dart';
 import '../../../shared/appearance/page_skin_scope.dart';
 import '../../../attachment/attachment_preview_page.dart';
 import '../../../attachment/bindings/attachment_source.dart';
+import '../../../../utils/invoice_file.dart';
 
 final _recordingAccountProvider =
     FutureProvider.autoDispose.family<Account?, int>((ref, id) async {
@@ -185,6 +186,7 @@ typedef AmountEditorResult = ({
   List<File> pendingAttachments,
   bool excludeFromStats,
   bool excludeFromBudget,
+  bool invoicePending,
   // v30 交易级多币种:交易币种(有账户=账户币种;无账户=手选,默认本位币)
   // 与折本位币快照(同币种 == amount;外币 = amount × 汇率,缺汇率已在提交前阻断)。
   String? currencyCode,
@@ -215,6 +217,7 @@ class AmountEditorSheet extends ConsumerStatefulWidget {
   final String transactionKind; // 'expense' / 'income' / 'transfer'，决定标记开关可见性
   final bool initialExcludeFromStats; // 不计入收支，编辑模式回显
   final bool initialExcludeFromBudget; // 不计入预算，编辑模式回显
+  final bool initialInvoicePending;
   // v30 编辑模式回显:该笔的原币种与折算快照(用于推隐含汇率,只改备注时
   // 折算基准不漂移,.docs/multi-currency-ledger 01 §4.2)。
   final String? initialCurrencyCode;
@@ -248,6 +251,7 @@ class AmountEditorSheet extends ConsumerStatefulWidget {
     this.transactionKind = 'expense',
     this.initialExcludeFromStats = false,
     this.initialExcludeFromBudget = false,
+    this.initialInvoicePending = false,
     this.initialCurrencyCode,
     this.initialNativeAmount,
     this.fixedCurrencyCode,
@@ -306,6 +310,10 @@ class AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
 
   // 防重复提交标志
   bool _isSubmitting = false;
+  bool _addingAttachments = false;
+  int? _savedDraftId;
+  int? get _attachmentTransactionId =>
+      widget.editingTransactionId ?? _savedDraftId;
   Timer? _finishTapTimer;
   bool _discardConfirmed = false;
 
@@ -318,6 +326,7 @@ class AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
   // 交易标记（旗标弹窗）
   bool _excludeFromStats = false;
   bool _excludeFromBudget = false;
+  late bool _invoicePending = widget.initialInvoicePending;
 
   // v30 交易级多币种(L7 自动探测 + L12 无账户手选)
   String? _pickedCurrency; // 无账户时手选的币种;null = 本位币
@@ -681,7 +690,9 @@ class AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
   }
 
   Future<void> _submit({required bool continueAdding}) async {
-    if (_isSubmitting || !mounted || !widget.canSubmit) return;
+    if (_isSubmitting || _addingAttachments || !mounted || !widget.canSubmit) {
+      return;
+    }
     if (widget.cardLayout &&
         _selectedAccountId != null &&
         _selectedAccountCurrency == null) {
@@ -730,6 +741,7 @@ class AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
         accountId: _selectedAccountId,
         tagIds: _selectedTagIds,
         pendingAttachments: _pendingAttachments,
+        invoicePending: _invoicePending,
         excludeFromStats: _excludeFromStats,
         excludeFromBudget: (widget.transactionKind == 'expense' ||
                 widget.transactionKind == 'transfer') &&
@@ -737,6 +749,16 @@ class AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
         currencyCode: txCurrency,
         nativeAmount: nativeAmount,
       ));
+    } on RecordingAttachmentSaveFailure catch (failure) {
+      if (mounted) {
+        setState(() {
+          _savedDraftId = failure.transactionId;
+          _pendingAttachments = failure.failedFiles;
+        });
+        showAttachmentSaveWarning(context,
+            failure.attempted - failure.failedFiles.length, failure.attempted,
+            retryDraft: true);
+      }
     } catch (_) {
       if (mounted) {
         showBeeToast(
@@ -1036,6 +1058,7 @@ class AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
       _pendingAttachments.isNotEmpty ||
       _excludeFromStats != widget.initialExcludeFromStats ||
       _excludeFromBudget != widget.initialExcludeFromBudget ||
+      _invoicePending != widget.initialInvoicePending ||
       _selectedTagIds.length != (widget.initialTagIds?.length ?? 0) ||
       !_selectedTagIds.toSet().containsAll(widget.initialTagIds ?? []);
 
@@ -1197,11 +1220,11 @@ class AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
         (ref.watch(tagsForCurrentLedgerProvider).valueOrNull ?? <Tag>[])
             .where((tag) => _selectedTagIds.contains(tag.id))
             .toList();
-    final savedAttachments = widget.editingTransactionId == null
+    final savedAttachments = _attachmentTransactionId == null
         ? <TransactionAttachment>[]
         : ref
-                .watch(transactionAttachmentsProvider(
-                    widget.editingTransactionId!))
+                .watch(
+                    transactionAttachmentsProvider(_attachmentTransactionId!))
                 .valueOrNull ??
             <TransactionAttachment>[];
     final attachmentCount =
@@ -1361,9 +1384,9 @@ class AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
         allTags.where((t) => _selectedTagIds.contains(t.id)).toList();
 
     // 获取附件数量
-    if (widget.editingTransactionId != null) {
-      final attachmentsAsync = ref
-          .watch(transactionAttachmentsProvider(widget.editingTransactionId!));
+    if (_attachmentTransactionId != null) {
+      final attachmentsAsync =
+          ref.watch(transactionAttachmentsProvider(_attachmentTransactionId!));
       // 同样使用 valueOrNull 避免闪烁
       final attachments = attachmentsAsync.valueOrNull ?? [];
       final totalCount = attachments.length + _pendingAttachments.length;
@@ -1372,13 +1395,11 @@ class AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
     return _buildRowContent(selectedTags, _pendingAttachments.length, []);
   }
 
-  /// 交易标记弹窗：两个标记开关。
-  /// 可见性(01 §三):不计入收支 对 income/expense 显示;不计入预算 仅 expense。
-  /// 转账两个开关都不显示 → 旗标图标本身不渲染,不会触发此弹窗。
+  /// Invoice status is available for all transactions. Statistical flags vary
+  /// with the transaction type.
   Future<void> _showFlagsDialog() async {
-    if (widget.transactionKind == 'transfer') return;
     final l10n = AppLocalizations.of(context);
-    final primary = ref.watch(primaryColorProvider);
+    final primary = ref.read(primaryColorProvider);
     final kind = widget.transactionKind;
     final showStats = kind != 'transfer';
     final showBudget = kind == 'expense';
@@ -1395,36 +1416,54 @@ class AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
             return _editorDialog(
               backgroundColor: BeeTokens.surface(context),
               title: Text(
-                l10n.txFlagDialogTitle,
+                showStats ? l10n.txFlagDialogTitle : l10n.txFlagMoreOptions,
                 style: TextStyle(
                   color: BeeTokens.textPrimary(context),
                   fontSize: 17.0.scaled(context, ref),
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              content: RecordingFlagsForm(
-                  titleSize: 15.0.scaled(context, ref),
-                  hintSize: 12.0.scaled(context, ref),
-                  options: [
-                    if (showStats)
-                      RecordingFlagOption(
-                          title: l10n.txFlagExcludeFromStats,
-                          hint: l10n.txFlagExcludeFromStatsHint,
-                          value: stats,
-                          onChanged: (v) {
-                            setDialogState(() => stats = v);
-                            setState(() => _excludeFromStats = v);
-                          }),
-                    if (showBudget)
-                      RecordingFlagOption(
-                          title: l10n.txFlagExcludeFromBudget,
-                          hint: l10n.txFlagExcludeFromBudgetHint,
-                          value: budget,
-                          onChanged: (v) {
-                            setDialogState(() => budget = v);
-                            setState(() => _excludeFromBudget = v);
-                          })
-                  ]),
+              content: SingleChildScrollView(
+                  child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (showStats)
+                    RecordingFlagsForm(
+                        titleSize: 15.0.scaled(context, ref),
+                        hintSize: 12.0.scaled(context, ref),
+                        options: [
+                          if (showStats)
+                            RecordingFlagOption(
+                                title: l10n.txFlagExcludeFromStats,
+                                hint: l10n.txFlagExcludeFromStatsHint,
+                                value: stats,
+                                onChanged: (v) {
+                                  setDialogState(() => stats = v);
+                                  setState(() => _excludeFromStats = v);
+                                }),
+                          if (showBudget)
+                            RecordingFlagOption(
+                                title: l10n.txFlagExcludeFromBudget,
+                                hint: l10n.txFlagExcludeFromBudgetHint,
+                                value: budget,
+                                onChanged: (v) {
+                                  setDialogState(() => budget = v);
+                                  setState(() => _excludeFromBudget = v);
+                                })
+                        ]),
+                  Consumer(builder: (context, dialogRef, _) {
+                    final id = _attachmentTransactionId;
+                    final invoices = id == null
+                        ? null
+                        : dialogRef.watch(transactionAttachmentsProvider(id));
+                    return _invoiceControl(invoices?.valueOrNull ?? const [],
+                        statusReady: invoices == null || invoices.hasValue,
+                        onChanged: () {
+                      if (context.mounted) setDialogState(() {});
+                    });
+                  }),
+                ],
+              )),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
@@ -1510,12 +1549,12 @@ class AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
             onPendingFilesChanged: (files) {
               if (mounted) setState(() => _pendingAttachments = files);
             },
-            transactionId: widget.editingTransactionId,
+            transactionId: _attachmentTransactionId,
           ),
         ),
       );
       // 如果返回了新的待上传文件列表，更新状态
-      if (result != null) {
+      if (result != null && mounted) {
         setState(() {
           _pendingAttachments = result;
         });
@@ -1523,84 +1562,89 @@ class AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
     }
   }
 
+  Widget _invoiceControl(List<TransactionAttachment> saved,
+      {required bool statusReady, required VoidCallback onChanged}) {
+    final l = AppLocalizations.of(context);
+    final issued = saved.any((item) => isInvoiceFile(item.fileName)) ||
+        _pendingAttachments.any((file) => isInvoiceFile(file.path));
+    return BeeMenuRow(
+      key: const ValueKey('recording-invoice-status'),
+      title: l.invoiceStatus,
+      trailing: Text(!statusReady
+          ? '…'
+          : issued
+              ? l.invoiceIssued
+              : _invoicePending
+                  ? l.invoicePending
+                  : l.invoiceNotRequired),
+      onTap: issued || !statusReady
+          ? null
+          : () async {
+              final pending = await showBeeSheet<bool>(context,
+                  title: l.invoiceStatus,
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    BeeMenuRow(
+                        title: l.invoicePending,
+                        trailing:
+                            _invoicePending ? const Icon(Icons.check) : null,
+                        onTap: () => Navigator.pop(context, true)),
+                    BeeMenuRow(
+                        title: l.invoiceNotRequired,
+                        trailing:
+                            !_invoicePending ? const Icon(Icons.check) : null,
+                        onTap: () => Navigator.pop(context, false)),
+                  ]));
+              if (pending != null && mounted) {
+                setState(() => _invoicePending = pending);
+                onChanged();
+              }
+            },
+    );
+  }
+
   Future<void> _showAddAttachmentOptions() async {
-    final l10n = AppLocalizations.of(context);
-    final service = ref.read(attachmentServiceProvider);
-    if (widget.cardLayout) {
-      final savedCount = widget.editingTransactionId == null
-          ? 0
-          : await ref.read(
-              attachmentCountProvider(widget.editingTransactionId!).future);
+    if (_addingAttachments || _isSubmitting) return;
+    _addingAttachments = true;
+    try {
+      final transactionId = _attachmentTransactionId;
+      final repo = ref.read(repositoryProvider);
+      final service = ref.read(attachmentServiceProvider);
+      final existing = transactionId == null
+          ? const <TransactionAttachment>[]
+          : await repo.getAttachmentsByTransaction(transactionId);
       if (!mounted) return;
       final files = await pickAttachmentFiles(context, ref,
           remaining: AttachmentService.maxAttachments -
-              savedCount -
+              existing.length -
               _pendingAttachments.length);
       if (files.isEmpty || !mounted) return;
-      if (widget.editingTransactionId != null) {
-        await service.saveAttachments(
-            transactionId: widget.editingTransactionId!,
-            sourceFiles: files,
-            startIndex: savedCount);
-        ref.read(attachmentListRefreshProvider.notifier).state++;
-      } else {
+      if (transactionId == null) {
         setState(
             () => _pendingAttachments = [..._pendingAttachments, ...files]);
+        return;
       }
-      return;
-    }
-    Future<void> camera() async {
-      Navigator.pop(context);
-      final picked = await service.takePhoto();
-      if (!mounted) return;
-      final cropped = await cropPickedAttachmentFiles(
-          context, ref, picked == null ? [] : [picked]);
-      final file = cropped.isEmpty ? null : cropped.first;
-      if (file != null && mounted) {
-        if (widget.editingTransactionId != null) {
-          await service.saveAttachment(
-              transactionId: widget.editingTransactionId!,
-              sourceFile: file,
-              index: 0);
-          ref.read(attachmentListRefreshProvider.notifier).state++;
-        } else {
-          setState(() => _pendingAttachments = [..._pendingAttachments, file]);
-        }
+      final refresh = ref.read(attachmentListRefreshProvider.notifier);
+      final failed = <File>[];
+      final saved = await service.saveAttachments(
+          transactionId: transactionId,
+          sourceFiles: files,
+          startIndex: nextAttachmentSortOrder(existing),
+          onFailed: failed.add,
+          stopOnFailure: true);
+      if (saved.isNotEmpty && refresh.mounted) refresh.state++;
+      if (failed.isNotEmpty && mounted) {
+        setState(
+            () => _pendingAttachments = [..._pendingAttachments, ...failed]);
+        showAttachmentSaveWarning(context, saved.length, files.length,
+            retryDraft: true);
       }
-    }
-
-    Future<void> gallery() async {
-      Navigator.pop(context);
-      final picked = await service.pickFromGallery(
-          maxCount: 9 - _pendingAttachments.length);
-      if (!mounted) return;
-      final files = await cropPickedAttachmentFiles(context, ref, picked);
-      if (files.isNotEmpty && mounted) {
-        if (widget.editingTransactionId != null) {
-          await service.saveAttachments(
-              transactionId: widget.editingTransactionId!,
-              sourceFiles: files,
-              startIndex: 0);
-          ref.read(attachmentListRefreshProvider.notifier).state++;
-        } else {
-          setState(
-              () => _pendingAttachments = [..._pendingAttachments, ...files]);
-        }
+    } catch (_) {
+      if (mounted) {
+        showBeeToast(context, AppLocalizations.of(context).commonError,
+            tone: BeeTone.error);
       }
+    } finally {
+      _addingAttachments = false;
     }
-
-    await showModalBottomSheet<void>(
-        context: context,
-        builder: (_) => SafeArea(
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-              ListTile(
-                  leading: const Icon(Icons.camera_alt),
-                  title: Text(l10n.attachmentTakePhoto),
-                  onTap: camera),
-              ListTile(
-                  leading: const Icon(Icons.photo_library),
-                  title: Text(l10n.attachmentChooseFromGallery),
-                  onTap: gallery),
-            ])));
   }
 }

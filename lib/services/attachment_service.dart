@@ -12,6 +12,22 @@ import 'package:path_provider/path_provider.dart';
 import '../data/db.dart';
 import '../providers.dart';
 import 'system/logger_service.dart';
+import '../utils/invoice_file.dart';
+
+int nextAttachmentSortOrder(Iterable<TransactionAttachment> attachments) =>
+    attachments.fold(
+        0, (next, row) => row.sortOrder >= next ? row.sortOrder + 1 : next);
+
+/// The transaction exists. Only these files need to be retried.
+class RecordingAttachmentSaveFailure implements Exception {
+  RecordingAttachmentSaveFailure(
+      this.transactionId, List<File> failedFiles, this.attempted)
+      : failedFiles = List.unmodifiable(failedFiles);
+
+  final int transactionId;
+  final List<File> failedFiles;
+  final int attempted;
+}
 
 /// 附件服务
 /// 负责图片的选择、压缩、存储和管理
@@ -115,8 +131,10 @@ class AttachmentService {
     bool urgent = false,
   }) async {
     try {
+      final invoice = isInvoiceFile(sourceFile.path);
+      if (invoice) await validateInvoiceFile(sourceFile);
       final stored = await _prepareAttachmentImage(sourceFile,
-          index: index, urgent: urgent);
+          index: index, urgent: urgent || invoice);
       if (stored == null) return null;
       final fileName = stored.fileName;
       final fileSize = stored.fileSize;
@@ -266,6 +284,8 @@ class AttachmentService {
     required int transactionId,
     required List<File> sourceFiles,
     int startIndex = 0,
+    void Function(File)? onFailed,
+    bool stopOnFailure = false,
   }) async {
     final results = <TransactionAttachment>[];
     for (int i = 0; i < sourceFiles.length; i++) {
@@ -276,6 +296,14 @@ class AttachmentService {
       );
       if (attachment != null) {
         results.add(attachment);
+      } else {
+        onFailed?.call(sourceFiles[i]);
+        if (stopOnFailure) {
+          for (final remaining in sourceFiles.skip(i + 1)) {
+            onFailed?.call(remaining);
+          }
+          break;
+        }
       }
     }
     return results;

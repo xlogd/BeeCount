@@ -9,22 +9,33 @@ import '../../../../services/data/category_service.dart';
 import '../../../../utils/category_utils.dart';
 import '../../../../utils/currencies.dart';
 import '../../branding/bee_artwork.dart';
+import '../../../../utils/project_links.dart';
 
-/// Formatting and original project links live at the App boundary, not in UI.
+/// Format amounts and supply project links for share posters.
 String posterMoney(double value, AppLocalizations l,
         {String currency = 'CNY', bool hidden = false}) =>
     hidden
         ? '**'
         : '${getCurrencySymbol(currency)}${NumberFormat('#,##0.00', l.localeName).format(value)}';
 
-Widget posterQr({String? campaign}) => ColoredBox(
+Widget posterQr({String? campaign}) {
+  final url = campaign == null
+      ? ProjectLinks.repository
+      : Uri.parse(ProjectLinks.repository).replace(queryParameters: {
+          'utm_source': 'share_poster',
+          'utm_medium': 'qr_code',
+          'utm_campaign': campaign,
+        }).toString();
+  return ColoredBox(
     color: Colors.white,
     child: QrImageView(
-        data: campaign == null
-            ? 'https://github.com/TNT-Likely/BeeCount'
-            : 'https://github.com/TNT-Likely/BeeCount?utm_source=share_poster&utm_medium=qr_code&utm_campaign=$campaign',
-        backgroundColor: Colors.white,
-        padding: const EdgeInsets.all(5)));
+      data: url,
+      semanticsLabel: url,
+      backgroundColor: Colors.white,
+      padding: const EdgeInsets.all(5),
+    ),
+  );
+}
 
 Widget posterBrand(AppLocalizations l, Color accent,
         {double size = 54,
@@ -47,6 +58,7 @@ Widget posterFooter(AppLocalizations l, {String? campaign, bool qr = true}) =>
     BeePosterFooter(
         slogan: l.sharePosterSlogan,
         caption: l.appPromoFooterText,
+        projectLink: ProjectLinks.repositoryLabel,
         qr: qr ? posterQr(campaign: campaign) : null);
 
 List<BeePosterCategory> posterCategories(

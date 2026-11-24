@@ -105,9 +105,10 @@ class BeeAppSharePoster extends StatelessWidget {
       required this.features,
       required this.qr,
       required this.invitation,
+      required this.projectLink,
       required this.tags});
   final Widget header, footer, qr;
-  final String title, invitation;
+  final String title, invitation, projectLink;
   final Color accent;
   final List<BeePromoFeature> features;
   final List<String> tags;
@@ -174,8 +175,9 @@ class BeeAppSharePoster extends StatelessWidget {
                         style: const TextStyle(
                             fontSize: 24, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 12),
-                    const Text('github.com/TNT-Likely/BeeCount',
-                        style: TextStyle(fontSize: 17, color: BeePaper.muted)),
+                    Text(projectLink,
+                        style: const TextStyle(
+                            fontSize: 17, color: BeePaper.muted)),
                     const SizedBox(height: 15),
                     Wrap(spacing: 9, runSpacing: 9, children: [
                       for (final tag in tags)

@@ -422,6 +422,7 @@ List<RecentTransactionItem> _recentItems(_Pack p) {
         happenedAt: at,
         excludeFromStats: false,
         excludeFromBudget: false,
+        invoicePending: false,
       );
   return [
     RecentTransactionItem(

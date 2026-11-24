@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:in_app_review/in_app_review.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../services/system/logger_service.dart';
+import '../../../../utils/project_links.dart';
 
 Future<bool> tryOpenMineUrl(Uri url) async {
   try {
@@ -37,45 +38,17 @@ Future<bool> tryOpenMineUrl(Uri url) async {
 /// 显示 GitHub Star 引导弹窗
 void showMineGitHubStarGuide(BuildContext context) {
   final l10n = AppLocalizations.of(context);
-  final screenHeight = MediaQuery.of(context).size.height;
 
   showDialog(
     context: context,
     builder: (context) => BeeDialog(
       title: Text(l10n.githubStarGuideTitle),
-      content: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: screenHeight * 0.5,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                l10n.githubStarGuideContent,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 16),
-              // 引导图片
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  'assets/images/github_star_guide.png',
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      content: Text(l10n.githubStarGuideContent),
       actions: [
         FilledButton(
           onPressed: () {
             Navigator.pop(context);
-            tryOpenMineUrl(Uri.parse('https://github.com/TNT-Likely/BeeCount'));
+            tryOpenMineUrl(Uri.parse(ProjectLinks.repository));
           },
           child: Text(l10n.githubStarGuideButton),
         ),

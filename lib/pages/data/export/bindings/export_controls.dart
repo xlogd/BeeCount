@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:beecount_business_ui/transaction_export.dart';
 import 'package:beecount_ui/beecount_ui.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../models/transaction_export_column.dart';
 import '../../../../models/transaction_export_filter.dart';
 import '../../../../providers.dart';
+import '../../../../services/attachment_service.dart';
 import '../../../../services/system/logger_service.dart';
 import '../../../shared/dialogs/app_dialogs.dart';
 import 'export_csv.dart';
@@ -201,7 +204,10 @@ class _ExportControlsState extends ConsumerState<ExportControls> {
                     exporting || !filter.hasDateRange ? null : _clearDates,
                 onTypeChanged: exporting ? null : _changeType),
             fieldLabels: [
-              for (final column in columns) exportCsvColumnLabel(l, column)
+              l.exportCsvHeaderSequence,
+              for (final column in columns)
+                if (column != TransactionExportColumn.attachments)
+                  exportCsvColumnLabel(l, column)
             ],
             fieldsEditor: BeeExportColumns(
                 options: [
@@ -256,12 +262,17 @@ class _ExportControlsState extends ConsumerState<ExportControls> {
     try {
       final directory = await platform.exportDirectory();
       var recordCount = 0;
+      final includeAttachments =
+          selectedColumns.contains(TransactionExportColumn.attachments);
+      var attachments = <TransactionExportAttachment>[];
       final csv = await buildTransactionExportCsv(
           repo: repo,
           ledgerId: ledgerId,
           l10n: l,
           columns: selectedColumns,
           filter: selectedFilter,
+          packageAttachments: includeAttachments,
+          onAttachments: (value) => attachments = value,
           onRecordCount: (value) => recordCount = value,
           onProgress: (value) {
             if (mounted) setState(() => progress = value * .9);
@@ -276,8 +287,29 @@ class _ExportControlsState extends ConsumerState<ExportControls> {
       final fraction =
           (now.millisecond * 1000 + now.microsecond).toString().padLeft(6, '0');
       final ts = '${DateFormat('yyyyMMdd_HHmmss').format(now)}_$fraction';
-      final path = p.join(directory, 'beecount_$ts.csv');
-      await platform.writeCsv(path, csv);
+      final hasAttachments = includeAttachments && attachments.isNotEmpty;
+      final path =
+          p.join(directory, 'beecount_$ts.${hasAttachments ? 'zip' : 'csv'}');
+      if (hasAttachments) {
+        final attachmentDirectory =
+            await ref.read(attachmentServiceProvider).getAttachmentDirectory();
+        final files = <TransactionExportFile>[];
+        for (final attachment in attachments) {
+          final name = attachment.attachment.fileName;
+          if (name != p.basename(name) ||
+              name.contains('\\') ||
+              name == '.' ||
+              name == '..') {
+            throw FormatException('Invalid attachment file name', name);
+          }
+          files.add(TransactionExportFile(
+              File(p.join(attachmentDirectory.path, name)),
+              attachment.archivePath));
+        }
+        await platform.writePackage(path, csv, files);
+      } else {
+        await platform.writeCsv(path, csv);
+      }
       if (!mounted) return;
       setState(() {
         savedPath = path;

@@ -1,4 +1,5 @@
 import 'package:csv/csv.dart';
+import 'package:path/path.dart' as p;
 
 import '../../../../data/db.dart';
 import '../../../../data/repositories/base_repository.dart';
@@ -6,19 +7,31 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../models/transaction_export_column.dart';
 import '../../../../models/transaction_export_filter.dart';
 import '../../../../utils/category_utils.dart';
+import '../../../../utils/invoice_file.dart';
 
-/// Exports a ledger snapshot using exactly the selected column order.
+class TransactionExportAttachment {
+  const TransactionExportAttachment(this.attachment, this.archivePath);
+  final TransactionAttachment attachment;
+  final String archivePath;
+}
+
+/// Exports a ledger snapshot using the selected column order after the sequence.
 Future<String> buildTransactionExportCsv({
   required BaseRepository repo,
   required int ledgerId,
   required AppLocalizations l10n,
   List<TransactionExportColumn>? columns,
   TransactionExportFilter filter = const TransactionExportFilter.all(),
+  bool packageAttachments = false,
+  void Function(List<TransactionExportAttachment> attachments)? onAttachments,
   void Function(int count)? onRecordCount,
   void Function(double)? onProgress,
 }) async {
   // Copy before the first await so an in-flight export cannot change shape.
   final selected = validateTransactionExportColumns(columns);
+  final csvColumns = selected
+      .where((column) => column != TransactionExportColumn.attachments)
+      .toList(growable: false);
   final fields = selected.toSet();
   final snapshot =
       await repo.transactionsWithCategoryAll(ledgerId: ledgerId).first;
@@ -31,6 +44,7 @@ Future<String> buildTransactionExportCsv({
   final output = StringBuffer(
       encoder.convert([exportCsvHeaders(l10n, columns: selected)]));
   if (transactions.isEmpty) {
+    onAttachments?.call(const []);
     onProgress?.call(1);
     return output.toString();
   }
@@ -51,7 +65,6 @@ Future<String> buildTransactionExportCsv({
       }
     }
   }
-
   final needsAccounts = fields.any(const {
     TransactionExportColumn.currency,
     TransactionExportColumn.account,
@@ -78,9 +91,25 @@ Future<String> buildTransactionExportCsv({
     }
   }
 
+  final exportAttachments = <TransactionExportAttachment>[];
   for (var i = 0; i < transactions.length; i++) {
     final row = transactions[i];
     final transaction = row.t;
+    final rowAttachments =
+        attachments[transaction.id] ?? <TransactionAttachment>[];
+    if (packageAttachments) {
+      for (var index = 0; index < rowAttachments.length; index++) {
+        exportAttachments.add(TransactionExportAttachment(
+            rowAttachments[index],
+            transactionExportAttachmentPath(
+                l10n: l10n,
+                sequence: i + 1,
+                attachment: rowAttachments[index],
+                imageIndex: index + 1,
+                imageCount: rowAttachments.length,
+                note: transaction.note)));
+      }
+    }
     final category = row.category;
     final account = accountMap[transaction.accountId];
     final transfer = transaction.type == 'transfer';
@@ -114,24 +143,39 @@ Future<String> buildTransactionExportCsv({
           TransactionExportColumn.time => _exportTime(transaction.happenedAt),
           TransactionExportColumn.tags =>
             (tags[transaction.id] ?? <Tag>[]).map((tag) => tag.name).join(','),
-          TransactionExportColumn.attachments =>
-            (attachments[transaction.id] ?? <TransactionAttachment>[])
-                .map((attachment) => attachment.fileName)
-                .join(','),
+          TransactionExportColumn.attachments => throw StateError(
+              'Attachments are a package option, not a CSV column'),
         };
     // Encode rows directly instead of retaining a second copy of the ledger.
     output.write('\n');
-    final values = selected.map(value).toList();
-    // A single empty field must be quoted, otherwise readers may discard it as
-    // a blank line or treat it as a row with zero columns.
-    encoder.convertSingleRow(output, values,
-        delimitAllFields: values.length == 1 && values.single == '',
-        returnString: false);
+    final values = [i + 1, ...csvColumns.map(value)];
+    encoder.convertSingleRow(output, values, returnString: false);
     if (i % 50 == 0 || i == transactions.length - 1) {
       onProgress?.call((i + 1) / transactions.length);
     }
   }
+  onAttachments?.call(exportAttachments);
   return output.toString();
+}
+
+String transactionExportAttachmentPath({
+  required AppLocalizations l10n,
+  required int sequence,
+  required TransactionAttachment attachment,
+  required int imageIndex,
+  required int imageCount,
+  required String? note,
+}) {
+  final extension = p.extension(attachment.fileName).toLowerCase();
+  final safeExtension =
+      RegExp(r'^\.[a-z0-9]{1,10}$').hasMatch(extension) ? extension : '.bin';
+  final cleanNote =
+      (note ?? '').replaceAll(RegExp(r'[<>:"/\\|?*\x00-\x1f]'), '_').trim();
+  final shortNote = String.fromCharCodes(cleanNote.runes.take(40));
+  final notePart = shortNote.isEmpty ? l10n.exportAttachmentNoNote : shortNote;
+  final imagePart = imageCount > 1 ? '-$imageIndex' : '';
+  final folder = isInvoiceFile(attachment.fileName) ? '发票' : '附件';
+  return '$folder/${l10n.exportCsvHeaderSequence}-$sequence$imagePart-$notePart$safeExtension';
 }
 
 String _exportTime(DateTime time) {
@@ -158,9 +202,12 @@ String exportCsvColumnLabel(
 
 List<String> exportCsvHeaders(AppLocalizations l10n,
         {List<TransactionExportColumn>? columns}) =>
-    validateTransactionExportColumns(columns)
-        .map((column) => exportCsvColumnLabel(l10n, column))
-        .toList();
+    [
+      l10n.exportCsvHeaderSequence,
+      ...validateTransactionExportColumns(columns)
+          .where((column) => column != TransactionExportColumn.attachments)
+          .map((column) => exportCsvColumnLabel(l10n, column))
+    ];
 
 String exportTypeDisplayName(AppLocalizations l10n, String type) =>
     switch (type) {

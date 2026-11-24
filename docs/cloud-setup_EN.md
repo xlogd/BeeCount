@@ -315,4 +315,4 @@ Aliyun OSS (S3-compatible):
 - 📦 Dropbox
 - 📦 OneDrive
 
-If you want to prioritize a service, please raise an [Issue](https://github.com/TNT-Likely/BeeCount/issues)!
+If you want to prioritize a service, please raise an [Issue](https://github.com/xlogd/BeeCount/issues)!

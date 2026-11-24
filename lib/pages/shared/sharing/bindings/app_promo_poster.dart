@@ -2,6 +2,7 @@ import 'package:beecount_business_ui/share_posters.dart';
 import 'package:flutter/material.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'poster_projection.dart';
+import '../../../../utils/project_links.dart';
 
 class AppPromoPoster extends StatelessWidget {
   const AppPromoPoster(
@@ -12,10 +13,11 @@ class AppPromoPoster extends StatelessWidget {
   Widget build(BuildContext context) => MediaQuery.withNoTextScaling(
           child: BeeAppSharePoster(
               header:
-                  posterHeader(l10n, primaryColor, 'OPEN SOURCE · BEECOUNT'),
+                  posterHeader(l10n, primaryColor, 'OPEN SOURCE · ${l10n.appName}'),
               footer: posterFooter(l10n, qr: false),
               title: l10n.sharePosterSlogan.replaceFirst('，', '，\n'),
               accent: primaryColor,
+              projectLink: ProjectLinks.repositoryLabel,
               invitation: l10n.v4SharePosterPromoInvite,
               qr: posterQr(campaign: 'app_share'),
               tags: [

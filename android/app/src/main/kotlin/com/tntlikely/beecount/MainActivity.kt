@@ -15,6 +15,7 @@ import android.provider.Settings
 import androidx.core.content.FileProvider
 import java.io.File
 import java.io.FileInputStream
+import java.util.UUID
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -25,6 +26,7 @@ class MainActivity: FlutterFragmentActivity() {
     private val SCREENSHOT_CHANNEL = "com.tntlikely.beecount/screenshot"
     private val LOGGER_CHANNEL = "com.beecount.logger"
     private val SHARE_CHANNEL = "com.tntlikely.beecount/share"
+    private val DOCUMENT_SCAN_CHANNEL = "com.tntlikely.beecount/document_scan"
 
     private var screenshotObserver: ScreenshotObserver? = null
 
@@ -167,6 +169,59 @@ class MainActivity: FlutterFragmentActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        registerDocumentFlatten(
+            flutterEngine.dartExecutor.binaryMessenger,
+            assets,
+            io.flutter.FlutterInjector.instance().flutterLoader()
+        )
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, DOCUMENT_SCAN_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                if (call.method != "copyImages") {
+                    result.notImplemented()
+                } else {
+                    val uris = call.argument<List<String>>("uris")
+                    if (uris.isNullOrEmpty() || uris.size > 9) {
+                        result.error("INVALID_SCAN", "Invalid scanned page count", null)
+                    } else {
+                        Thread {
+                            val files = mutableListOf<File>()
+                            try {
+                                val directory = File(cacheDir, "beecount_scans")
+                                if (!directory.isDirectory && !directory.mkdirs()) {
+                                    throw IllegalStateException("Could not create scan cache")
+                                }
+                                for (value in uris) {
+                                    val uri = Uri.parse(value)
+                                    val file = File(directory, "scan_${UUID.randomUUID()}.jpg")
+                                    files.add(file)
+                                    val input = when (uri.scheme) {
+                                        "content" -> contentResolver.openInputStream(uri)
+                                        "file" -> {
+                                            val path = uri.path
+                                            require(uri.authority.isNullOrEmpty() && path != null && path.startsWith("/"))
+                                            val source = File(path).canonicalFile
+                                            require(source.path.startsWith(cacheDir.canonicalPath + File.separator))
+                                            source.inputStream()
+                                        }
+                                        else -> throw IllegalArgumentException("Invalid scanned image URI")
+                                    } ?: throw IllegalStateException("Could not read scanned image")
+                                    input.use { source ->
+                                        file.outputStream().use { target -> source.copyTo(target) }
+                                    }
+                                    if (file.length() == 0L) {
+                                        throw IllegalStateException("Scanned image is empty")
+                                    }
+                                }
+                                result.success(files.map { it.absolutePath })
+                            } catch (error: Exception) {
+                                files.forEach { it.delete() }
+                                result.error("SCAN_COPY_FAILED", "Could not save scanned images", null)
+                            }
+                        }.start()
+                    }
+                }
+            }
 
         android.util.Log.e("MainActivity", "==========================================")
         android.util.Log.e("MainActivity", "configureFlutterEngine 被调用！！！")

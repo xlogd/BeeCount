@@ -1,13 +1,10 @@
 import 'dart:ui';
 
-/// 官网 URL 管理
-///
-/// 统一管理官网链接，方便未来域名变更
+/// 上游官网及使用文档。
 class WebsiteUrls {
   WebsiteUrls._();
 
-  /// 官网基础域名
-  /// 未来换域名时只需修改这里
+  /// 上游文档站域名
   static const String baseUrl = 'https://count.beejz.com';
 
   /// GLM 邀请注册入口:cfg.beejz.com Worker 302 到池内当前该用的邀请码

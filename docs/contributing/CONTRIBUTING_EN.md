@@ -37,17 +37,17 @@ Examples of behavior that contributes to creating a positive environment include
 
 ### Enforcement
 
-Instances of unacceptable behavior may be reported by contacting the project team at sunxiaoyes@outlook.com. All complaints will be reviewed and investigated and will result in a response that is deemed necessary and appropriate to the circumstances.
+Instances of unacceptable behavior may be reported by contacting the maintainer [LogDancer](https://github.com/xlogd). All complaints will be reviewed and investigated and will result in a response that is deemed necessary and appropriate to the circumstances.
 
 ## What Can I Contribute?
 
 ### 🐛 Report Bugs
 
-Found an issue? Please let us know through [GitHub Issues](https://github.com/TNT-Likely/BeeCount/issues).
+Found an issue? Please let us know through [GitHub Issues](https://github.com/xlogd/BeeCount/issues).
 
 ### 💡 Suggest New Features
 
-Have a great idea? We'd love to hear it! Please check [Issues](https://github.com/TNT-Likely/BeeCount/issues) and [Discussions](https://github.com/TNT-Likely/BeeCount/discussions) first to see if someone has already suggested it.
+Have a great idea? We'd love to hear it! Please check [Issues](https://github.com/xlogd/BeeCount/issues) first to see if someone has already suggested it.
 
 ### 💻 Contribute Code
 
@@ -91,7 +91,7 @@ Designers retain copyright in their submissions. Before a selected design is use
 Before submitting a bug report, please:
 
 1. Check the [FAQ](https://github.com/TNT-Likely/BeeCount/wiki/FAQ) to see if there's already a solution
-2. Search [existing Issues](https://github.com/TNT-Likely/BeeCount/issues) to confirm the bug hasn't been reported
+2. Search [existing Issues](https://github.com/xlogd/BeeCount/issues) to confirm the bug hasn't been reported
 3. Ensure you're using the latest version
 
 ### How to Report
@@ -148,7 +148,7 @@ Should be able to save large amount transactions, or display amount limit warnin
 
 We welcome feature suggestions! Before submitting:
 
-1. Check the "Ideas" category in [Discussions](https://github.com/TNT-Likely/BeeCount/discussions)
+1. Search [Issues](https://github.com/xlogd/BeeCount/issues) for existing feature requests
 2. Ensure the feature aligns with project goals (privacy-first, open-source, self-hosted)
 3. Consider the feature's practicality and universality
 
@@ -262,7 +262,7 @@ flutter doctor
 2. **Clone Project**
 
 ```bash
-git clone https://github.com/TNT-Likely/BeeCount.git
+git clone https://github.com/xlogd/BeeCount.git
 cd BeeCount
 ```
 
@@ -694,9 +694,8 @@ git push origin docs/improve-supabase-guide
 
 ### Community Communication
 
-- [GitHub Discussions](https://github.com/TNT-Likely/BeeCount/discussions) - Project discussions
 - [V2EX Thread](https://www.v2ex.com/t/1168480) - Chinese community
-- Email: sunxiaoyes@outlook.com - Direct contact
+- [LogDancer](https://github.com/xlogd) - Project maintainer
 
 ## Recognizing Contributors
 
@@ -710,4 +709,4 @@ This project is dual-licensed: free for non-commercial use, paid license for com
 
 Thank you again for your contribution! 🙏
 
-If you have any questions, feel free to contact us through [Issues](https://github.com/TNT-Likely/BeeCount/issues) or [Discussions](https://github.com/TNT-Likely/BeeCount/discussions).
+If you have any questions, feel free to contact us through [Issues](https://github.com/xlogd/BeeCount/issues).

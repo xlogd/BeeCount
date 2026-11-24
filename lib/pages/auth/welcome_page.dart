@@ -20,6 +20,7 @@ import '../../utils/file_picker_helper.dart';
 import '../shared/branding/bee_artwork.dart';
 import '../shared/selectors/currency_picker_sheet.dart';
 import '../settings/privacy_policy_page.dart';
+import '../../utils/project_links.dart';
 
 part 'welcome/bindings/welcome_actions.dart';
 part 'welcome/widgets/welcome_content.dart';

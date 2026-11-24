@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:path/path.dart' as p;
 import 'package:beecount_business_ui/beecount_business_ui.dart';
 import 'package:beecount_ui/beecount_ui.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,10 @@ import '../../../l10n/app_localizations.dart';
 import '../../../providers.dart';
 import '../../../services/attachment_service.dart';
 import '../../../services/image_crop_service.dart';
+import '../../../services/document_flatten_service.dart';
+import '../../../utils/invoice_file.dart';
 import '../bindings/attachment_source.dart';
+import '../document_flatten_page.dart';
 
 /// Real file access, repository mutations and platform pickers stay in the App.
 class AttachmentViewerBinding extends ConsumerStatefulWidget {
@@ -113,14 +117,18 @@ class _AttachmentViewerBindingState
   List<BeeAttachment> _models(AppLocalizations l10n) => [
         ..._saved.map((a) => BeeAttachment(
             id: 'saved-${a.id}-${a.fileName}',
-            image: FileImage(File('$_directory/${a.fileName}')),
+            image: isInvoiceFile(a.fileName)
+                ? null
+                : FileImage(File('$_directory/${a.fileName}')),
             label: a.originalName ?? l10n.attachmentPreview,
             info:
                 '${_size(a.fileSize)}${a.width != null && a.height != null ? ' · ${a.width}×${a.height}' : ''}')),
         ..._pending.map((f) => BeeAttachment(
             id: 'pending-${f.path}',
-            image: FileImage(f),
-            label: l10n.attachmentPreview,
+            image: isInvoiceFile(f.path) ? null : FileImage(f),
+            label: isInvoiceFile(f.path)
+                ? p.basename(f.path)
+                : l10n.attachmentPreview,
             info: l10n.v4AttachmentPending)),
       ];
 
@@ -128,6 +136,7 @@ class _AttachmentViewerBindingState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final saved = _index < _saved.length;
+    final isInvoice = _count > 0 && isInvoiceFile(_fileAt(_index).path);
     final placeholder = _loading
         ? const CircularProgressIndicator(color: Colors.white)
         : _failed
@@ -151,6 +160,15 @@ class _AttachmentViewerBindingState
                 onIndexChanged: (index) => setState(() => _index = index),
                 onClose: _close,
                 onImageTap: _close,
+                documentBuilder: (index) => Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: BeeButton(
+                          label: l10n.attachmentOpenInvoice,
+                          onPressed: () => openInvoice(context, _fileAt(index)),
+                        ),
+                      ),
+                    ),
                 emptyLabel: _loading
                     ? l10n.attachmentPreview
                     : l10n.attachmentPreviewEmpty,
@@ -169,12 +187,26 @@ class _AttachmentViewerBindingState
                   if (!_loading &&
                       !_failed &&
                       _count > 0 &&
+                      !isInvoice &&
                       (widget.allowCrop ?? widget.allowDelete))
                     BeeIconButton(
                         key: const ValueKey('attachment-crop'),
                         label: l10n.imageCropAction,
                         icon: const BeeLineIcon('Crop', color: Colors.white),
-                        onPressed: _busy ? null : _crop),
+                        onPressed: _busy ? null : () => _editImage()),
+                  if (supportsDocumentFlatten &&
+                      !_loading &&
+                      !_failed &&
+                      _count > 0 &&
+                      !isInvoice &&
+                      (widget.allowCrop ?? widget.allowDelete))
+                    BeeIconButton(
+                        key: const ValueKey('attachment-flatten'),
+                        label: l10n.documentFlattenAction,
+                        icon: const Icon(Icons.auto_fix_high_outlined,
+                            color: Colors.white),
+                        onPressed:
+                            _busy ? null : () => _editImage(flatten: true)),
                   if (!_loading && !_failed && widget.allowDelete && _count > 0)
                     BeeIconButton(
                         label: l10n.commonDelete,
@@ -185,7 +217,11 @@ class _AttachmentViewerBindingState
                 ])));
   }
 
-  Future<void> _crop() async {
+  File _fileAt(int index) => index < _saved.length
+      ? File('$_directory/${_saved[index].fileName}')
+      : _pending[index - _saved.length];
+
+  Future<void> _editImage({bool flatten = false}) async {
     if (_busy || _loading || _failed || _count == 0) return;
     final index = _bounded(_index);
     final saved = index < _saved.length ? _saved[index] : null;
@@ -193,24 +229,32 @@ class _AttachmentViewerBindingState
     final source = saved == null
         ? _pending[pendingIndex]
         : File('$_directory/${saved.fileName}');
+    if (isInvoiceFile(source.path)) return;
     final cropper = ref.read(imageCropServiceProvider);
+    final flattenService = ref.read(documentFlattenServiceProvider);
     final service = ref.read(attachmentServiceProvider);
     final refresh = ref.read(attachmentListRefreshProvider.notifier);
     final l = AppLocalizations.of(context);
     setState(() => _busy = true);
+    File? transformed;
     try {
-      final cropped = await cropper.crop(context, source);
-      if (cropped == null || !mounted) return;
+      transformed = flatten
+          ? (await reviewDocumentPages(context, [source], flattenService))
+              ?.single
+          : await cropper.crop(context, source);
+      if (transformed == null || transformed.path == source.path || !mounted) {
+        return;
+      }
       if (saved == null) {
-        setState(() => _pending[pendingIndex] = cropped);
+        setState(() => _pending[pendingIndex] = transformed!);
         _emitPending();
       } else {
         final updated = await service.replaceAttachmentImage(
             id: saved.id,
             expectedFileName: saved.fileName,
-            sourceFile: cropped);
+            sourceFile: transformed);
         if (updated == null) {
-          throw StateError('Cropped attachment was not saved');
+          throw StateError('Edited attachment was not saved');
         }
         if (refresh.mounted) refresh.state++;
         if (!mounted) return;
@@ -222,13 +266,22 @@ class _AttachmentViewerBindingState
         });
       }
       if (mounted) {
-        showBeeToast(context, l.imageCropDone, tone: BeeTone.success);
+        showBeeToast(context, flatten ? l.documentFlattenDone : l.imageCropDone,
+            tone: BeeTone.success);
       }
     } catch (_) {
       if (mounted) {
-        showBeeToast(context, l.imageCropFailed, tone: BeeTone.error);
+        showBeeToast(
+            context, flatten ? l.documentFlattenFailed : l.imageCropFailed,
+            tone: BeeTone.error);
       }
     } finally {
+      if (flatten &&
+          transformed != null &&
+          transformed.path != source.path &&
+          !_pending.contains(transformed)) {
+        await discardFlattenedPreview(transformed);
+      }
       if (mounted) {
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
         setState(() => _busy = false);
@@ -236,10 +289,18 @@ class _AttachmentViewerBindingState
     }
   }
 
+  bool _pickingAttachments = false;
+
   Future<void> _sources() async {
-    final files = await pickAttachmentFiles(context, ref,
-        remaining: AttachmentService.maxAttachments - _count);
-    if (files.isNotEmpty && mounted) await _add(files);
+    if (_pickingAttachments || _busy) return;
+    _pickingAttachments = true;
+    try {
+      final files = await pickAttachmentFiles(context, ref,
+          remaining: AttachmentService.maxAttachments - _count);
+      if (files.isNotEmpty && mounted) await _add(files);
+    } finally {
+      _pickingAttachments = false;
+    }
   }
 
   Future<void> _add(List<File> files) async {
@@ -247,22 +308,26 @@ class _AttachmentViewerBindingState
     setState(() => _busy = true);
     try {
       final service = ref.read(attachmentServiceProvider);
+      var added = 0;
+      var nextIndex = nextAttachmentSortOrder(_saved);
       for (final file in files) {
         if (!mounted || _count >= AttachmentService.maxAttachments) break;
         if (widget.transactionId != null) {
           final row = await service.saveAttachment(
               transactionId: widget.transactionId!,
               sourceFile: file,
-              index: _saved.length);
+              index: nextIndex);
           if (!mounted) return;
-          if (row != null) {
-            setState(() {
-              _saved.add(row);
-              _index = _saved.length - 1;
-            });
-            ref.read(attachmentListRefreshProvider.notifier).state++;
-          }
+          if (row == null) break;
+          added++;
+          nextIndex++;
+          setState(() {
+            _saved.add(row);
+            _index = _saved.length - 1;
+          });
+          ref.read(attachmentListRefreshProvider.notifier).state++;
         } else {
+          added++;
           setState(() {
             _pending.add(file);
             _index = _count - 1;
@@ -270,6 +335,7 @@ class _AttachmentViewerBindingState
           _emitPending();
         }
       }
+      if (mounted) showAttachmentSaveWarning(context, added, files.length);
     } catch (_) {
       if (mounted) {
         showBeeToast(context, AppLocalizations.of(context).commonError,

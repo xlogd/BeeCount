@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/app_localizations.dart';
 import '../../pages/shared/dialogs/app_dialogs.dart';
 import '../../styles/tokens.dart';
+import '../../utils/project_links.dart';
 import '../system/logger_service.dart';
 import 'github_mirror_service.dart';
 
@@ -240,7 +241,7 @@ class UpdateDialogs {
 
   /// 启动GitHub Releases页面
   static Future<void> launchGitHubReleases(BuildContext context) async {
-    const url = 'https://github.com/TNT-Likely/BeeCount/releases';
+    const url = ProjectLinks.releases;
     try {
       if (await canLaunchUrl(Uri.parse(url))) {
         await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
@@ -255,7 +256,8 @@ class UpdateDialogs {
         await AppDialog.info(
           context,
           title: AppLocalizations.of(context).updateCannotOpenLinkTitle,
-          message: AppLocalizations.of(context).updateManualVisit,
+          message: AppLocalizations.of(context)
+              .updateManualVisit(url),
         );
       }
     }

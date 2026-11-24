@@ -120,6 +120,9 @@ extension SyncEngineAttachmentsExt on SyncEngine {
           ledgerId: serverLedgerId,
           bytes: bytes,
           fileName: att.originalName ?? att.fileName,
+          mimeType: p.extension(att.fileName).toLowerCase() == '.pdf'
+              ? 'application/pdf'
+              : null,
         );
         await (db.update(db.transactionAttachments)
               ..where((a) => a.id.equals(att.id)))

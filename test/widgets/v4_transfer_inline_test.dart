@@ -605,6 +605,7 @@ void main() {
           pendingAttachments: [],
           excludeFromStats: false,
           excludeFromBudget: false,
+          invoicePending: false,
           currencyCode: currency,
           nativeAmount: native
         );

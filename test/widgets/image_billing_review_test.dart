@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:beecount/ai/core/ai_extraction_context.dart';
 import 'package:beecount/ai/core/ai_extraction_engine.dart';
@@ -9,6 +10,7 @@ import 'package:beecount/cloud/sync_service.dart';
 import 'package:beecount/data/db.dart';
 import 'package:beecount/data/repositories/local/local_repository.dart';
 import 'package:beecount/l10n/app_localizations.dart';
+import 'package:beecount/pages/attachment/attachment_crop_page.dart';
 import 'package:beecount/providers.dart';
 import 'package:beecount/providers/ai_chat_providers.dart';
 import 'package:beecount/services/attachment_service.dart';
@@ -16,10 +18,14 @@ import 'package:beecount/services/ai/billing_image_service.dart';
 import 'package:beecount/services/image_crop_service.dart';
 import 'package:beecount/utils/image_billing_helper.dart';
 import 'package:beecount_ui/beecount_ui.dart';
+import 'package:crop_your_image/crop_your_image.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+// The picker is replaced at its platform boundary in this test.
+// ignore: depend_on_referenced_packages
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -112,7 +118,9 @@ void main() {
   });
 
   Future<void> host(WidgetTester t,
-      {bool failPostProcessing = false, bool failAttachment = false}) async {
+      {bool failPostProcessing = false,
+      bool failAttachment = false,
+      bool useRealCrop = false}) async {
     final attachments = _Attachments();
     when(() => attachments.saveAttachment(
         transactionId: any(named: 'transactionId'),
@@ -125,7 +133,7 @@ void main() {
       currentLedgerProvider.overrideWith((ref) => Stream.value(ledger)),
       aiExtractionEngineProvider.overrideWithValue(extraction),
       billingImageServiceProvider.overrideWithValue(_Images()),
-      imageCropServiceProvider.overrideWithValue(_Crop()),
+      if (!useRealCrop) imageCropServiceProvider.overrideWithValue(_Crop()),
       attachmentServiceProvider.overrideWithValue(attachments),
       smartBillingAutoAttachmentProvider.overrideWith((ref) => failAttachment),
       syncServiceProvider.overrideWith((ref) {
@@ -156,7 +164,9 @@ void main() {
       if (find
           .byKey(const ValueKey('image-billing-review-save'))
           .evaluate()
-          .isNotEmpty) break;
+          .isNotEmpty) {
+        break;
+      }
     }
     expect(find.byKey(const ValueKey('image-billing-review-save')),
         findsOneWidget);
@@ -187,6 +197,79 @@ void main() {
 
   Future<List<Transaction>?> rows(WidgetTester t) =>
       t.runAsync(() => db.select(db.transactions).get());
+
+  testWidgets('image billing opens the fixed crop editor before recognition',
+      (t) async {
+    const pathProvider = MethodChannel('plugins.flutter.io/path_provider');
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(
+        pathProvider, (_) async => directory.path);
+    addTearDown(() => messenger.setMockMethodCallHandler(pathProvider, null));
+    final source = File(picker.path);
+    await t.runAsync(() async {
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder);
+      canvas.drawRect(
+          const Rect.fromLTWH(0, 0, 320, 240), Paint()..color = Colors.white);
+      canvas.drawRect(
+          const Rect.fromLTWH(40, 30, 200, 120), Paint()..color = Colors.blue);
+      final picture = recorder.endRecording();
+      final image = picture.toImageSync(320, 240);
+      picture.dispose();
+      try {
+        final png = (await image.toByteData(format: ui.ImageByteFormat.png))!;
+        await source.writeAsBytes(Uint8List.sublistView(png));
+      } finally {
+        image.dispose();
+      }
+    });
+    await host(t, useRealCrop: true);
+    final saveCrop = find.byKey(const ValueKey('attachment-crop-save'));
+    Future<void> openCrop() async {
+      await t.runAsync(() async {
+        operation = start();
+      });
+      for (var attempt = 0; attempt < 100; attempt++) {
+        await t.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await t.pump(const Duration(milliseconds: 20));
+        if (saveCrop.evaluate().isNotEmpty &&
+            t.widget<IconButton>(saveCrop).onPressed != null) {
+          return;
+        }
+      }
+      fail('Image billing crop editor did not become ready');
+    }
+
+    await openCrop();
+    expect(find.byType(AttachmentCropPage), findsOneWidget);
+    expect(t.widget<Crop>(find.byType(Crop)).interactive, isFalse);
+    expect(engineCalls, 0);
+    await t.tap(find.byKey(const ValueKey('attachment-crop-cancel')));
+    await t.runAsync(() => operation);
+    await t.pumpAndSettle();
+    expect(engineCalls, 0);
+    expect(await rows(t), isEmpty);
+
+    await openCrop();
+    await t.drag(find.byType(DotControl).last, const Offset(-40, -30));
+    await t.pump();
+    await t.tap(saveCrop);
+    await waitForReview(t);
+    final inputs = verify(() => extraction.extractFromImage(captureAny(), any(),
+        billGuard: any(named: 'billGuard'))).captured;
+    final input = inputs.single as File;
+    expect(input.path, isNot(source.path));
+    final png = input.readAsBytesSync();
+    final dimensions = ByteData.sublistView(png, 16, 24);
+    expect(dimensions.getUint32(0), lessThan(320));
+    expect(dimensions.getUint32(4), lessThan(240));
+    expect(await rows(t), isEmpty);
+    await confirm(t, operation);
+    expect(await rows(t), hasLength(1));
+    await finish(t);
+  });
 
   testWidgets(
       'no financial write before review; unrelated existing bill is unselected',

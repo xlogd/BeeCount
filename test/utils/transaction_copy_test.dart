@@ -22,6 +22,7 @@ void main() {
         lastEditedByUserId: 'source-editor',
         excludeFromStats: true,
         excludeFromBudget: true,
+        invoicePending: false,
         currencyCode: 'JPY',
         nativeAmount: 6.15,
       );
@@ -63,6 +64,7 @@ void main() {
       happenedAt: oldDate,
       excludeFromStats: false,
       excludeFromBudget: false,
+      invoicePending: false,
       categorySyncIdOverride: 'shared-cat',
       accountSyncIdOverride: 'shared-from',
       toAccountSyncIdOverride: 'shared-to',
@@ -86,6 +88,7 @@ void main() {
       happenedAt: oldDate,
       excludeFromStats: false,
       excludeFromBudget: false,
+      invoicePending: false,
     );
     final page =
         TransactionEditorPage.copy(source: empty, tagIds: tags, now: now);

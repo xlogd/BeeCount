@@ -126,3 +126,6 @@
 # OkHttp - required by uCrop 2.2.11 (image_cropper 10.0.0)
 -dontwarn okhttp3.**
 -keep class okhttp3.** { *; }
+
+# ONNX Runtime resolves tensor classes through JNI.
+-keep class ai.onnxruntime.** { *; }

@@ -552,7 +552,9 @@ extension SyncEngineRealtime on SyncEngine {
             DateTime.tryParse(time) == null) {
           invalid('items.happenedAt');
         }
-        for (final flag in ['excludeFromStats', 'excludeFromBudget']) {
+        for (final flag in [
+          'excludeFromStats', 'excludeFromBudget', 'invoicePending'
+        ]) {
           if (item[flag] is! bool) invalid('items.$flag');
         }
         if (item['note'] != null && item['note'] is! String) {

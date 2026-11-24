@@ -110,8 +110,12 @@ class BeePosterHeader extends StatelessWidget {
 
 class BeePosterFooter extends StatelessWidget {
   const BeePosterFooter(
-      {super.key, required this.slogan, required this.caption, this.qr});
-  final String slogan, caption;
+      {super.key,
+      required this.slogan,
+      required this.caption,
+      required this.projectLink,
+      this.qr});
+  final String slogan, caption, projectLink;
   final Widget? qr;
   @override
   Widget build(BuildContext context) =>
@@ -130,8 +134,8 @@ class BeePosterFooter extends StatelessWidget {
                 Text(caption,
                     style: const TextStyle(
                         fontSize: 15, height: 1.8, color: BeePaper.muted)),
-                const Text('github.com/TNT-Likely/BeeCount',
-                    style: TextStyle(
+                Text(projectLink,
+                    style: const TextStyle(
                         fontSize: 14, height: 1.8, color: BeePaper.muted))
               ])),
           if (qr != null) ...[

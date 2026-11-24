@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/db.dart';
 import '../providers.dart';
 import 'attachment_service.dart';
+import '../utils/invoice_file.dart';
 import 'custom_icon_service.dart';
 import 'system/logger_service.dart';
 import 'ui/avatar_service.dart';
@@ -530,7 +531,8 @@ class AttachmentExportImportService {
         final actualFiles = attachmentDir.listSync();
         logger.debug('AttachmentExportImport', '附件目录中实际有 ${actualFiles.length} 个文件/文件夹');
         for (final entity in actualFiles) {
-          if (entity is File && _isImageFile(entity.path)) {
+          if (entity is File &&
+              (_isImageFile(entity.path) || isInvoiceFile(entity.path))) {
             attachmentFiles.add(entity);
             logger.debug('AttachmentExportImport', '附件文件: ${path.basename(entity.path)}');
           }

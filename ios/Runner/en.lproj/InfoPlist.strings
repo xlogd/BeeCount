@@ -1,13 +1,9 @@
-/* Localized BeeCount app names — solves App Store reviewer hitting 2.3.8
-   when the device language is English but CFBundleDisplayName falls back
-   to the default Chinese "蜜蜂记账" (which doesn't match the App Store
-   marketplace name "BeeCount - Simple Ledger"). */
-"CFBundleDisplayName" = "BeeCount";
-"CFBundleName" = "BeeCount";
+"CFBundleDisplayName" = "AI账舞";
+"CFBundleName" = "AI账舞";
 
 /* Privacy usage descriptions (system permission prompts) */
-"NSPhotoLibraryUsageDescription" = "BeeCount needs access to your photo library to import or share billing data files";
-"NSPhotoLibraryAddUsageDescription" = "BeeCount needs to save files to your photo library";
-"NSCameraUsageDescription" = "BeeCount needs the camera to capture payment receipts for OCR recognition";
-"NSMicrophoneUsageDescription" = "BeeCount needs the microphone for voice bookkeeping";
-"NSFaceIDUsageDescription" = "BeeCount uses Face ID to unlock the app";
+"NSPhotoLibraryUsageDescription" = "AI账舞 needs access to your photo library to import or share billing data files";
+"NSPhotoLibraryAddUsageDescription" = "AI账舞 needs to save files to your photo library";
+"NSCameraUsageDescription" = "AI账舞 needs the camera to capture payment receipts for OCR recognition";
+"NSMicrophoneUsageDescription" = "AI账舞 needs the microphone for voice bookkeeping";
+"NSFaceIDUsageDescription" = "AI账舞 uses Face ID to unlock the app";

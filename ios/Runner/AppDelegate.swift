@@ -1,4 +1,5 @@
 import Flutter
+import onnxruntime_objc
 import UIKit
 import UserNotifications
 
@@ -9,6 +10,9 @@ import UserNotifications
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
+    if let registrar = self.registrar(forPlugin: "BeeCountDocumentFlatten") {
+      registerDocumentFlatten(with: registrar)
+    }
 
     // 注册AppIntents桥接插件
     if #available(iOS 13.0, *) {
@@ -90,5 +94,59 @@ import UserNotifications
   ) {
     clearNotificationBadge()
     completionHandler()
+  }
+}
+
+private func registerDocumentFlatten(with registrar: FlutterPluginRegistrar) {
+  let queue = DispatchQueue(label: "com.tntlikely.beecount.document_flatten")
+  let channel = FlutterMethodChannel(
+    name: "com.tntlikely.beecount/document_flatten",
+    binaryMessenger: registrar.messenger()
+  )
+  let assetKey = registrar.lookupKey(forAsset: "assets/models/uvdoc.onnx")
+  let model = Bundle.main.path(forResource: assetKey, ofType: nil)
+  channel.setMethodCallHandler { call, result in
+    guard call.method == "flatten" else {
+      result(FlutterMethodNotImplemented)
+      return
+    }
+    guard let args = call.arguments as? [String: Any],
+          let width = args["width"] as? Int,
+          let height = args["height"] as? Int,
+          (64...1920).contains(width), (64...1920).contains(height),
+          let pixels = args["pixels"] as? FlutterStandardTypedData,
+          pixels.data.count == width * height * 3 * MemoryLayout<Float>.size,
+          let model = model else {
+      result(FlutterError(code: "INVALID_IMAGE", message: "Invalid UVDoc input", details: nil))
+      return
+    }
+    queue.async {
+      let response: Any = autoreleasepool {
+        do {
+          let env = try ORTEnv(loggingLevel: .warning)
+          let options = try ORTSessionOptions()
+          try options.setIntraOpNumThreads(2)
+          let session = try ORTSession(env: env, modelPath: model, sessionOptions: options)
+          let shape = [1, 3, height, width].map { NSNumber(value: $0) }
+          let input = try ORTValue(
+            tensorData: NSMutableData(data: pixels.data), elementType: .float, shape: shape
+          )
+          let outputs = try session.run(
+            withInputs: ["image": input], outputNames: ["fetch_name_0"], runOptions: nil
+          )
+          guard let output = outputs["fetch_name_0"],
+                try output.tensorTypeAndShapeInfo().shape == shape else {
+            return FlutterError(code: "FLATTEN_FAILED", message: "Unexpected UVDoc output", details: nil)
+          }
+          // Copy the tensor bytes before the ORTValue owning them is released.
+          let data = try output.tensorData()
+          let copy = Data(bytes: data.bytes, count: data.length)
+          return FlutterStandardTypedData(float32: copy)
+        } catch {
+          return FlutterError(code: "FLATTEN_FAILED", message: "UVDoc inference failed", details: nil)
+        }
+      }
+      DispatchQueue.main.async { result(response) }
+    }
   }
 }

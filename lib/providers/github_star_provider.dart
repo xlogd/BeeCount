@@ -3,14 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/system/logger_service.dart';
+import '../utils/project_links.dart';
 
 /// GitHub Star 数量 Provider
 /// 缓存1小时，避免频繁请求API
-const githubStarFallbackCount = 2500;
-
-final githubStarCountProvider = FutureProvider<int>((ref) async {
-  const cacheKey = 'github_star_count';
-  const cacheTimeKey = 'github_star_count_time';
+final githubStarCountProvider = FutureProvider<int?>((ref) async {
+  const cacheKey = 'github_star_count_${ProjectLinks.slug}';
+  const cacheTimeKey = 'github_star_count_time_${ProjectLinks.slug}';
   const cacheDuration = Duration(hours: 1);
 
   final prefs = await SharedPreferences.getInstance();
@@ -29,12 +28,13 @@ final githubStarCountProvider = FutureProvider<int>((ref) async {
   // 从GitHub API获取
   try {
     final response = await http
-        .get(Uri.parse('https://api.github.com/repos/TNT-Likely/BeeCount'))
+        .get(Uri.parse(ProjectLinks.apiRepository))
         .timeout(const Duration(seconds: 5));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final starCount = data['stargazers_count'] as int? ?? 0;
+      final starCount = data['stargazers_count'] as int?;
+      if (starCount == null) return cachedCount;
 
       // 缓存结果
       await prefs.setInt(cacheKey, starCount);
@@ -46,6 +46,5 @@ final githubStarCountProvider = FutureProvider<int>((ref) async {
     logger.warning('GitHubStar', '获取Star数量失败: $e');
   }
 
-  // 返回缓存值或默认值（网络不可用时保持可信的项目展示）。
-  return cachedCount ?? githubStarFallbackCount;
+  return cachedCount;
 });

@@ -235,6 +235,8 @@ flutter {
 }
 
 dependencies {
+    // 1.20.0 supports API 23 and its arm64 library is aligned to 16 KB.
+    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.20.0'
     // 与 Flutter integration_test 传递依赖的 AndroidX Test 版本保持一致。
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

@@ -31,8 +31,8 @@ void main() {
     await db.close();
   });
 
-  test('schemaVersion = 34(包含图片记账重试身份)', () {
-    expect(db.schemaVersion, 34);
+  test('schemaVersion = 35(包含发票状态)', () {
+    expect(db.schemaVersion, 35);
   });
 
   test('sync_pull_errors 表存在,所有列就位', () async {

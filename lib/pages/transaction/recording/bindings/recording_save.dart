@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart' as d;
 import 'package:flutter/foundation.dart' show ValueChanged;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,6 +71,7 @@ Future<void> persistRecordingDraft(
       accountSyncIdOverride: accountOverride,
       excludeFromStats: res.excludeFromStats,
       excludeFromBudget: res.excludeFromBudget,
+      invoicePending: res.invoicePending,
       currencyCode: res.currencyCode,
       nativeAmount: res.nativeAmount,
     );
@@ -89,6 +92,7 @@ Future<void> persistRecordingDraft(
       accountSyncIdOverride: accountOverride,
       excludeFromStats: res.excludeFromStats,
       excludeFromBudget: res.excludeFromBudget,
+      invoicePending: res.invoicePending,
       currencyCode: res.currencyCode,
       nativeAmount: res.nativeAmount,
     );
@@ -96,7 +100,7 @@ Future<void> persistRecordingDraft(
     // 共享账本:新建本地 tx 也回填创建人 + 编辑人(同一个 user)
     await TxAuthorService.markCreated(ref, transactionId);
   }
-  await _persistRecordingMetadata(ref,
+  final attachmentFailure = await _persistRecordingMetadata(ref,
       transactionId: transactionId, result: res, editing: editingId != null);
   // 统一处理：自动/手动同步与状态刷新（后台静默）
   PostProcessor.sync(ref, ledgerId: ledgerId);
@@ -105,6 +109,7 @@ Future<void> persistRecordingDraft(
   ref.read(statsRefreshProvider.notifier).state++;
   // 刷新：预算数据
   ref.read(budgetRefreshProvider.notifier).state++;
+  if (attachmentFailure != null) throw attachmentFailure;
 }
 
 /// App-owned transfer persistence; the caller retains a created identity on
@@ -156,6 +161,7 @@ Future<void> persistTransferDraft(
       note: result.note,
       excludeFromStats: result.excludeFromStats,
       excludeFromBudget: result.excludeFromBudget,
+      invoicePending: result.invoicePending,
       currencyCode: result.currencyCode,
       nativeAmount: result.nativeAmount,
     );
@@ -174,6 +180,7 @@ Future<void> persistTransferDraft(
       note: result.note,
       excludeFromStats: result.excludeFromStats,
       excludeFromBudget: result.excludeFromBudget,
+      invoicePending: result.invoicePending,
       currencyCode: result.currencyCode,
       nativeAmount: result.nativeAmount,
     );
@@ -185,14 +192,18 @@ Future<void> persistTransferDraft(
     );
     await TxAuthorService.markEdited(ref, transactionId);
   }
-  await _persistRecordingMetadata(ref,
+  final attachmentFailure = await _persistRecordingMetadata(ref,
       transactionId: transactionId, result: result, editing: editingId != null);
-  await PostProcessor.sync(ref, ledgerId: ledgerId);
   ref.invalidate(countsForLedgerProvider(ledgerId));
   ref.read(statsRefreshProvider.notifier).state++;
+  if (attachmentFailure != null) {
+    PostProcessor.sync(ref, ledgerId: ledgerId);
+    throw attachmentFailure;
+  }
+  await PostProcessor.sync(ref, ledgerId: ledgerId);
 }
 
-Future<void> _persistRecordingMetadata(
+Future<RecordingAttachmentSaveFailure?> _persistRecordingMetadata(
   WidgetRef ref, {
   required int transactionId,
   required AmountEditorResult result,
@@ -264,14 +275,24 @@ Future<void> _persistRecordingMetadata(
   // Save files after tag writes, so a failed tag retry cannot duplicate them.
   if (res.pendingAttachments.isNotEmpty) {
     final attachmentService = ref.read(attachmentServiceProvider);
-    await attachmentService.saveAttachments(
+    final existing = await repo.getAttachmentsByTransaction(transactionId);
+    final failed = <File>[];
+    final saved = await attachmentService.saveAttachments(
       transactionId: transactionId,
       sourceFiles: res.pendingAttachments,
-      startIndex: 0,
+      startIndex: nextAttachmentSortOrder(existing),
+      onFailed: failed.add,
+      stopOnFailure: true,
     );
-    // 刷新附件列表缓存
-    ref.read(attachmentListRefreshProvider.notifier).state++;
+    if (saved.isNotEmpty) {
+      ref.read(attachmentListRefreshProvider.notifier).state++;
+    }
+    if (failed.isNotEmpty) {
+      return RecordingAttachmentSaveFailure(
+          transactionId, failed, res.pendingAttachments.length);
+    }
   }
+  return null;
 }
 
 /// 获取默认账户ID（验证币种匹配）

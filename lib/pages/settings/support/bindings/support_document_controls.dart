@@ -23,8 +23,8 @@ import 'support_platform.dart';
 /// - 离线:加载失败显示兜底页,可重试或跳浏览器
 class SupportDocumentControls extends ConsumerStatefulWidget {
   const SupportDocumentControls(
-      {super.key, this.initialUrl, this.title, this.privacy = false});
-  final bool privacy;
+      {super.key, this.initialUrl, this.title, this.subtitle});
+  final String? subtitle;
 
   /// 可选:指定初始打开的文档 URL(应为本站 embed 模式链接)。不传则打开文档
   /// 首页(intro)。登录页「注册指引」用它按当前云后端直达对应文档。
@@ -62,7 +62,6 @@ class _SupportDocumentControlsState
 
   void _trackAwayFromHome(String? url) {
     if (url == null || !mounted) return;
-    if (widget.privacy) return;
     final away = _normPath(url) != _normPath(_url);
     if (away != _awayFromHome) setState(() => _awayFromHome = away);
   }
@@ -74,7 +73,7 @@ class _SupportDocumentControlsState
     if (_controller != null) return;
     final locale = Localizations.localeOf(context);
     _url = widget.initialUrl ??
-        (widget.privacy ? WebsiteUrls.privacy : WebsiteUrls.docsEmbed)(
+        WebsiteUrls.docsEmbed(
           locale,
           dark: BeeTokens.isDark(context),
           primaryHex: _hex(ref.read(primaryColorProvider)),
@@ -127,12 +126,6 @@ class _SupportDocumentControlsState
 
   Future<void> _openInBrowser() async {
     final locale = Localizations.localeOf(context);
-    if (widget.privacy) {
-      final lang = locale.languageCode == 'zh' ? '' : '/en';
-      await launchUrl(Uri.parse('${WebsiteUrls.baseUrl}$lang/privacy'),
-          mode: LaunchMode.externalApplication);
-      return;
-    }
     final current = await _controller?.currentUrl();
     // 外部打开用非 embed 的正常文档页:当前是 embed 链接(初始页或站内跳转)就
     // 去掉 query 还原正常文档 URL;拿不到当前 URL 才兜底文档首页。
@@ -160,9 +153,7 @@ class _SupportDocumentControlsState
       //   canPop=true,左滑正常退出页面。注意 Flutter 路由手势优先级高于
       //   WKWebView 手势,所以 iOS 不能像 Android 一样常开拦截(左滑退不出页),
       //   也不能常不拦截(左滑直接退整页)
-      canPop: ref.watch(supportPlatformProvider).isIOS
-          ? (widget.privacy || !_awayFromHome)
-          : false,
+      canPop: ref.watch(supportPlatformProvider).isIOS ? !_awayFromHome : false,
       onPopInvokedWithResult: (didPop, _) async {
         if (didPop) return;
         final controller = _controller;
@@ -174,17 +165,15 @@ class _SupportDocumentControlsState
         Navigator.of(context).pop();
       },
       child: SupportFrame(
-        title: widget.title ??
-            (widget.privacy ? l10n.aboutPrivacyPolicy : l10n.mineHelp),
-        actions: widget.privacy
-            ? const []
-            : [
-                BeeIconButton(
-                    key: const ValueKey('support-document-open'),
-                    label: l10n.helpCenterOpenInBrowser,
-                    icon: const BeeLineIcon('ExternalLink', size: 20),
-                    onPressed: _openInBrowser)
-              ],
+        title: widget.title ?? l10n.mineHelp,
+        subtitle: widget.subtitle,
+        actions: [
+          BeeIconButton(
+              key: const ValueKey('support-document-open'),
+              label: l10n.helpCenterOpenInBrowser,
+              icon: const BeeLineIcon('ExternalLink', size: 20),
+              onPressed: _openInBrowser)
+        ],
         body: BeeSupportDocument(
           view: _controller == null
               ? const SizedBox.shrink()

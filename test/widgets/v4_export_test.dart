@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:archive/archive.dart';
 import 'package:beecount/data/db.dart';
 import 'package:beecount/data/repositories/local/local_repository.dart';
 import 'package:beecount/l10n/app_localizations.dart';
 import 'package:beecount/l10n/app_localizations_en.dart';
+import 'package:beecount/l10n/app_localizations_zh.dart';
 import 'package:beecount/models/transaction_export_column.dart';
 import 'package:beecount/models/transaction_export_filter.dart';
 import 'package:beecount/pages/data/export_page.dart';
@@ -14,6 +16,7 @@ import 'package:beecount/pages/data/export/bindings/export_platform.dart';
 import 'package:beecount/dev/component_gallery/bindings/export_preview.dart';
 import 'package:beecount/dev/component_gallery/export_sample.dart';
 import 'package:beecount/providers.dart';
+import 'package:beecount/services/attachment_service.dart';
 import 'package:beecount_business_ui/transaction_export.dart';
 import 'package:beecount_ui/beecount_ui.dart';
 import 'package:csv/csv.dart';
@@ -28,6 +31,7 @@ class _Platform implements TransactionExportPlatform {
   @override
   final bool shareAfterSave;
   String? csv, path, sharedPath, sharedText;
+  List<TransactionExportFile>? packagedFiles;
   int writes = 0;
   bool failWrite = false, failShare = false;
   Completer<void>? gate;
@@ -46,11 +50,28 @@ class _Platform implements TransactionExportPlatform {
   }
 
   @override
+  Future<void> writePackage(String target, String content,
+      List<TransactionExportFile> attachments) async {
+    writes++;
+    if (failWrite) throw StateError('QA write denied');
+    path = target;
+    csv = content;
+    packagedFiles = attachments;
+  }
+
+  @override
   Future<void> shareCsv(String target, String text) async {
     if (failShare) throw StateError('QA share unavailable');
     sharedPath = target;
     sharedText = text;
   }
+}
+
+class _ExportAttachments extends AttachmentService {
+  _ExportAttachments(super.ref, this.root);
+  final Directory root;
+  @override
+  Future<Directory> getAttachmentDirectory() async => root;
 }
 
 class _TrackedRepository extends LocalRepository {
@@ -128,11 +149,15 @@ void main() {
     });
   }
 
-  Widget host(_Platform platform, {Widget page = const ExportPage()}) =>
+  Widget host(_Platform platform,
+          {Widget page = const ExportPage(), Directory? attachmentDirectory}) =>
       ProviderScope(
           overrides: [
             repositoryProvider.overrideWithValue(repo),
-            transactionExportPlatformProvider.overrideWithValue(platform)
+            transactionExportPlatformProvider.overrideWithValue(platform),
+            if (attachmentDirectory != null)
+              attachmentServiceProvider.overrideWith(
+                  (ref) => _ExportAttachments(ref, attachmentDirectory)),
           ],
           child: MaterialApp(
               theme: beeTheme(),
@@ -251,12 +276,142 @@ void main() {
         onRecordCount: (count) => matched = count);
     final rows = const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
         .convert(csv);
-    expect(rows.skip(1).map((row) => row.first).toSet(),
+    expect(rows.skip(1).map((row) => row[1]).toSet(),
         {'start expense', 'end expense'});
     expect(matched, 2);
     expect(tracked.tagBatches, [2]);
     expect(tracked.attachmentBatches, [2]);
     expect(await db.select(db.transactions).get(), before);
+  });
+
+  test(
+      'PDF invoices and images share the CSV sequence and attachment numbering',
+      () async {
+    await seed(id: 1, note: 'included');
+    await seed(id: 2, note: 'excluded', type: 'income', category: 3);
+    await db.customStatement(
+        "INSERT INTO transaction_attachments(id,transaction_id,file_name,sort_order) VALUES(11,1,'receipt.png',0),(12,1,'invoice.PDF',1),(13,2,'other.png',0)");
+    var selected = <TransactionExportAttachment>[];
+    final csv = await buildTransactionExportCsv(
+        repo: repo,
+        ledgerId: 1,
+        l10n: l,
+        columns: [
+          TransactionExportColumn.note,
+          TransactionExportColumn.attachments
+        ],
+        filter: TransactionExportFilter(type: TransactionExportType.expense),
+        packageAttachments: true,
+        onAttachments: (value) => selected = value);
+    final rows = const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
+        .convert(csv);
+    expect(rows, [
+      [l.exportCsvHeaderSequence, l.exportCsvHeaderNote],
+      ['1', 'included']
+    ]);
+    expect(selected.map((item) => item.attachment.id), [11, 12]);
+    expect(selected.map((item) => item.archivePath),
+        ['附件/No-1-1-included.png', '发票/No-1-2-included.pdf']);
+    final zh = AppLocalizationsZh();
+    expect(
+        transactionExportAttachmentPath(
+            l10n: zh,
+            sequence: 1,
+            attachment: selected.first.attachment,
+            imageIndex: 1,
+            imageCount: 2,
+            note: '午/餐:*'),
+        '附件/序号-1-1-午_餐__.png');
+    expect(
+        transactionExportAttachmentPath(
+            l10n: zh,
+            sequence: 2,
+            attachment: selected.first.attachment,
+            imageIndex: 1,
+            imageCount: 1,
+            note: ''),
+        '附件/序号-2-无备注.png');
+  });
+
+  test('real ZIP contains CSV and referenced files, missing file leaves no ZIP',
+      () async {
+    final root = await Directory.systemTemp.createTemp('beecount-export-');
+    try {
+      final first = File('${root.path}/first.png')..writeAsBytesSync([1, 2]);
+      final invoice = '%PDF-1.7\n%%EOF\n'.codeUnits;
+      final second = File('${root.path}/invoice.pdf')
+        ..writeAsBytesSync(invoice);
+      final platform = const SystemTransactionExportPlatform();
+      final output = '${root.path}/export.zip';
+      await platform.writePackage(output, 'Attachment\n附件/11.png', [
+        TransactionExportFile(first, '附件/11.png'),
+        TransactionExportFile(second, '发票/12.pdf'),
+      ]);
+      final archive = ZipDecoder().decodeBytes(File(output).readAsBytesSync());
+      expect(archive.findFile('附件/11.png')!.content, [1, 2]);
+      expect(archive.findFile('发票/12.pdf')!.content, invoice);
+      final csvBytes =
+          archive.findFile('transactions.csv')!.content as List<int>;
+      expect(csvBytes.take(3), [0xef, 0xbb, 0xbf]);
+      expect(utf8.decode(csvBytes), 'Attachment\n附件/11.png');
+      final missingOutput = '${root.path}/missing.zip';
+      await expectLater(
+          platform.writePackage(missingOutput, 'CSV', [
+            TransactionExportFile(
+                File('${root.path}/absent.png'), '附件/13.png')
+          ]),
+          throwsA(isA<FileSystemException>()));
+      expect(File(missingOutput).existsSync(), isFalse);
+      expect(File('$missingOutput.part').existsSync(), isFalse);
+    } finally {
+      await root.delete(recursive: true);
+    }
+  });
+
+  scenario('selecting attachments exports a package with matching row paths',
+      (t) async {
+    screen(t, const Size(398, 1000));
+    await seed();
+    await db.customStatement(
+        "INSERT INTO transaction_attachments(id,transaction_id,file_name) VALUES(21,1,'receipt.jpg')");
+    final root = Directory.systemTemp.createTempSync('beecount-export-ui-');
+    try {
+      File('${root.path}/receipt.jpg').writeAsBytesSync([5, 6]);
+      final platform = _Platform();
+      await t.pumpWidget(host(platform, attachmentDirectory: root));
+      await t.pumpAndSettle();
+      await start(t);
+      await pumpTask(t);
+      expect(platform.path, endsWith('.zip'));
+      expect(platform.packagedFiles, hasLength(1));
+      expect(platform.packagedFiles!.single.archivePath,
+          '附件/No-1-QA note.jpg');
+      expect(platform.packagedFiles!.single.source.readAsBytesSync(), [5, 6]);
+      expect(
+          const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
+              .convert(platform.csv!),
+          [
+            exportCsvHeaders(l),
+            [
+              '1',
+              l.exportTypeExpense,
+              'QA parent',
+              'QA child',
+              '12.35',
+              'EUR',
+              'QA USD account',
+              '',
+              '',
+              'QA note',
+              '  2026-10-25 08:09:10  ',
+              ''
+            ]
+          ]);
+      await dismiss(t);
+    } finally {
+      await t.pumpWidget(const SizedBox.shrink());
+      root.deleteSync(recursive: true);
+    }
   });
 
   for (final type in TransactionExportType.values) {
@@ -274,7 +429,7 @@ void main() {
           const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
               .convert(csv);
       expect(
-          rows.skip(1).map((row) => row.single).toSet(),
+          rows.skip(1).map((row) => row[1]).toSet(),
           type == TransactionExportType.all
               ? {'expense', 'income', 'transfer'}
               : {type.name});
@@ -367,11 +522,11 @@ void main() {
     final rows = const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
         .convert(platform.csv!);
     expect(rows.length, 2);
-    expect(rows.last[8], 'income');
+    expect(rows.last[9], 'income');
     await dismiss(t);
   });
 
-  test('CSV保留12列顺序、当前账本、类型、分类层级、币种和转账账户', () async {
+  test('CSV首列序号及其余11列顺序、当前账本、类型、分类层级、币种和转账账户', () async {
     await seed(note: 'Comma, quote " and\nnewline');
     await seed(id: 2, type: 'income', category: 3, currency: null);
     await seed(id: 3, type: 'transfer', category: null, currency: null);
@@ -392,6 +547,7 @@ void main() {
     expect(rows.length, 5);
     expect(rows.every((row) => row.length == 12), isTrue);
     expect(rows.first, [
+      l.exportCsvHeaderSequence,
       l.exportCsvHeaderType,
       l.exportCsvHeaderCategory,
       l.exportCsvHeaderSubCategory,
@@ -402,12 +558,12 @@ void main() {
       l.exportCsvHeaderToAccount,
       l.exportCsvHeaderNote,
       l.exportCsvHeaderTime,
-      l.exportCsvHeaderTags,
-      l.exportCsvHeaderAttachments
+      l.exportCsvHeaderTags
     ]);
     final expense =
-        rows.singleWhere((row) => row[8] == 'Comma, quote " and\nnewline');
-    expect(expense, [
+        rows.singleWhere((row) => row[9] == 'Comma, quote " and\nnewline');
+    expect(int.tryParse(expense.first), isNotNull);
+    expect(expense.sublist(1), [
       l.exportTypeExpense,
       'QA parent',
       'QA child',
@@ -418,18 +574,17 @@ void main() {
       '',
       'Comma, quote " and\nnewline',
       '  2026-10-25 08:09:10  ',
-      'QA tag,one,QA tag two',
-      'qa-a.png,qa-b.jpg'
+      'QA tag,one,QA tag two'
     ]);
-    final income = rows.singleWhere((row) => row[0] == l.exportTypeIncome);
-    expect(income.sublist(1, 8),
+    final income = rows.singleWhere((row) => row[1] == l.exportTypeIncome);
+    expect(income.sublist(2, 9),
         ['QA salary', '', '12.35', 'USD', 'QA USD account', '', '']);
-    final transfer = rows.singleWhere((row) => row[0] == l.exportTypeTransfer);
-    expect(transfer.sublist(1, 8),
+    final transfer = rows.singleWhere((row) => row[1] == l.exportTypeTransfer);
+    expect(transfer.sublist(2, 9),
         ['', '', '12.35', 'USD', '', 'QA USD account', 'QA recipient']);
     final noAccount = rows
-        .singleWhere((row) => row[0] == l.exportTypeExpense && row[5] == '');
-    expect(noAccount[4], 'CNY');
+        .singleWhere((row) => row[1] == l.exportTypeExpense && row[6] == '');
+    expect(noAccount[5], 'CNY');
     expect(csv, isNot(contains('Other ledger excluded')));
     expect(progress, [.25, 1]);
     expect(await db.select(db.transactions).get(), before);
@@ -484,8 +639,13 @@ void main() {
     final rows = const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
         .convert(csv);
     expect(rows, [
-      [l.exportCsvHeaderNote, l.exportCsvHeaderAmount, l.exportCsvHeaderType],
-      ['咖啡, "双份"\n第二行', '12.35', l.exportTypeExpense]
+      [
+        l.exportCsvHeaderSequence,
+        l.exportCsvHeaderNote,
+        l.exportCsvHeaderAmount,
+        l.exportCsvHeaderType
+      ],
+      ['1', '咖啡, "双份"\n第二行', '12.35', l.exportTypeExpense]
     ]);
     expect(tracked.tagBatches, isEmpty);
     expect(tracked.attachmentBatches, isEmpty);
@@ -504,8 +664,12 @@ void main() {
       ..add(TransactionExportColumn.type);
     final rows = const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
         .convert(await pending);
-    expect(rows.first, [l.exportCsvHeaderNote, l.exportCsvHeaderAmount]);
-    expect(rows.last, ['QA note', '12.35']);
+    expect(rows.first, [
+      l.exportCsvHeaderSequence,
+      l.exportCsvHeaderNote,
+      l.exportCsvHeaderAmount
+    ]);
+    expect(rows.last, ['1', 'QA note', '12.35']);
   });
 
   test('仅导出一个可空字段时空值仍保留每笔交易的完整单元格', () async {
@@ -514,7 +678,6 @@ void main() {
     for (final column in [
       TransactionExportColumn.note,
       TransactionExportColumn.tags,
-      TransactionExportColumn.attachments
     ]) {
       final csv = await buildTransactionExportCsv(
           repo: repo, ledgerId: 1, l10n: l, columns: [column]);
@@ -522,12 +685,25 @@ void main() {
           const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
               .convert(csv);
       expect(rows, [
-        [exportCsvColumnLabel(l, column)],
-        [''],
-        ['']
+        [l.exportCsvHeaderSequence, exportCsvColumnLabel(l, column)],
+        ['1', ''],
+        ['2', '']
       ]);
-      expect(csv, endsWith('\n""\n""'));
+      expect(csv, endsWith('\n1,\n2,'));
     }
+    final attachmentOnly = await buildTransactionExportCsv(
+        repo: repo,
+        ledgerId: 1,
+        l10n: l,
+        columns: [TransactionExportColumn.attachments]);
+    expect(
+        const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
+            .convert(attachmentOnly),
+        [
+          [l.exportCsvHeaderSequence],
+          ['1'],
+          ['2']
+        ]);
   });
 
   test('服务拒绝空列和重复列，空账本仍完成自定义表头与进度', () async {
@@ -548,7 +724,7 @@ void main() {
         l10n: l,
         columns: [TransactionExportColumn.amount],
         onProgress: values.add);
-    expect(csv, l.exportCsvHeaderAmount);
+    expect(csv, '${l.exportCsvHeaderSequence},${l.exportCsvHeaderAmount}');
     expect(values, [1]);
   });
 
@@ -576,8 +752,9 @@ void main() {
     final rows = const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
         .convert(csv);
     expect(rows.length, 502);
-    expect(rows.singleWhere((row) => row.first == 'batch 501'),
-        ['batch 501', 'last tag', 'last.png']);
+    final last = rows.singleWhere((row) => row[1] == 'batch 501');
+    expect(int.tryParse(last.first), isNotNull);
+    expect(last.sublist(1), ['batch 501', 'last tag']);
   });
 
   test('列偏好保留顺序、过滤未知或重复ID，并恢复无法识别的旧配置', () {
@@ -633,8 +810,8 @@ void main() {
         const CsvToListConverter(eol: '\n', shouldParseNumbers: false)
             .convert(platform.csv!),
         [
-          [l.exportCsvHeaderAmount],
-          ['12.35']
+          [l.exportCsvHeaderSequence, l.exportCsvHeaderAmount],
+          ['1', '12.35']
         ]);
     await dismiss(t);
     expect(
@@ -684,6 +861,7 @@ void main() {
             .convert(platform.csv!)
             .first,
         [
+          l.exportCsvHeaderSequence,
           l.exportCsvHeaderNote,
           l.exportCsvHeaderAmount,
           l.exportCsvHeaderType

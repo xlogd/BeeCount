@@ -153,6 +153,9 @@ class Transactions extends Table {
   /// 单币种/未折算 == amount(隐含汇率 1.0)。账本维度统计读本列(?? amount),
   /// 账户维度(余额等)仍读 amount。
   RealColumn get nativeAmount => real().nullable()();
+
+  /// Manual invoice preference used when the transaction has no PDF invoice.
+  BoolColumn get invoicePending => boolean().withDefault(const Constant(false))();
 }
 
 class RecurringTransactions extends Table {
@@ -523,8 +526,7 @@ class BeeDatabase extends _$BeeDatabase {
   BeeDatabase.forTesting(QueryExecutor executor) : super(executor);
 
   @override
-  int get schemaVersion =>
-      34; // v34: image recognition drafts and retry identity
+  int get schemaVersion => 35; // v35: transaction invoice preference
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -1274,6 +1276,10 @@ class BeeDatabase extends _$BeeDatabase {
           if (from < 34) {
             await _createTableIfMissing(
                 migrator, 'image_billing_drafts', imageBillingDrafts);
+          }
+          if (from < 35) {
+            await _addColumnIfMissing('transactions', 'invoice_pending',
+                'ALTER TABLE transactions ADD COLUMN invoice_pending INTEGER NOT NULL DEFAULT 0;');
           }
         },
         onCreate: (m) async {

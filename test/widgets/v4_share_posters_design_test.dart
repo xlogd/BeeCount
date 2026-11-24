@@ -25,6 +25,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:beecount/utils/project_links.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -179,6 +181,13 @@ void main() {
       expect(boundary.size.width, entry.key == 'receipt' ? 320 : 750);
       if (['profile', 'app', 'month', 'year', 'ledger'].contains(entry.key)) {
         expect(boundary.size.height, 1334);
+      }
+      if (entry.key == 'app') {
+        expect(find.text(ProjectLinks.repositoryLabel), findsNWidgets(2));
+        final qr = t.widget<QrImageView>(find.byType(QrImageView));
+        final uri = Uri.parse(qr.semanticsLabel);
+        expect('${uri.origin}${uri.path}', ProjectLinks.repository);
+        expect(uri.queryParameters['utm_campaign'], 'app_share');
       }
       if (entry.key == 'receipt') {
         expect(find.text('−\$12.00'), findsOneWidget);

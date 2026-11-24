@@ -3,6 +3,7 @@ import 'package:beecount_business_ui/beecount_business_ui.dart';
 import 'package:flutter/material.dart';
 import '../../../../services/attachment_export_import_service.dart';
 import '../../../../utils/image_file_info.dart';
+import '../../../../utils/invoice_file.dart';
 
 /// Original file/header readers and cache; neither export data nor bytes mutate.
 class AttachmentLibraryData {
@@ -19,7 +20,7 @@ class AttachmentLibraryData {
         for (var i = 0; i < files.length; i++)
           BeeAttachment(
               id: '$group:$i',
-              image: FileImage(files[i]),
+              image: isInvoiceFile(files[i].path) ? null : FileImage(files[i]),
               label: files[i].path.split('/').last,
               info: '')
       ];
@@ -30,7 +31,9 @@ class AttachmentLibraryData {
       for (var i = 0; i < files.length; i++)
         BeeAttachment(
             id: '$group:$i',
-            image: MemoryImage(files[i].bytes),
+            image: isInvoiceFile(files[i].fileName)
+                ? null
+                : MemoryImage(files[i].bytes),
             label: files[i].fileName,
             info: '')
     ];

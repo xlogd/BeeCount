@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../system/logger_service.dart';
 import 'update_result.dart';
+import '../../utils/project_links.dart';
 
 /// 更新检查管理类
 class UpdateChecker {
@@ -106,15 +107,18 @@ class UpdateChecker {
         try {
           logger.info('UpdateChecker', '尝试第$attempts次请求GitHub API...');
           resp = await _dio.get(
-            'https://api.github.com/repos/TNT-Likely/BeeCount/releases/latest',
+            ProjectLinks.latestReleaseApi,
             options: Options(
+              validateStatus: (status) => status == 200 || status == 404,
               headers: {
                 'Accept': 'application/vnd.github+json',
                 'User-Agent': _generateRandomUserAgent(),
               },
             ),
           );
-          // 如果是成功响应，跳出循环
+          if (resp.statusCode == 404) {
+            return UpdateResult(message: '__UPDATE_NO_RELEASE__');
+          }
           if (resp.statusCode == 200) {
             logger.info('UpdateChecker', 'GitHub API请求成功');
             break;

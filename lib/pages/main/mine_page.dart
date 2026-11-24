@@ -20,6 +20,7 @@ import '../settings/automation_page.dart';
 import '../settings/about_page.dart';
 import '../report/annual_report_page.dart';
 import '../donation/donation_page.dart';
+import '../../utils/project_links.dart';
 
 class MinePage extends ConsumerWidget {
   const MinePage({super.key});
@@ -55,8 +56,7 @@ class MinePage extends ConsumerWidget {
                 ]
               ]))
         ]);
-    final stars = ref.watch(githubStarCountProvider).valueOrNull ??
-        githubStarFallbackCount;
+    final stars = ref.watch(githubStarCountProvider).valueOrNull;
     return V4PageScaffold(
         profileHeaderSkin: true,
         backgroundColor: BeeCardTheme.of(context).canvas,
@@ -102,11 +102,16 @@ class MinePage extends ConsumerWidget {
                 ]),
                 group(l.v4MineSupportGroup, [
                   if (Platform.isIOS)
-                    row(l.donationTitle, l.donationEntrySubtitle, 'Heart',
+                    row(
+                        l.aboutSupportDevelopment,
+                        l.aboutSupportDevelopmentSubtitle,
+                        'Heart',
                         () => open(const DonationPage())),
                   row(
-                      l.mineSupportAuthor,
-                      l.mineSupportAuthorSubtitle(stars.toString()),
+                      l.projectStarTitle,
+                      stars == null
+                          ? l.projectStarDescription
+                          : l.mineSupportAuthorSubtitle(stars.toString()),
                       'Star',
                       () => showMineGitHubStarGuide(context)),
                   row(
@@ -122,15 +127,16 @@ class MinePage extends ConsumerWidget {
                           context)),
                   row(l.mineCopyPromoText, l.mineCopyPromoSubtitle, 'Copy',
                       () async {
-                    await Clipboard.setData(
-                        ClipboardData(text: l.shareGuidanceCopyText));
+                    await Clipboard.setData(ClipboardData(
+                        text:
+                            l.shareGuidanceCopyText(ProjectLinks.repository)));
                     if (context.mounted) {
                       showBeeToast(context, l.shareGuidanceCopied,
                           tone: BeeTone.success);
                     }
                   }),
                   if (Platform.isIOS)
-                    row(l.mineRateApp, l.mineRateAppSubtitle, 'Star',
+                    row(l.mineRateApp, l.aboutUpstreamAppStore, 'Star',
                         () => rateMineApp(context)),
                 ])
               ]))

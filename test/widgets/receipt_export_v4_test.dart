@@ -24,7 +24,8 @@ TransactionReceiptData fixture() => TransactionReceiptData(
         currencyCode: 'USD',
         happenedAt: DateTime(2026, 10, 20),
         excludeFromStats: false,
-        excludeFromBudget: false),
+        excludeFromBudget: false,
+        invoicePending: false),
     ledger: Ledger(
         id: 1,
         name: 'QA ledger',

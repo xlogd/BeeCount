@@ -9,10 +9,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../providers.dart';
-import '../../help_center_page.dart';
 import '../../log_center_page.dart';
 import '../../privacy_policy_page.dart';
 import '../../../../services/marketing/product_promos.dart';
+import '../../../../utils/project_links.dart';
 import '../../../../utils/website_urls.dart';
 import '../../../shared/branding/bee_artwork.dart';
 import '../../../../dev/component_gallery/component_gallery_page.dart';
@@ -66,9 +66,6 @@ class _SupportAboutControlsState extends ConsumerState<SupportAboutControls> {
 
   void _page(Widget page) =>
       Navigator.push(context, MaterialPageRoute<void>(builder: (_) => page));
-  String _hex(Color c) => [c.r, c.g, c.b]
-      .map((v) => ((v * 255).round() & 0xff).toRadixString(16).padLeft(2, '0'))
-      .join();
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context),
@@ -115,25 +112,28 @@ class _SupportAboutControlsState extends ConsumerState<SupportAboutControls> {
               tag: '${l.appPromoTagOpenSource} · ${l.appPromoTagFree}',
               sourceLabel: l.v4SharePosterOpenSourceAction,
               recommendLabel: l.v4SharePosterRecommend,
-              onSource: () => open('https://github.com/TNT-Likely/BeeCount'),
+              onSource: () => open(ProjectLinks.repository),
               onRecommend: () => showDialog<void>(
                   context: context,
                   builder: (_) => const ShareCardDialog(type: 'app')),
               socials: [
-                social(l.aboutWebsite, 'website', WebsiteUrls.home(locale)),
-                social('GitHub', 'github',
-                    'https://github.com/TNT-Likely/BeeCount',
+                social('GitHub', 'github', ProjectLinks.repository,
                     asset: 'assets/icons/social/github.svg'),
-                if (!simplified)
-                  social(l.aboutTelegram, 'telegram', 'https://t.me/beecount',
-                      asset: 'assets/icons/social/telegram.svg'),
-                social(l.aboutXiaohongshu, 'xiaohongshu',
-                    'https://xhslink.com/m/8K1ekg7EFOq',
-                    asset: 'assets/icons/social/xiaohongshu.svg'),
-                social(l.aboutDouyin, 'douyin',
-                    'https://v.douyin.com/YG7tUweYYyQ/',
-                    asset: 'assets/icons/social/douyin.svg'),
               ]),
+          BeeSupportActions(actions: [
+            BeeSupportAction(
+                key: const ValueKey('support-maintainer'),
+                title: l.aboutMaintainer,
+                subtitle: ProjectLinks.maintainer,
+                leading: const BeeLineIcon('Users'),
+                onTap: () => open(ProjectLinks.maintainerProfile)),
+            BeeSupportAction(
+                key: const ValueKey('support-original-author'),
+                title: l.aboutOriginalAuthor,
+                subtitle: ProjectLinks.originalAuthor,
+                leading: const BeeLineIcon('Heart'),
+                onTap: () => open(ProjectLinks.originalRepository)),
+          ]),
           BeeSupportActions(actions: [
             if (!platform.isIOS && !platform.isGooglePlay)
               BeeSupportAction(
@@ -174,20 +174,11 @@ class _SupportAboutControlsState extends ConsumerState<SupportAboutControls> {
                                       : UpdateProgress.active(value, status));
                         }),
             BeeSupportAction(
-                key: const ValueKey('support-development'),
-                title: l.aboutSupportDevelopment,
-                subtitle: l.aboutSupportDevelopmentSubtitle,
-                leading: const BeeLineIcon('Heart'),
-                onTap: () => open(locale.languageCode == 'zh'
-                    ? 'https://github.com/TNT-Likely/BeeCount/blob/main/docs/donate/README_ZH.md'
-                    : 'https://github.com/TNT-Likely/BeeCount/blob/main/docs/donate/README_EN.md')),
-            BeeSupportAction(
                 key: const ValueKey('support-feedback'),
                 title: l.mineFeedback,
                 subtitle: l.mineFeedbackSubtitle,
                 leading: const BeeLineIcon('MessageSquare'),
-                onTap: () =>
-                    open('https://github.com/TNT-Likely/BeeCount/issues')),
+                onTap: () => open(ProjectLinks.issues)),
             BeeSupportAction(
                 key: const ValueKey('support-logs'),
                 title: l.logCenterTitle,
@@ -204,6 +195,26 @@ class _SupportAboutControlsState extends ConsumerState<SupportAboutControls> {
                   leading: const BeeLineIcon('PanelsTopLeft'),
                   onTap: () => _page(const ComponentGalleryPage()))
             ]),
+          BeeSectionLabel(l.aboutUpstreamResources),
+          BeeSupportActions(actions: [
+            social(l.aboutWebsite, 'website', WebsiteUrls.home(locale)),
+            if (!simplified)
+              social(l.aboutTelegram, 'telegram', 'https://t.me/beecount',
+                  asset: 'assets/icons/social/telegram.svg'),
+            social(l.aboutXiaohongshu, 'xiaohongshu',
+                'https://xhslink.com/m/8K1ekg7EFOq',
+                asset: 'assets/icons/social/xiaohongshu.svg'),
+            social(l.aboutDouyin, 'douyin', 'https://v.douyin.com/YG7tUweYYyQ/',
+                asset: 'assets/icons/social/douyin.svg'),
+            BeeSupportAction(
+                key: const ValueKey('support-development'),
+                title: l.aboutSupportDevelopment,
+                subtitle: l.aboutSupportDevelopmentSubtitle,
+                leading: const BeeLineIcon('Heart'),
+                onTap: () => open(locale.languageCode == 'zh'
+                    ? '${ProjectLinks.originalRepository}/blob/main/docs/donate/README_ZH.md'
+                    : '${ProjectLinks.originalRepository}/blob/main/docs/donate/README_EN.md')),
+          ]),
           BeeSectionLabel(l.aboutRelatedProducts),
           for (final product in products)
             BeePromotionCard(
@@ -223,22 +234,13 @@ class _SupportAboutControlsState extends ConsumerState<SupportAboutControls> {
           Wrap(alignment: WrapAlignment.center, spacing: 8, children: [
             TextButton(
                 key: const ValueKey('support-changelog'),
-                onPressed: () => _page(HelpCenterPage(
-                    title: l.aboutChangelog,
-                    initialUrl: WebsiteUrls.changelogEmbed(locale,
-                        dark: Theme.of(context).brightness == Brightness.dark,
-                        primaryHex: _hex(primary)))),
+                onPressed: () => open(ProjectLinks.releases),
                 child: Text(l.aboutChangelog)),
             TextButton(
                 key: const ValueKey('support-privacy'),
                 onPressed: () => _page(const PrivacyPolicyPage()),
                 child: Text(l.aboutPrivacyPolicy))
           ]),
-          if (simplified)
-            Text('浙ICP备2025214907号-2A',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 11, color: Theme.of(context).hintColor)),
         ]));
   }
 }

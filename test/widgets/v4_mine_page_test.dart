@@ -407,7 +407,7 @@ void main() {
       l.appearanceSettings,
       l.about,
       l.mineHelp,
-      l.mineSupportAuthor,
+      l.projectStarTitle,
       l.annualReportTitle,
       l.mineShareApp,
       l.mineCopyPromoText
@@ -417,12 +417,12 @@ void main() {
       expect(find.text(label), findsOneWidget);
       expect(tester.takeException(), isNull);
     }
-    await tester.ensureVisible(find.text(l.mineSupportAuthor));
+    await tester.ensureVisible(find.text(l.projectStarTitle));
     await tester.pumpAndSettle();
     final pos =
         tester.state<ScrollableState>(find.byType(Scrollable).first).position;
     final before = pos.pixels;
-    await tester.tap(find.text(l.mineSupportAuthor));
+    await tester.tap(find.text(l.projectStarTitle));
     await tester.pumpAndSettle();
     expect(find.byType(BeeDialog), findsOneWidget);
     await tester.tap(find.byType(CloseButton));

@@ -11,19 +11,67 @@ import 'package:beecount/l10n/app_localizations.dart';
 import 'package:beecount/pages/transaction/transaction_editor_page.dart';
 import 'package:beecount/pages/transaction/recording/bindings/recording_category_section.dart';
 import 'package:beecount/providers.dart';
+import 'package:beecount/services/document_scan_service.dart';
 import 'package:beecount/utils/shared_ledger_picker_filter.dart';
 import 'package:beecount/pages/transaction/recording/bindings/amount_editor_sheet.dart';
 import 'package:beecount/pages/shared/selectors/account_selector.dart';
 import 'package:beecount/pages/transaction/recording/bindings/note_picker_dialog.dart';
 import 'package:drift/native.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_doc_scanner/flutter_doc_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const captureUi = bool.fromEnvironment('BEECOUNT_CAPTURE_UI');
+
+class _InvoicePicker extends FilePicker {
+  _InvoicePicker(this.file);
+  final File file;
+
+  @override
+  Future<FilePickerResult?> pickFiles({
+    String? dialogTitle,
+    String? initialDirectory,
+    FileType type = FileType.any,
+    List<String>? allowedExtensions,
+    Function(FilePickerStatus)? onFileLoading,
+    bool allowCompression = true,
+    int compressionQuality = 30,
+    bool allowMultiple = false,
+    bool withData = false,
+    bool withReadStream = false,
+    bool lockParentWindow = false,
+    bool readSequential = false,
+  }) async {
+    expect(allowedExtensions, ['pdf']);
+    return FilePickerResult([
+      PlatformFile(
+          name: 'invoice.pdf', path: file.path, size: file.lengthSync()),
+    ]);
+  }
+}
+
+class _UnusedFilePicker extends FilePicker {}
+
+class ReturnedScan extends FlutterDocScanner {
+  @override
+  Future<ImageScanResult?> getScannedDocumentAsImages({
+    int page = 4,
+    ImageFormat imageFormat = ImageFormat.jpeg,
+    double quality = 0.9,
+    bool useAutomaticSinglePictureProcessing = false,
+  }) async =>
+      const ImageScanResult(images: [
+        'file:///data/user/0/example/cache/mlkit_docscan_ui_client/one.jpg',
+        'content://scanner/two',
+        'content://scanner/three',
+      ]);
+}
 
 class RetryRecordingRepository extends LocalRepository {
   RetryRecordingRepository(super.db);
@@ -59,6 +107,7 @@ void recordingTest(String name, Future<void> Function(WidgetTester) body) {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  setUpAll(() => FilePicker.platform = _UnusedFilePicker());
   late BeeDatabase db;
   late LocalRepository repo;
   late int foodId;
@@ -109,6 +158,7 @@ void main() {
     double textScale = 1,
     Brightness brightness = Brightness.light,
     String skin = 'none',
+    DocumentScanService? scanner,
   }) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = size;
@@ -144,6 +194,9 @@ void main() {
           skinAnimationEnabledProvider.overrideWith((ref) => false),
           databaseProvider.overrideWithValue(db),
           repositoryProvider.overrideWithValue(repo),
+          if (scanner != null) ...[
+            documentScanServiceProvider.overrideWithValue(scanner),
+          ],
           currentLedgerProvider.overrideWith(
               (ref) => repo.watchLedger(ref.watch(currentLedgerIdProvider))),
           beecountCloudProviderInstance.overrideWith((ref) async => null),
@@ -975,6 +1028,186 @@ void main() {
         tagId);
     expect(find.text('打开记账'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  recordingTest('扫描页进入草稿，保存部分失败后只重试剩余图片', (tester) async {
+    SharedPreferences.setMockInitialValues(
+        {'auto_sync': false, 'attachmentKeepOriginal': true});
+    debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    final dir = Directory.systemTemp.createTempSync('beecount-scan-draft-');
+    addTearDown(() => dir.deleteSync(recursive: true));
+    final first = File('${dir.path}/first.png');
+    final second = File('${dir.path}/second.png');
+    final third = File('${dir.path}/third.png');
+    final png = base64Decode(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aPd0AAAAASUVORK5CYII=');
+    const pathChannel = MethodChannel('plugins.flutter.io/path_provider');
+    const copyChannel = MethodChannel('qa/recording_scan');
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(pathChannel, (_) async => dir.path);
+    messenger.setMockMethodCallHandler(copyChannel, (call) async {
+      expect(call.method, 'copyImages');
+      expect(call.arguments['uris'], hasLength(3));
+      first.writeAsBytesSync(png);
+      second.writeAsBytesSync(png);
+      third.writeAsBytesSync(png);
+      return [first.path, second.path, third.path];
+    });
+    addTearDown(() {
+      messenger.setMockMethodCallHandler(pathChannel, null);
+      messenger.setMockMethodCallHandler(copyChannel, null);
+    });
+    try {
+      await tester.runAsync(() async {
+        await open(tester,
+            scanner: DocumentScanService(
+                scanner: ReturnedScan(),
+                android: true,
+                androidChannel: copyChannel));
+        await category(tester, foodId);
+        await category(tester, lunchId);
+        await key(tester, '8');
+        await press(tester, 'recording-attachments');
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('扫描文件'));
+        await tester.pumpAndSettle();
+        final review = find.byKey(const ValueKey('document-flatten-confirm'));
+        for (var i = 0; review.evaluate().isEmpty && i < 40; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+          await tester.pump(const Duration(milliseconds: 20));
+        }
+        expect(review, findsOneWidget);
+        await tester.tap(review);
+        await tester.pumpAndSettle();
+        for (var i = 0; !second.existsSync() && i < 40; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+          await tester.pump();
+        }
+        // Verify both scan pages reached the draft before simulating a save fault.
+        final attachment = find.byKey(const ValueKey('recording-attachments'));
+        final three = find.descendant(of: attachment, matching: find.text('3'));
+        for (var i = 0; three.evaluate().isEmpty && i < 40; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+          await tester.pump();
+        }
+        expect(three, findsOneWidget);
+        second.deleteSync();
+        await press(tester, 'recording-save');
+        final warning = find.textContaining('附件已保存 1/3 张');
+        for (var i = 0; warning.evaluate().isEmpty && i < 80; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+          await tester.pump(const Duration(milliseconds: 16));
+        }
+        expect(warning, findsOneWidget);
+        final transaction = (await db.select(db.transactions).get()).single;
+        expect(await repo.getAttachmentsByTransaction(transaction.id),
+            hasLength(1));
+        second.writeAsBytesSync(png);
+        await press(tester, 'recording-save');
+        for (var i = 0; find.text('打开记账').evaluate().isEmpty && i < 80; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+          await tester.pump(const Duration(milliseconds: 30));
+        }
+        expect(find.text('打开记账'), findsOneWidget);
+        expect(
+            (await db.select(db.transactions).get()).single.id, transaction.id);
+        final attachments =
+            await repo.getAttachmentsByTransaction(transaction.id);
+        expect(attachments.map((row) => row.originalName),
+            ['first.png', 'second.png', 'third.png']);
+        expect(attachments.map((row) => row.sortOrder), [0, 1, 2]);
+      });
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  recordingTest('发票状态随 PDF 附件变化，账单保存 PDF 原始内容', (tester) async {
+    final dir = Directory.systemTemp.createTempSync('beecount-invoice-');
+    addTearDown(() => dir.deleteSync(recursive: true));
+    final file = File('${dir.path}/invoice.pdf')
+      ..writeAsStringSync('%PDF-1.7\n%%EOF\n');
+    final originalPicker = FilePicker.platform;
+    FilePicker.platform = _InvoicePicker(file);
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    const pathChannel = MethodChannel('plugins.flutter.io/path_provider');
+    messenger.setMockMethodCallHandler(pathChannel, (_) async => dir.path);
+    addTearDown(() {
+      FilePicker.platform = originalPicker;
+      messenger.setMockMethodCallHandler(pathChannel, null);
+    });
+    final status = find.byKey(const ValueKey('recording-invoice-status'));
+    final loading = find.byTooltip('更多选项');
+    Future<void> showStatus(String expected) async {
+      await tester.tap(loading);
+      await tester.pumpAndSettle();
+      expect(find.descendant(of: status, matching: find.text(expected)),
+          findsOneWidget);
+    }
+
+    Future<void> attach() async {
+      await press(tester, 'recording-attachments');
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('添加发票（PDF）'));
+      for (var i = 0; i < 12; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 15));
+        await tester.pump(const Duration(milliseconds: 20));
+      }
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> closeOptions() async {
+      await tester.tap(find.text('确定').last);
+      await tester.pumpAndSettle();
+    }
+
+    await tester.runAsync(() async {
+      await open(tester);
+      await category(tester, foodId);
+      await category(tester, lunchId);
+      await key(tester, '8');
+      await showStatus('不开');
+      await tester.tap(status);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('待开').last);
+      await tester.pumpAndSettle();
+      expect(find.descendant(of: status, matching: find.text('待开')),
+          findsOneWidget);
+      await closeOptions();
+      await attach();
+      await showStatus('已开');
+      await closeOptions();
+      await press(tester, 'recording-attachments');
+      for (var i = 0;
+          find.text('打开发票').evaluate().isEmpty && i < 60;
+          i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        await tester.pump(const Duration(milliseconds: 20));
+      }
+      expect(find.text('打开发票'), findsOneWidget);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('attachment-crop')), findsNothing);
+      await tester.tap(find.byTooltip('删除').last);
+      await tester.pumpAndSettle();
+      await showStatus('待开');
+      await closeOptions();
+      await attach();
+      await press(tester, 'recording-save');
+      for (var i = 0; find.text('打开记账').evaluate().isEmpty && i < 80; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 25));
+        await tester.pump(const Duration(milliseconds: 30));
+      }
+      expect(find.text('打开记账'), findsOneWidget);
+      final tx = (await db.select(db.transactions).get()).single;
+      expect(tx.invoicePending, isTrue);
+      final item = (await repo.getAttachmentsByTransaction(tx.id)).single;
+      expect(item.fileName, endsWith('.pdf'));
+      expect(item.originalName, 'invoice.pdf');
+      expect(File('${dir.path}/attachments/${item.fileName}').readAsBytesSync(),
+          file.readAsBytesSync());
+    });
   });
 
   recordingTest('减法、除法和清空不丢分类选择', (tester) async {

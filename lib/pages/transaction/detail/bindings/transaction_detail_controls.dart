@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import '../../../../utils/account_type_utils.dart';
+import '../../../../utils/invoice_file.dart';
 
 import 'package:beecount_business_ui/transaction_detail.dart';
 import 'package:beecount_ui/beecount_ui.dart';
@@ -240,8 +241,10 @@ class _TransactionDetailControlsState
             for (final a in data.attachments)
               BeeAttachment(
                   id: '${a.id}',
-                  image: FileImage(
-                      File('${directory!.valueOrNull}/${a.fileName}')),
+                  image: isInvoiceFile(a.fileName)
+                      ? null
+                      : FileImage(
+                          File('${directory!.valueOrNull}/${a.fileName}')),
                   label: a.originalName ?? a.fileName,
                   info: a.fileSize == null ? '' : '${a.fileSize} B')
           ];
@@ -305,6 +308,10 @@ class _TransactionDetailControlsState
       onAttachment: (index) => _open(AttachmentPreviewPage.fromTransaction(
           transactionId: tx.id, initialIndex: index, allowDelete: false)),
       statusLabels: [
+        if (data.attachments.any((item) => isInvoiceFile(item.fileName)))
+          l.invoiceIssued
+        else if (tx.invoicePending)
+          l.invoicePending,
         if (tx.excludeFromStats) l.txFlagExcludeFromStats,
         if (tx.excludeFromBudget) l.txFlagExcludeFromBudget
       ],

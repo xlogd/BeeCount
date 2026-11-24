@@ -47,6 +47,8 @@ String _localizeUpdateMessage(BuildContext context, String? message) {
       return AppLocalizations.of(context).updateUserCancelled;
     case '__UPDATE_PERMISSION_DENIED__':
       return AppLocalizations.of(context).updatePermissionDenied;
+    case '__UPDATE_NO_RELEASE__':
+      return AppLocalizations.of(context).updateNoRelease;
     case '__UPDATE_NO_APK_FOUND__':
       return AppLocalizations.of(context).updateNoApkFound;
     case '__UPDATE_ALREADY_LATEST_SIMPLE__':

@@ -2013,6 +2013,16 @@ class $TransactionsTable extends Transactions
   late final GeneratedColumn<double> nativeAmount = GeneratedColumn<double>(
       'native_amount', aliasedName, true,
       type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _invoicePendingMeta =
+      const VerificationMeta('invoicePending');
+  @override
+  late final GeneratedColumn<bool> invoicePending = GeneratedColumn<bool>(
+      'invoice_pending', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("invoice_pending" IN (0, 1))'),
+      defaultValue: const Constant(false));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -2035,7 +2045,8 @@ class $TransactionsTable extends Transactions
         excludeFromStats,
         excludeFromBudget,
         currencyCode,
-        nativeAmount
+        nativeAmount,
+        invoicePending
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2165,6 +2176,12 @@ class $TransactionsTable extends Transactions
           nativeAmount.isAcceptableOrUnknown(
               data['native_amount']!, _nativeAmountMeta));
     }
+    if (data.containsKey('invoice_pending')) {
+      context.handle(
+          _invoicePendingMeta,
+          invoicePending.isAcceptableOrUnknown(
+              data['invoice_pending']!, _invoicePendingMeta));
+    }
     return context;
   }
 
@@ -2219,6 +2236,8 @@ class $TransactionsTable extends Transactions
           .read(DriftSqlType.string, data['${effectivePrefix}currency_code']),
       nativeAmount: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}native_amount']),
+      invoicePending: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}invoice_pending'])!,
     );
   }
 
@@ -2263,6 +2282,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   /// 单币种/未折算 == amount(隐含汇率 1.0)。账本维度统计读本列(?? amount),
   /// 账户维度(余额等)仍读 amount。
   final double? nativeAmount;
+
+  /// Manual invoice preference used when the transaction has no PDF invoice.
+  final bool invoicePending;
   const Transaction(
       {required this.id,
       required this.ledgerId,
@@ -2284,7 +2306,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       required this.excludeFromStats,
       required this.excludeFromBudget,
       this.currencyCode,
-      this.nativeAmount});
+      this.nativeAmount,
+      required this.invoicePending});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -2339,6 +2362,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     if (!nullToAbsent || nativeAmount != null) {
       map['native_amount'] = Variable<double>(nativeAmount);
     }
+    map['invoice_pending'] = Variable<bool>(invoicePending);
     return map;
   }
 
@@ -2390,6 +2414,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       nativeAmount: nativeAmount == null && nullToAbsent
           ? const Value.absent()
           : Value(nativeAmount),
+      invoicePending: Value(invoicePending),
     );
   }
 
@@ -2423,6 +2448,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       excludeFromBudget: serializer.fromJson<bool>(json['excludeFromBudget']),
       currencyCode: serializer.fromJson<String?>(json['currencyCode']),
       nativeAmount: serializer.fromJson<double?>(json['nativeAmount']),
+      invoicePending: serializer.fromJson<bool>(json['invoicePending']),
     );
   }
   @override
@@ -2453,6 +2479,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'excludeFromBudget': serializer.toJson<bool>(excludeFromBudget),
       'currencyCode': serializer.toJson<String?>(currencyCode),
       'nativeAmount': serializer.toJson<double?>(nativeAmount),
+      'invoicePending': serializer.toJson<bool>(invoicePending),
     };
   }
 
@@ -2477,7 +2504,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           bool? excludeFromStats,
           bool? excludeFromBudget,
           Value<String?> currencyCode = const Value.absent(),
-          Value<double?> nativeAmount = const Value.absent()}) =>
+          Value<double?> nativeAmount = const Value.absent(),
+          bool? invoicePending}) =>
       Transaction(
         id: id ?? this.id,
         ledgerId: ledgerId ?? this.ledgerId,
@@ -2514,6 +2542,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
             currencyCode.present ? currencyCode.value : this.currencyCode,
         nativeAmount:
             nativeAmount.present ? nativeAmount.value : this.nativeAmount,
+        invoicePending: invoicePending ?? this.invoicePending,
       );
   Transaction copyWithCompanion(TransactionsCompanion data) {
     return Transaction(
@@ -2562,6 +2591,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       nativeAmount: data.nativeAmount.present
           ? data.nativeAmount.value
           : this.nativeAmount,
+      invoicePending: data.invoicePending.present
+          ? data.invoicePending.value
+          : this.invoicePending,
     );
   }
 
@@ -2588,7 +2620,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ..write('excludeFromStats: $excludeFromStats, ')
           ..write('excludeFromBudget: $excludeFromBudget, ')
           ..write('currencyCode: $currencyCode, ')
-          ..write('nativeAmount: $nativeAmount')
+          ..write('nativeAmount: $nativeAmount, ')
+          ..write('invoicePending: $invoicePending')
           ..write(')'))
         .toString();
   }
@@ -2615,7 +2648,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
         excludeFromStats,
         excludeFromBudget,
         currencyCode,
-        nativeAmount
+        nativeAmount,
+        invoicePending
       ]);
   @override
   bool operator ==(Object other) =>
@@ -2641,7 +2675,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           other.excludeFromStats == this.excludeFromStats &&
           other.excludeFromBudget == this.excludeFromBudget &&
           other.currencyCode == this.currencyCode &&
-          other.nativeAmount == this.nativeAmount);
+          other.nativeAmount == this.nativeAmount &&
+          other.invoicePending == this.invoicePending);
 }
 
 class TransactionsCompanion extends UpdateCompanion<Transaction> {
@@ -2666,6 +2701,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   final Value<bool> excludeFromBudget;
   final Value<String?> currencyCode;
   final Value<double?> nativeAmount;
+  final Value<bool> invoicePending;
   const TransactionsCompanion({
     this.id = const Value.absent(),
     this.ledgerId = const Value.absent(),
@@ -2688,6 +2724,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.excludeFromBudget = const Value.absent(),
     this.currencyCode = const Value.absent(),
     this.nativeAmount = const Value.absent(),
+    this.invoicePending = const Value.absent(),
   });
   TransactionsCompanion.insert({
     this.id = const Value.absent(),
@@ -2711,6 +2748,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.excludeFromBudget = const Value.absent(),
     this.currencyCode = const Value.absent(),
     this.nativeAmount = const Value.absent(),
+    this.invoicePending = const Value.absent(),
   })  : ledgerId = Value(ledgerId),
         type = Value(type),
         amount = Value(amount);
@@ -2736,6 +2774,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     Expression<bool>? excludeFromBudget,
     Expression<String>? currencyCode,
     Expression<double>? nativeAmount,
+    Expression<bool>? invoicePending,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2764,6 +2803,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       if (excludeFromBudget != null) 'exclude_from_budget': excludeFromBudget,
       if (currencyCode != null) 'currency_code': currencyCode,
       if (nativeAmount != null) 'native_amount': nativeAmount,
+      if (invoicePending != null) 'invoice_pending': invoicePending,
     });
   }
 
@@ -2788,7 +2828,8 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       Value<bool>? excludeFromStats,
       Value<bool>? excludeFromBudget,
       Value<String?>? currencyCode,
-      Value<double?>? nativeAmount}) {
+      Value<double?>? nativeAmount,
+      Value<bool>? invoicePending}) {
     return TransactionsCompanion(
       id: id ?? this.id,
       ledgerId: ledgerId ?? this.ledgerId,
@@ -2814,6 +2855,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       excludeFromBudget: excludeFromBudget ?? this.excludeFromBudget,
       currencyCode: currencyCode ?? this.currencyCode,
       nativeAmount: nativeAmount ?? this.nativeAmount,
+      invoicePending: invoicePending ?? this.invoicePending,
     );
   }
 
@@ -2887,6 +2929,9 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     if (nativeAmount.present) {
       map['native_amount'] = Variable<double>(nativeAmount.value);
     }
+    if (invoicePending.present) {
+      map['invoice_pending'] = Variable<bool>(invoicePending.value);
+    }
     return map;
   }
 
@@ -2913,7 +2958,8 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
           ..write('excludeFromStats: $excludeFromStats, ')
           ..write('excludeFromBudget: $excludeFromBudget, ')
           ..write('currencyCode: $currencyCode, ')
-          ..write('nativeAmount: $nativeAmount')
+          ..write('nativeAmount: $nativeAmount, ')
+          ..write('invoicePending: $invoicePending')
           ..write(')'))
         .toString();
   }
@@ -13689,6 +13735,7 @@ typedef $$TransactionsTableCreateCompanionBuilder = TransactionsCompanion
   Value<bool> excludeFromBudget,
   Value<String?> currencyCode,
   Value<double?> nativeAmount,
+  Value<bool> invoicePending,
 });
 typedef $$TransactionsTableUpdateCompanionBuilder = TransactionsCompanion
     Function({
@@ -13713,6 +13760,7 @@ typedef $$TransactionsTableUpdateCompanionBuilder = TransactionsCompanion
   Value<bool> excludeFromBudget,
   Value<String?> currencyCode,
   Value<double?> nativeAmount,
+  Value<bool> invoicePending,
 });
 
 class $$TransactionsTableFilterComposer
@@ -13794,6 +13842,10 @@ class $$TransactionsTableFilterComposer
 
   ColumnFilters<double> get nativeAmount => $composableBuilder(
       column: $table.nativeAmount, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get invoicePending => $composableBuilder(
+      column: $table.invoicePending,
+      builder: (column) => ColumnFilters(column));
 }
 
 class $$TransactionsTableOrderingComposer
@@ -13877,6 +13929,10 @@ class $$TransactionsTableOrderingComposer
   ColumnOrderings<double> get nativeAmount => $composableBuilder(
       column: $table.nativeAmount,
       builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get invoicePending => $composableBuilder(
+      column: $table.invoicePending,
+      builder: (column) => ColumnOrderings(column));
 }
 
 class $$TransactionsTableAnnotationComposer
@@ -13950,6 +14006,9 @@ class $$TransactionsTableAnnotationComposer
 
   GeneratedColumn<double> get nativeAmount => $composableBuilder(
       column: $table.nativeAmount, builder: (column) => column);
+
+  GeneratedColumn<bool> get invoicePending => $composableBuilder(
+      column: $table.invoicePending, builder: (column) => column);
 }
 
 class $$TransactionsTableTableManager extends RootTableManager<
@@ -13999,6 +14058,7 @@ class $$TransactionsTableTableManager extends RootTableManager<
             Value<bool> excludeFromBudget = const Value.absent(),
             Value<String?> currencyCode = const Value.absent(),
             Value<double?> nativeAmount = const Value.absent(),
+            Value<bool> invoicePending = const Value.absent(),
           }) =>
               TransactionsCompanion(
             id: id,
@@ -14022,6 +14082,7 @@ class $$TransactionsTableTableManager extends RootTableManager<
             excludeFromBudget: excludeFromBudget,
             currencyCode: currencyCode,
             nativeAmount: nativeAmount,
+            invoicePending: invoicePending,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -14045,6 +14106,7 @@ class $$TransactionsTableTableManager extends RootTableManager<
             Value<bool> excludeFromBudget = const Value.absent(),
             Value<String?> currencyCode = const Value.absent(),
             Value<double?> nativeAmount = const Value.absent(),
+            Value<bool> invoicePending = const Value.absent(),
           }) =>
               TransactionsCompanion.insert(
             id: id,
@@ -14068,6 +14130,7 @@ class $$TransactionsTableTableManager extends RootTableManager<
             excludeFromBudget: excludeFromBudget,
             currencyCode: currencyCode,
             nativeAmount: nativeAmount,
+            invoicePending: invoicePending,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

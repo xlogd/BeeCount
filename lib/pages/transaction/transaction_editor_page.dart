@@ -33,6 +33,7 @@ class TransactionEditorPage extends ConsumerStatefulWidget {
   final List<int>? initialTagIds; // 初始标签ID列表
   final bool initialExcludeFromStats; // 不计入收支，编辑模式回显
   final bool initialExcludeFromBudget; // 不计入预算，编辑模式回显
+  final bool initialInvoicePending;
   // v30 多币种编辑回显(推隐含汇率用)
   final String? initialCurrencyCode;
   final double? initialNativeAmount;
@@ -52,6 +53,7 @@ class TransactionEditorPage extends ConsumerStatefulWidget {
     this.initialTagIds,
     this.initialExcludeFromStats = false,
     this.initialExcludeFromBudget = false,
+    this.initialInvoicePending = false,
     this.initialCurrencyCode,
     this.initialNativeAmount,
   });
@@ -205,7 +207,8 @@ class _TransactionEditorPageState extends ConsumerState<TransactionEditorPage> {
                   onBack: () => Navigator.maybePop(context),
                   moreLabel: l10n.txFlagMoreOptions,
                   onMore: kind == 'transfer'
-                      ? null
+                      ? () => _transferEditorKey.currentState
+                          ?.showRecordingOptions()
                       : () =>
                           _cardEditorKey.currentState?.showRecordingOptions(),
                   onChanged: _changeType),
@@ -242,6 +245,8 @@ class _TransactionEditorPageState extends ConsumerState<TransactionEditorPage> {
                                     widget.initialExcludeFromStats,
                                 initialExcludeFromBudget:
                                     widget.initialExcludeFromBudget,
+                                initialInvoicePending:
+                                    widget.initialInvoicePending,
                                 initialCurrencyCode: widget.initialCurrencyCode,
                                 initialNativeAmount: widget.initialNativeAmount,
                               )
@@ -290,6 +295,8 @@ class _TransactionEditorPageState extends ConsumerState<TransactionEditorPage> {
                                     widget.initialExcludeFromStats,
                                 initialExcludeFromBudget:
                                     widget.initialExcludeFromBudget,
+                                initialInvoicePending:
+                                    !_cardReset && widget.initialInvoicePending,
                                 initialCurrencyCode: _cardReset
                                     ? null
                                     : widget.initialCurrencyCode,

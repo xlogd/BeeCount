@@ -37,17 +37,17 @@
 
 ### 执行
 
-不可接受的行为可以通过联系项目团队 sunxiaoyes@outlook.com 来报告。所有投诉都将被审查和调查，并将做出必要且适当的回应。
+不可接受的行为可以通过通过 [GitHub 联系维护者 LogDancer](https://github.com/xlogd) 来报告。所有投诉都将被审查和调查，并将做出必要且适当的回应。
 
 ## 我能做什么贡献？
 
 ### 🐛 报告 Bug
 
-发现了问题？请通过 [GitHub Issues](https://github.com/TNT-Likely/BeeCount/issues) 告诉我们。
+发现了问题？请通过 [GitHub Issues](https://github.com/xlogd/BeeCount/issues) 告诉我们。
 
 ### 💡 提出新功能
 
-有好的想法？我们很乐意听到！请先查看 [Issues](https://github.com/TNT-Likely/BeeCount/issues) 和 [Discussions](https://github.com/TNT-Likely/BeeCount/discussions) 看看是否已经有人提出。
+有好的想法？我们很乐意听到！请先查看 [Issues](https://github.com/xlogd/BeeCount/issues) 看看是否已经有人提出。
 
 ### 💻 贡献代码
 
@@ -91,7 +91,7 @@ BeeCount 4.0 正式上线，我们正在邀请社区一起重新设计产品 Log
 在提交 Bug 报告前，请先：
 
 1. 检查 [FAQ](https://github.com/TNT-Likely/BeeCount/wiki/常见问题-FAQ) 看看问题是否已有解决方案
-2. 搜索 [现有 Issues](https://github.com/TNT-Likely/BeeCount/issues) 确认问题未被报告
+2. 搜索 [现有 Issues](https://github.com/xlogd/BeeCount/issues) 确认问题未被报告
 3. 确保你使用的是最新版本
 
 ### 如何报告
@@ -148,7 +148,7 @@ BeeCount 4.0 正式上线，我们正在邀请社区一起重新设计产品 Log
 
 我们欢迎新功能建议！在提交前：
 
-1. 检查 [Discussions](https://github.com/TNT-Likely/BeeCount/discussions) 中的"Ideas"分类
+1. 检查 [Issues](https://github.com/xlogd/BeeCount/issues) 中已有的功能建议
 2. 确认功能符合项目定位（隐私优先、开源、自托管）
 3. 考虑功能的实用性和普遍性
 
@@ -262,7 +262,7 @@ flutter doctor
 2. **Clone 项目**
 
 ```bash
-git clone https://github.com/TNT-Likely/BeeCount.git
+git clone https://github.com/xlogd/BeeCount.git
 cd BeeCount
 ```
 
@@ -698,9 +698,8 @@ git push origin docs/improve-supabase-guide
 
 ### 社区交流
 
-- [GitHub Discussions](https://github.com/TNT-Likely/BeeCount/discussions) - 项目讨论
 - [V2EX 帖子](https://www.v2ex.com/t/1168480) - 中文社区
-- Email: sunxiaoyes@outlook.com - 直接联系
+- [LogDancer](https://github.com/xlogd) - 项目维护者
 
 ## 认可贡献者
 
@@ -714,4 +713,4 @@ git push origin docs/improve-supabase-guide
 
 再次感谢你的贡献！🙏
 
-如有任何问题，欢迎通过 [Issues](https://github.com/TNT-Likely/BeeCount/issues) 或 [Discussions](https://github.com/TNT-Likely/BeeCount/discussions) 与我们联系。
+如有任何问题，欢迎通过 [Issues](https://github.com/xlogd/BeeCount/issues) 与我们联系。

@@ -380,6 +380,7 @@ class LocalRepository extends BaseRepository {
     String? toAccountSyncIdOverride,
     bool excludeFromStats = false,
     bool excludeFromBudget = false,
+    bool invoicePending = false,
     int? recurringId,
     String? currencyCode,
     double? nativeAmount,
@@ -424,6 +425,7 @@ class LocalRepository extends BaseRepository {
         toAccountSyncIdOverride: toAccountSyncIdOverride,
         excludeFromStats: excludeFromStats,
         excludeFromBudget: excludeFromBudget,
+        invoicePending: invoicePending,
         recurringId: recurringId,
         currencyCode: cc,
         nativeAmount: na,
@@ -500,6 +502,7 @@ class LocalRepository extends BaseRepository {
     String? toAccountSyncIdOverride,
     bool? excludeFromStats,
     bool? excludeFromBudget,
+    bool? invoicePending,
     String? currencyCode,
     double? nativeAmount,
   }) async {
@@ -549,6 +552,7 @@ class LocalRepository extends BaseRepository {
           toAccountSyncIdOverride: toAccountSyncIdOverride,
           excludeFromStats: excludeFromStats,
           excludeFromBudget: excludeFromBudget,
+          invoicePending: invoicePending,
           currencyCode: effCurrency,
           nativeAmount: effNative,
         );
@@ -575,6 +579,7 @@ class LocalRepository extends BaseRepository {
       toAccountSyncIdOverride: toAccountSyncIdOverride,
       excludeFromStats: excludeFromStats,
       excludeFromBudget: excludeFromBudget,
+      invoicePending: invoicePending,
       currencyCode: effCurrency,
       nativeAmount: effNative,
     );

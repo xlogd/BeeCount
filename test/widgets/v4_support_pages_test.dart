@@ -15,7 +15,9 @@ import 'package:beecount/providers.dart';
 import 'package:beecount/services/update/update_dialogs.dart';
 import 'package:beecount/services/platform/app_link_service.dart';
 import 'package:beecount/pages/settings/support/bindings/product_promo_actions.dart';
+import 'package:beecount/utils/project_links.dart';
 import 'package:beecount_ui/beecount_ui.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -312,12 +314,14 @@ void main() {
     }
   }
 
-  check(
-      'about version, story, social targets, developer debug and original products',
+  check('about keeps current project links and credits the original author',
       (t) async {
     await host(t, const AboutPage());
     await t.pumpAndSettle();
     expect(find.text('dev-9.0.0 (QA)'), findsOneWidget);
+    expect(find.text('AI账舞'), findsOneWidget);
+    expect(find.text(ProjectLinks.maintainer), findsOneWidget);
+    expect(find.text(ProjectLinks.originalAuthor), findsOneWidget);
     expect(find.byKey(const ValueKey('support-headline')), findsNothing);
     expect(find.byKey(const ValueKey('support-help')), findsNothing);
     expect(find.byKey(const ValueKey('support-gallery')), findsOneWidget);
@@ -325,9 +329,14 @@ void main() {
     expect(find.text(l.aboutDeveloperStory), findsOneWidget);
     navigator.currentState!.pop();
     await t.pumpAndSettle();
+    await t.tap(find.text(l.v4SharePosterOpenSourceAction));
+    await t.pumpAndSettle();
+    await tap(t, const ValueKey('support-maintainer'));
+    await tap(t, const ValueKey('support-original-author'));
+    await tap(t, const ValueKey('support-feedback'));
     for (final id in [
-      'website',
       'github',
+      'website',
       'telegram',
       'xiaohongshu',
       'douyin'
@@ -335,14 +344,19 @@ void main() {
       await tap(t, ValueKey('support-social-$id'));
     }
     expect(platform.opened.map((u) => u.toString()), [
+      ProjectLinks.repository,
+      ProjectLinks.maintainerProfile,
+      ProjectLinks.originalRepository,
+      ProjectLinks.issues,
+      ProjectLinks.repository,
       'https://count.beejz.com/en',
-      'https://github.com/TNT-Likely/BeeCount',
       'https://t.me/beecount',
       'https://xhslink.com/m/8K1ekg7EFOq',
       'https://v.douyin.com/YG7tUweYYyQ/'
     ]);
     await tap(t, const ValueKey('support-development'));
-    expect(platform.opened.last.path.endsWith('README_EN.md'), isTrue);
+    expect(platform.opened.last.toString(),
+        'https://github.com/TNT-Likely/BeeCount/blob/main/docs/donate/README_EN.md');
     await tap(t, const ValueKey('support-product-6763686675'));
     expect(find.byType(BeeDialog), findsOneWidget);
     expect(platform.products.single.googlePlayUrl,
@@ -350,15 +364,15 @@ void main() {
     navigator.currentState!.pop();
     await t.pumpAndSettle();
   });
-  check(
-      'simplified about keeps ICP and hides Telegram; Traditional still shows it',
+  check('simplified about hides upstream Telegram and omits upstream ICP',
       (t) async {
     await host(t, const AboutPage(), locale: const Locale('zh'));
     await t.pumpAndSettle();
     expect(find.byKey(const ValueKey('support-social-telegram')), findsNothing);
-    expect(find.text('浙ICP备2025214907号-2A'), findsOneWidget);
+    expect(find.text('浙ICP备2025214907号-2A'), findsNothing);
     await tap(t, const ValueKey('support-development'));
-    expect(platform.opened.single.path.endsWith('README_ZH.md'), isTrue);
+    expect(platform.opened.single.toString(),
+        'https://github.com/TNT-Likely/BeeCount/blob/main/docs/donate/README_ZH.md');
     await host(t, const AboutPage(), locale: const Locale('zh', 'TW'));
     await t.pumpAndSettle();
     expect(
@@ -437,53 +451,47 @@ void main() {
       expect(find.text(name), findsOneWidget);
     }
   });
-  for (final privacy in [false, true]) {
-    check(
-        '${privacy ? 'privacy' : 'help'} keeps source URL, progress, main-frame failure, retry and browser fallback',
-        (t) async {
-      await host(
-          t, privacy ? const PrivacyPolicyPage() : const HelpCenterPage());
-      await t.pump();
-      final webview = browser.controller!;
-      final expected =
-          'https://count.beejz.com/en/${privacy ? 'privacy' : 'docs/intro'}';
-      expect(webview.loaded.toString(),
-          startsWith('$expected?embed=1&theme=light&primary='));
-      expect(webview.js, web.JavaScriptMode.unrestricted);
-      webview.delegate!.progress!(50);
-      await t.pump();
-      expect(
-          t
-              .widget<LinearProgressIndicator>(
-                  find.byType(LinearProgressIndicator))
-              .value,
-          .5);
-      webview.delegate!.error!(web.WebResourceError(
-          errorCode: 404,
-          description: 'QA image failed',
-          isForMainFrame: false));
-      await t.pump();
-      expect(find.text(l.helpCenterLoadFailed), findsNothing);
-      webview.delegate!.error!(web.WebResourceError(
-          errorCode: -1, description: 'QA main failed', isForMainFrame: true));
-      await t.pump();
-      expect(find.text(l.helpCenterLoadFailed), findsOneWidget);
-      await tap(t, const ValueKey('support-document-browser'));
-      expect(launched.last, expected);
-      await tap(t, const ValueKey('support-document-retry'));
-      expect(webview.reloads, 1);
-      expect(find.text(l.helpCenterLoadFailed), findsNothing);
-      expect(
-          await webview.delegate!.request!(const web.NavigationRequest(
-              url: 'https://count.beejz.com/en/docs/test', isMainFrame: true)),
-          web.NavigationDecision.navigate);
-      expect(
-          await webview.delegate!.request!(const web.NavigationRequest(
-              url: 'https://example.org/qa', isMainFrame: true)),
-          web.NavigationDecision.prevent);
-      expect(launched.last, 'https://example.org/qa');
-    });
-  }
+  check('help keeps source URL, progress, retry and browser fallback',
+      (t) async {
+    await host(t, const HelpCenterPage());
+    await t.pump();
+    final webview = browser.controller!;
+    const expected = 'https://count.beejz.com/en/docs/intro';
+    expect(find.text(l.aboutUpstreamDocs), findsOneWidget);
+    expect(webview.loaded.toString(),
+        startsWith('$expected?embed=1&theme=light&primary='));
+    expect(webview.js, web.JavaScriptMode.unrestricted);
+    webview.delegate!.progress!(50);
+    await t.pump();
+    expect(
+        t
+            .widget<LinearProgressIndicator>(
+                find.byType(LinearProgressIndicator))
+            .value,
+        .5);
+    webview.delegate!.error!(web.WebResourceError(
+        errorCode: 404, description: 'QA image failed', isForMainFrame: false));
+    await t.pump();
+    expect(find.text(l.helpCenterLoadFailed), findsNothing);
+    webview.delegate!.error!(web.WebResourceError(
+        errorCode: -1, description: 'QA main failed', isForMainFrame: true));
+    await t.pump();
+    expect(find.text(l.helpCenterLoadFailed), findsOneWidget);
+    await tap(t, const ValueKey('support-document-browser'));
+    expect(launched.last, expected);
+    await tap(t, const ValueKey('support-document-retry'));
+    expect(webview.reloads, 1);
+    expect(find.text(l.helpCenterLoadFailed), findsNothing);
+    expect(
+        await webview.delegate!.request!(const web.NavigationRequest(
+            url: 'https://count.beejz.com/en/docs/test', isMainFrame: true)),
+        web.NavigationDecision.navigate);
+    expect(
+        await webview.delegate!.request!(const web.NavigationRequest(
+            url: 'https://example.org/qa', isMainFrame: true)),
+        web.NavigationDecision.prevent);
+    expect(launched.last, 'https://example.org/qa');
+  });
   check(
       'help retains custom title/initial route and strips embed when opening current browser URL',
       (t) async {
@@ -501,7 +509,7 @@ void main() {
     await tap(t, const ValueKey('support-document-open'));
     expect(launched.last, 'https://count.beejz.com/en/docs/next');
   });
-  check('iOS help path-based pop and privacy direct pop remain distinct',
+  check('iOS help uses the current document path to control back navigation',
       (t) async {
     platform.ios = true;
     await host(t, const HelpCenterPage());
@@ -517,14 +525,6 @@ void main() {
         isFalse);
     browser.controller!.delegate!.urlChanged!(
         web.UrlChange(url: 'https://count.beejz.com/en/docs/intro/'));
-    await t.pump();
-    expect(
-        t.widget<PopScope>(find.byWidgetPredicate((w) => w is PopScope)).canPop,
-        isTrue);
-    await host(t, const PrivacyPolicyPage());
-    await t.pump();
-    browser.controller!.delegate!.urlChanged!(
-        web.UrlChange(url: 'https://count.beejz.com/en/privacy/next'));
     await t.pump();
     expect(
         t.widget<PopScope>(find.byWidgetPredicate((w) => w is PopScope)).canPop,
@@ -627,19 +627,21 @@ void main() {
     expect(donation.donations, 0);
     expect(platform.opened, isEmpty);
   });
-  check(
-      'About footer preserves changelog custom URL/title and original PrivacyPage',
-      (t) async {
+  check('About opens fork releases and bundled privacy policy', (t) async {
     await host(t, const AboutPage());
     await t.pumpAndSettle();
     await tap(t, const ValueKey('support-changelog'));
-    expect(find.byType(HelpCenterPage), findsOneWidget);
-    expect(browser.controller!.loaded!.path, '/en/docs/changelog');
-    expect(find.text(l.aboutChangelog), findsWidgets);
-    await t.pageBack();
+    expect(platform.opened.single.toString(), ProjectLinks.releases);
+    await t.runAsync(() async {
+      await tap(t, const ValueKey('support-privacy'), settle: false);
+      await t.pump(const Duration(milliseconds: 400));
+      await rootBundle.loadString('PRIVACY.md');
+    });
     await t.pumpAndSettle();
-    await tap(t, const ValueKey('support-privacy'));
     expect(find.byType(PrivacyPolicyPage), findsOneWidget);
-    expect(browser.controller!.loaded!.path, '/en/privacy');
+    expect(browser.controller, isNull);
+    final markdown = t.widget<Markdown>(find.byType(Markdown));
+    expect(markdown.data, contains(ProjectLinks.issues));
+    expect(markdown.data, contains(ProjectLinks.maintainer));
   });
 }

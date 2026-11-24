@@ -359,7 +359,7 @@ abstract class AppLocalizations {
   /// No description provided for @aiConsentBody.
   ///
   /// In en, this message translates to:
-  /// **'AI features need to send related data to the third-party AI provider you configure:\n\n• Who it goes to: by default Zhipu GLM (open.bigmodel.cn, operated by Zhipu); if you configure another third-party AI service, it goes to the provider you entered.\n• What is sent: the content you actively use for recognition/chat — receipt images, voice recordings, text you type, plus the category names, account names and relevant transaction records needed to complete recognition/analysis.\n• Purpose: only for bill recognition, bookkeeping and chats you initiate; BeeCount itself does not collect or store this data.\n\nThe data is processed by that third-party provider under its own privacy policy. Enabling means you consent to the data sharing above.'**
+  /// **'AI features need to send related data to the third-party AI provider you configure:\n\n• Who it goes to: by default Zhipu GLM (open.bigmodel.cn, operated by Zhipu); if you configure another third-party AI service, it goes to the provider you entered.\n• What is sent: the content you actively use for recognition/chat — receipt images, voice recordings, text you type, plus the category names, account names and relevant transaction records needed to complete recognition/analysis.\n• Purpose: only for bill recognition, bookkeeping and chats you initiate; AI账舞 itself does not collect or store this data.\n\nThe data is processed by that third-party provider under its own privacy policy. Enabling means you consent to the data sharing above.'**
   String get aiConsentBody;
 
   /// No description provided for @aiConsentAgree.
@@ -383,7 +383,7 @@ abstract class AppLocalizations {
   /// The application title
   ///
   /// In en, this message translates to:
-  /// **'Bee Accounting'**
+  /// **'AI账舞'**
   String get appTitle;
 
   /// No description provided for @tabHome.
@@ -605,7 +605,7 @@ abstract class AppLocalizations {
   /// No description provided for @voiceRecordingPermissionDeniedMessage.
   ///
   /// In en, this message translates to:
-  /// **'Voice billing requires microphone permission. Please allow BeeCount to access the microphone in System Settings.'**
+  /// **'Voice billing requires microphone permission. Please allow AI账舞 to access the microphone in System Settings.'**
   String get voiceRecordingPermissionDeniedMessage;
 
   /// No description provided for @voiceRecordingStartFailed.
@@ -875,7 +875,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeAppTitle.
   ///
   /// In en, this message translates to:
-  /// **'Bee Accounting'**
+  /// **'AI账舞'**
   String get homeAppTitle;
 
   /// No description provided for @homeSearch.
@@ -1385,7 +1385,7 @@ abstract class AppLocalizations {
   /// No description provided for @splashAppName.
   ///
   /// In en, this message translates to:
-  /// **'Bee Accounting'**
+  /// **'AI账舞'**
   String get splashAppName;
 
   /// No description provided for @splashSlogan.
@@ -2369,7 +2369,7 @@ abstract class AppLocalizations {
   /// No description provided for @mineSlogan.
   ///
   /// In en, this message translates to:
-  /// **'Bee Accounting, Every Penny Counts'**
+  /// **'AI账舞, Every Penny Counts'**
   String get mineSlogan;
 
   /// No description provided for @mineDisplayNameEditTitle.
@@ -2891,7 +2891,7 @@ abstract class AppLocalizations {
   /// No description provided for @mineShareWithFriends.
   ///
   /// In en, this message translates to:
-  /// **'Share BeeCount with friends'**
+  /// **'Share AI账舞 with friends'**
   String get mineShareWithFriends;
 
   /// No description provided for @mineCopyPromoText.
@@ -2915,7 +2915,7 @@ abstract class AppLocalizations {
   /// No description provided for @sharePosterAppName.
   ///
   /// In en, this message translates to:
-  /// **'BeeCount'**
+  /// **'AI账舞'**
   String get sharePosterAppName;
 
   /// No description provided for @sharePosterSlogan.
@@ -3065,8 +3065,8 @@ abstract class AppLocalizations {
   /// No description provided for @shareGuidanceCopyText.
   ///
   /// In en, this message translates to:
-  /// **'Track my expenses with BeeCount - open source, free & ad-free! 🐝 Download: https://github.com/TNT-Likely/BeeCount'**
-  String get shareGuidanceCopyText;
+  /// **'Track your expenses with AI账舞. Project page: {url}'**
+  String shareGuidanceCopyText(String url);
 
   /// No description provided for @shareGuidanceCopied.
   ///
@@ -3779,7 +3779,7 @@ abstract class AppLocalizations {
   /// No description provided for @githubStarGuideContent.
   ///
   /// In en, this message translates to:
-  /// **'After tapping the button below to open GitHub, tap the area marked in the image to complete the Star'**
+  /// **'Open the repository on GitHub and select Star.'**
   String get githubStarGuideContent;
 
   /// No description provided for @githubStarGuideButton.
@@ -4109,7 +4109,7 @@ abstract class AppLocalizations {
   /// No description provided for @categoryShareSubject.
   ///
   /// In en, this message translates to:
-  /// **'BeeCount Category Configuration'**
+  /// **'AI账舞 Category Configuration'**
   String get categoryShareSubject;
 
   /// No description provided for @categoryShareFailed.
@@ -5219,13 +5219,13 @@ abstract class AppLocalizations {
   /// No description provided for @reminderIOSInstructions.
   ///
   /// In en, this message translates to:
-  /// **'🍎 iOS notification settings:\n• Settings > Notifications > Bee Accounting\n• Enable \"Allow Notifications\"\n• Set notification style: Banner or Alert\n• Enable sound and vibration\n\n⚠️ Important Note:\n• iOS local notifications depend on app process\n• Do not force quit app from task manager\n• Notifications work when app is in background or foreground\n• Force quitting will disable notifications\n\n💡 Usage Tips:\n• Simply press Home button to exit app\n• iOS will manage background apps automatically\n• Keep app in background to receive reminders'**
+  /// **'🍎 iOS notification settings:\n• Settings > Notifications > AI账舞\n• Enable \"Allow Notifications\"\n• Set notification style: Banner or Alert\n• Enable sound and vibration\n\n⚠️ Important Note:\n• iOS local notifications depend on app process\n• Do not force quit app from task manager\n• Notifications work when app is in background or foreground\n• Force quitting will disable notifications\n\n💡 Usage Tips:\n• Simply press Home button to exit app\n• iOS will manage background apps automatically\n• Keep app in background to receive reminders'**
   String get reminderIOSInstructions;
 
   /// No description provided for @reminderAndroidInstructions.
   ///
   /// In en, this message translates to:
-  /// **'If notifications don\'t work properly, check:\n• App is allowed to send notifications\n• Disable battery optimization/power saving for app\n• Allow app to run in background and auto-start\n• Android 12+ needs exact alarm permission\n\n📱 Xiaomi phone special settings:\n• Settings > App Management > Bee Accounting > Notification Management\n• Tap \"Recording Reminder\" channel\n• Set importance to \"Urgent\" or \"High\"\n• Enable \"Banner notifications\", \"Sound\", \"Vibration\"\n• Security Center > App Management > Permissions > Auto-start\n\n🔒 Lock background methods:\n• Find Bee Accounting in recent tasks\n• Pull down app card to show lock icon\n• Tap lock icon to prevent cleanup'**
+  /// **'If notifications don\'t work properly, check:\n• App is allowed to send notifications\n• Disable battery optimization/power saving for app\n• Allow app to run in background and auto-start\n• Android 12+ needs exact alarm permission\n\n📱 Xiaomi phone special settings:\n• Settings > App Management > AI账舞 > Notification Management\n• Tap \"Recording Reminder\" channel\n• Set importance to \"Urgent\" or \"High\"\n• Enable \"Banner notifications\", \"Sound\", \"Vibration\"\n• Security Center > App Management > Permissions > Auto-start\n\n🔒 Lock background methods:\n• Find AI账舞 in recent tasks\n• Pull down app card to show lock icon\n• Tap lock icon to prevent cleanup'**
   String get reminderAndroidInstructions;
 
   /// No description provided for @categoryDetailLoadFailed.
@@ -5681,7 +5681,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportDescription.
   ///
   /// In en, this message translates to:
-  /// **'Export current-ledger transactions as a UTF-8 CSV file. Filter by date range and transaction type, then choose the columns and their order. Column settings are remembered for the next export.'**
+  /// **'Export current-ledger transactions as UTF-8 CSV with a sequence number in the first column. When Attachments is selected, images and PDF invoices are packaged in a ZIP with the CSV and named by sequence and note. Filters and settings are remembered.'**
   String get exportDescription;
 
   /// No description provided for @exportButtonIOS.
@@ -5771,7 +5771,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportShareText.
   ///
   /// In en, this message translates to:
-  /// **'BeeCount Export File'**
+  /// **'AI账舞 Export File'**
   String get exportShareText;
 
   /// No description provided for @exportSuccessTitle.
@@ -6203,8 +6203,8 @@ abstract class AppLocalizations {
   /// No description provided for @updateManualVisit.
   ///
   /// In en, this message translates to:
-  /// **'Please manually visit in browser:\\nhttps://github.com/TNT-Likely/BeeCount/releases'**
-  String get updateManualVisit;
+  /// **'Open the release page in your browser:\n{url}'**
+  String updateManualVisit(String url);
 
   /// No description provided for @updateNoLocalApkTitle.
   ///
@@ -6497,7 +6497,7 @@ abstract class AppLocalizations {
   /// No description provided for @updateNotificationGuideStep2.
   ///
   /// In en, this message translates to:
-  /// **'Find \\\"BeeCount\\\" app'**
+  /// **'Find \\\"AI账舞\\\" app'**
   String get updateNotificationGuideStep2;
 
   /// No description provided for @updateNotificationGuideStep3.
@@ -8135,7 +8135,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to BeeCount'**
+  /// **'Welcome to AI账舞'**
   String get welcomeTitle;
 
   /// No description provided for @welcomeDescription.
@@ -8195,7 +8195,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeCloudSyncDescription.
   ///
   /// In en, this message translates to:
-  /// **'BeeCount supports multiple sync methods - your data, your control'**
+  /// **'AI账舞 supports multiple sync methods - your data, your control'**
   String get welcomeCloudSyncDescription;
 
   /// No description provided for @welcomeCloudSyncFeature1.
@@ -8363,7 +8363,7 @@ abstract class AppLocalizations {
   /// No description provided for @iosWidgetStep3.
   ///
   /// In en, this message translates to:
-  /// **'Search and select \"BeeCount\"'**
+  /// **'Search and select \"AI账舞\"'**
   String get iosWidgetStep3;
 
   /// No description provided for @iosWidgetStep4.
@@ -8387,7 +8387,7 @@ abstract class AppLocalizations {
   /// No description provided for @androidWidgetStep3.
   ///
   /// In en, this message translates to:
-  /// **'Find and long press \"BeeCount\" widget'**
+  /// **'Find and long press \"AI账舞\" widget'**
   String get androidWidgetStep3;
 
   /// No description provided for @androidWidgetStep4.
@@ -8423,7 +8423,7 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
-  /// **'BeeCount'**
+  /// **'AI账舞'**
   String get appName;
 
   /// No description provided for @monthSuffix.
@@ -8591,13 +8591,13 @@ abstract class AppLocalizations {
   /// No description provided for @iosAutoShortcutStep3.
   ///
   /// In en, this message translates to:
-  /// **'Search and add \"BeeCount - Auto Billing\" action'**
+  /// **'Search and add \"AI账舞 - Auto Billing\" action'**
   String get iosAutoShortcutStep3;
 
   /// No description provided for @iosAutoShortcutStep4.
   ///
   /// In en, this message translates to:
-  /// **'Set the screenshot parameter of \"BeeCount\" to the previous \"Screenshot\"'**
+  /// **'Set the screenshot parameter of \"AI账舞\" to the previous \"Screenshot\"'**
   String get iosAutoShortcutStep4;
 
   /// No description provided for @iosAutoShortcutStep5.
@@ -9407,13 +9407,13 @@ abstract class AppLocalizations {
   /// No description provided for @shareBillingGuide.
   ///
   /// In en, this message translates to:
-  /// **'When you see a payment screenshot in Alipay, WeChat, Photos, etc., tap \"Share\" and choose \"BeeCount\" to auto-recognize the amount, merchant, and time and create a transaction — no need to save the screenshot first.'**
+  /// **'When you see a payment screenshot in Alipay, WeChat, Photos, etc., tap \"Share\" and choose \"AI账舞\" to auto-recognize the amount, merchant, and time and create a transaction — no need to save the screenshot first.'**
   String get shareBillingGuide;
 
   /// No description provided for @shareBillingActionHint.
   ///
   /// In en, this message translates to:
-  /// **'Recognized automatically in the background after sharing — no need to open BeeCount'**
+  /// **'Recognized automatically in the background after sharing — no need to open AI账舞'**
   String get shareBillingActionHint;
 
   /// No description provided for @automation.
@@ -9539,19 +9539,19 @@ abstract class AppLocalizations {
   /// No description provided for @aboutSupportDevelopment.
   ///
   /// In en, this message translates to:
-  /// **'Support Development'**
+  /// **'Support the original author'**
   String get aboutSupportDevelopment;
 
   /// No description provided for @aboutSupportDevelopmentSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Buy me a coffee'**
+  /// **'Upstream donation options'**
   String get aboutSupportDevelopmentSubtitle;
 
   /// No description provided for @aboutDeveloperStoryTitle.
   ///
   /// In en, this message translates to:
-  /// **'From the Developer'**
+  /// **'From the Original Author'**
   String get aboutDeveloperStoryTitle;
 
   /// No description provided for @aboutDeveloperStory.
@@ -9563,7 +9563,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutRelatedProducts.
   ///
   /// In en, this message translates to:
-  /// **'More Products'**
+  /// **'Other apps by the original author'**
   String get aboutRelatedProducts;
 
   /// No description provided for @aboutBeeAssets.
@@ -9581,7 +9581,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutBeeAssetsIntro.
   ///
   /// In en, this message translates to:
-  /// **'BeeCount focuses on daily cash flow; BeeAssets is its sibling product, focused on asset portfolio visualization: net worth trends across accounts, property / investment / crypto classification, returns, holding period, and allocation breakdown.'**
+  /// **'AI账舞 focuses on daily cash flow; BeeAssets is its sibling product, focused on asset portfolio visualization: net worth trends across accounts, property / investment / crypto classification, returns, holding period, and allocation breakdown.'**
   String get aboutBeeAssetsIntro;
 
   /// No description provided for @aboutBeeDNS.
@@ -9803,7 +9803,7 @@ abstract class AppLocalizations {
   /// No description provided for @configExportShareSubject.
   ///
   /// In en, this message translates to:
-  /// **'BeeCount Config File'**
+  /// **'AI账舞 Config File'**
   String get configExportShareSubject;
 
   /// No description provided for @configExportSuccess.
@@ -11873,7 +11873,7 @@ abstract class AppLocalizations {
   /// No description provided for @tagShareSubject.
   ///
   /// In en, this message translates to:
-  /// **'BeeCount Tags Configuration'**
+  /// **'AI账舞 Tags Configuration'**
   String get tagShareSubject;
 
   /// No description provided for @tagShareFailed.
@@ -13139,7 +13139,7 @@ abstract class AppLocalizations {
   /// No description provided for @appLockBiometricReason.
   ///
   /// In en, this message translates to:
-  /// **'Verify identity to unlock Bee Accounting'**
+  /// **'Verify identity to unlock AI账舞'**
   String get appLockBiometricReason;
 
   /// No description provided for @appLockTimeout.
@@ -13961,13 +13961,13 @@ abstract class AppLocalizations {
   /// No description provided for @sharedInviteInstruction.
   ///
   /// In en, this message translates to:
-  /// **'Send the code or short link to the other person. After they install BeeCount, they can tap the link or enter the code from \"Me → Join shared ledger\".'**
+  /// **'Send the code or short link to the other person. After they install AI账舞, they can tap the link or enter the code from \"Me → Join shared ledger\".'**
   String get sharedInviteInstruction;
 
   /// No description provided for @sharedInviteShareText.
   ///
   /// In en, this message translates to:
-  /// **'I\'m inviting you to BeeCount shared ledger \"{ledger}\".\n\nCode: {code}\nLink: {url}\n\nTap the link, or open BeeCount → Me → Join shared ledger and enter this code.'**
+  /// **'I\'m inviting you to AI账舞 shared ledger \"{ledger}\".\n\nCode: {code}\nLink: {url}\n\nTap the link, or open AI账舞 → Me → Join shared ledger and enter this code.'**
   String sharedInviteShareText(String ledger, String code, String url);
 
   /// No description provided for @sharedMembersPageTitle.
@@ -15623,7 +15623,7 @@ abstract class AppLocalizations {
   /// No description provided for @annualReportDownloadHint.
   ///
   /// In en, this message translates to:
-  /// **'Scan to download BeeCount and start bookkeeping'**
+  /// **'Scan to download AI账舞 and start bookkeeping'**
   String get annualReportDownloadHint;
 
   /// No description provided for @attachmentKeepOriginal.
@@ -16007,7 +16007,7 @@ abstract class AppLocalizations {
   /// No description provided for @sharePosterAppText.
   ///
   /// In en, this message translates to:
-  /// **'BeeCount - Simple Ledger'**
+  /// **'AI账舞'**
   String get sharePosterAppText;
 
   /// No description provided for @sharePosterDefaultLedgerName.
@@ -16223,7 +16223,7 @@ abstract class AppLocalizations {
   /// No description provided for @logExportTitle.
   ///
   /// In en, this message translates to:
-  /// **'=== BeeCount log export ==='**
+  /// **'=== AI账舞 log export ==='**
   String get logExportTitle;
 
   /// No description provided for @logExportTime.
@@ -16487,13 +16487,13 @@ abstract class AppLocalizations {
   /// No description provided for @v4HomeBrandShow.
   ///
   /// In en, this message translates to:
-  /// **'Show BeeCount branding'**
+  /// **'Show AI账舞 branding'**
   String get v4HomeBrandShow;
 
   /// No description provided for @v4HomeBrandHide.
   ///
   /// In en, this message translates to:
-  /// **'Hide BeeCount branding'**
+  /// **'Hide AI账舞 branding'**
   String get v4HomeBrandHide;
 
   /// No description provided for @v4HomeMonthExpense.
@@ -17933,7 +17933,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportColumnsDescription.
   ///
   /// In en, this message translates to:
-  /// **'Select the columns to include. Expand column order to arrange the exported headers.'**
+  /// **'Choose exported columns. Attachments packages images and PDF invoices. Expand column order to arrange the headers.'**
   String get exportColumnsDescription;
 
   /// No description provided for @imageCropFailed.
@@ -17971,6 +17971,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select export date range'**
   String get exportDateRangePickerTitle;
+
+  /// No description provided for @attachmentAddInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Add PDF invoice'**
+  String get attachmentAddInvoice;
+
+  /// No description provided for @attachmentOpenInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Open invoice'**
+  String get attachmentOpenInvoice;
+
+  /// No description provided for @attachmentInvoiceInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a valid PDF invoice.'**
+  String get attachmentInvoiceInvalid;
+
+  /// No description provided for @attachmentInvoiceOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the PDF invoice.'**
+  String get attachmentInvoiceOpenFailed;
+
+  /// No description provided for @invoiceStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice status'**
+  String get invoiceStatus;
+
+  /// No description provided for @invoiceIssued.
+  ///
+  /// In en, this message translates to:
+  /// **'Issued'**
+  String get invoiceIssued;
+
+  /// No description provided for @invoicePending.
+  ///
+  /// In en, this message translates to:
+  /// **'To be issued'**
+  String get invoicePending;
+
+  /// No description provided for @invoiceNotRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Not required'**
+  String get invoiceNotRequired;
+
+  /// No description provided for @attachmentScanDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan document'**
+  String get attachmentScanDocument;
+
+  /// No description provided for @documentFlattenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not flatten this page. You can still use the original.'**
+  String get documentFlattenFailed;
+
+  /// No description provided for @imageCropUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo crop'**
+  String get imageCropUndo;
+
+  /// No description provided for @documentFlattenReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review pages'**
+  String get documentFlattenReview;
+
+  /// No description provided for @attachmentSaveIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved {saved} of {total} attachments. Add the missing images again.'**
+  String attachmentSaveIncomplete(int saved, int total);
+
+  /// No description provided for @exportAttachmentNoNote.
+  ///
+  /// In en, this message translates to:
+  /// **'No note'**
+  String get exportAttachmentNoNote;
+
+  /// No description provided for @documentFlattenOriginal.
+  ///
+  /// In en, this message translates to:
+  /// **'Original'**
+  String get documentFlattenOriginal;
+
+  /// No description provided for @attachmentSaveRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction saved. {saved} of {total} attachments saved. Try saving again to retry the remaining images.'**
+  String attachmentSaveRetry(int saved, int total);
+
+  /// No description provided for @exportCsvHeaderSequence.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get exportCsvHeaderSequence;
+
+  /// No description provided for @attachmentScanPageLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachment limit reached. {count} extra scanned pages were skipped.'**
+  String attachmentScanPageLimit(int count);
+
+  /// No description provided for @attachmentScanFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not scan the document. Try again or take a photo.'**
+  String get attachmentScanFailed;
+
+  /// No description provided for @documentFlattenResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Flattened'**
+  String get documentFlattenResult;
+
+  /// No description provided for @documentFlattenProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Flattening on this device…'**
+  String get documentFlattenProcessing;
+
+  /// No description provided for @documentFlattenAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Flatten page'**
+  String get documentFlattenAction;
+
+  /// No description provided for @documentFlattenDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Page flattened'**
+  String get documentFlattenDone;
+
+  /// No description provided for @imageCropRedo.
+  ///
+  /// In en, this message translates to:
+  /// **'Redo crop'**
+  String get imageCropRedo;
+
+  /// No description provided for @aboutMaintainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintainer'**
+  String get aboutMaintainer;
+
+  /// No description provided for @aboutOriginalAuthor.
+  ///
+  /// In en, this message translates to:
+  /// **'Original author, with thanks'**
+  String get aboutOriginalAuthor;
+
+  /// No description provided for @aboutUpstreamResources.
+  ///
+  /// In en, this message translates to:
+  /// **'Upstream resources'**
+  String get aboutUpstreamResources;
+
+  /// No description provided for @aboutUpstreamDocs.
+  ///
+  /// In en, this message translates to:
+  /// **'Upstream documentation'**
+  String get aboutUpstreamDocs;
+
+  /// No description provided for @aboutUpstreamAppStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate the upstream app on the App Store'**
+  String get aboutUpstreamAppStore;
+
+  /// No description provided for @projectStarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Star AI账舞 on GitHub'**
+  String get projectStarTitle;
+
+  /// No description provided for @projectStarDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the project repository on GitHub'**
+  String get projectStarDescription;
+
+  /// No description provided for @updateNoRelease.
+  ///
+  /// In en, this message translates to:
+  /// **'This project has no stable release yet.'**
+  String get updateNoRelease;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

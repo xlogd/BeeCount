@@ -1,0 +1,9 @@
+UVDoc ONNX model distributed by PaddlePaddle
+https://huggingface.co/PaddlePaddle/UVDoc_onnx
+Revision: 3bcf535371727d11e783101f79a504c68848aae3
+File: inference.onnx (distributed here as uvdoc.onnx)
+SHA-256: 54cab30dc2cf347b4f3d6971c833b1c3d84f5ef17280f1f6d15796bff20e63d6
+License: Apache License, Version 2.0
+
+Original research: Tanguy Magne et al., UVDoc: Neural Grid-based Document Unwarping
+https://github.com/tanguymagne/UVDoc

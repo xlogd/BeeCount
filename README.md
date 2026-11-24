@@ -1,12 +1,10 @@
-# 蜜蜂记账(BeeCount) &nbsp; [English](README_EN.md)
+# AI账舞 &nbsp; [English](README_EN.md)
 
 <div align="center">
 
-![GitHub stars](https://img.shields.io/github/stars/TNT-Likely/BeeCount?style=social)
+![GitHub stars](https://img.shields.io/github/stars/xlogd/BeeCount?style=social)
 ![License](https://img.shields.io/badge/license-Business%20Source%20License-orange.svg)
-![Release](https://img.shields.io/github/v/release/TNT-Likely/BeeCount?label=latest&color=green)
-![Downloads](https://img.shields.io/github/downloads/TNT-Likely/BeeCount/total?color=blue)
-![Last commit](https://img.shields.io/github/last-commit/TNT-Likely/BeeCount)
+![Last commit](https://img.shields.io/github/last-commit/xlogd/BeeCount)
 ![Flutter](https://img.shields.io/badge/Flutter-3.27%2B-02569B?logo=flutter)
 
 **你的数据,你做主的开源记账应用**
@@ -15,20 +13,9 @@
 
 <br/>
 
-<a href="https://apps.apple.com/app/id6754611670">
-  <img src="https://img.shields.io/badge/App%20Store-000000?style=for-the-badge&logo=app-store&logoColor=white" alt="Download on App Store" height="64"/>
-</a>
-<a href="https://play.google.com/store/apps/details?id=com.tntlikely.beecount">
-  <img src="https://img.shields.io/badge/Google%20Play-414141?style=for-the-badge&logo=google-play&logoColor=white" alt="Get it on Google Play" height="64"/>
-</a>
-<a href="https://github.com/TNT-Likely/BeeCount-Cloud">
-  <img src="https://img.shields.io/badge/Web%20(Self--Hosted)-4A90E2?style=for-the-badge&logo=docker&logoColor=white" alt="Self-host Web" height="64"/>
-</a>
+由 **[LogDancer](https://github.com/xlogd)** 维护。感谢 **sunxiao（TNT-Likely）** 创建[原版蜜蜂记账](https://github.com/TNT-Likely/BeeCount)，也感谢上游贡献者。
 
-<br/>
-<br/>
-
-[🌐 官网](https://count.beejz.com) · [📖 文档](https://count.beejz.com/docs/intro) · [Logo 设计共创](https://github.com/TNT-Likely/BeeCount/issues/608) · [💝 捐赠](#-捐赠支持) · [🤝 商务合作](mailto:sunxiaoyes@outlook.com?subject=BeeCount%20Business%20Inquiry) · [💬 Telegram](https://t.me/beecount) · [📦 APK](https://github.com/TNT-Likely/BeeCount/releases/latest) · [🚀 TestFlight](https://testflight.apple.com/join/Eaw2rWxa)
+[项目主页](https://github.com/xlogd/BeeCount) · [问题反馈](https://github.com/xlogd/BeeCount/issues) · [版本发布](https://github.com/xlogd/BeeCount/releases) · [隐私政策](PRIVACY.md) · [上游使用文档](https://count.beejz.com/docs/intro)
 
 </div>
 
@@ -38,7 +25,7 @@
 
 ---
 
-## ❤️ 赞助商
+## ❤️ 上游项目赞助商
 
 <table>
   <tr>
@@ -59,7 +46,7 @@
 
 ---
 
-## 💡 为什么选择蜜蜂记账
+## 💡 为什么选择 AI账舞
 
 一款轻量、开源、隐私可控的**个人财务管理**和**支出追踪** App。
 
@@ -72,6 +59,8 @@
 | ❌ 广告 / 理财推荐 | ✅ **零广告 / 零追踪 / 零数据收集** |
 
 > **平台支持**:🤖 Android 6.0+(GitHub APK)/Android 7.0+(Google Play) · 🍎 iOS 15.5+ · 🌐 Web(BeeCount Cloud 自带,见下文)
+>
+> 上游发行渠道提供 [App Store](https://apps.apple.com/app/id6754611670)、[Google Play](https://play.google.com/store/apps/details?id=com.tntlikely.beecount) 和 [TestFlight](https://testflight.apple.com/join/Eaw2rWxa)。
 >
 > ~~📱 HarmonyOS — [已停止更新](https://github.com/TNT-Likely/beecount-openharmony)~~
 
@@ -337,11 +326,11 @@ flutter build apk --flavor prod --release
 
 BeeCount 4.0 已正式上线。无论你是日常用户、开发者、设计师还是译者，都欢迎参与，让蜜蜂记账变得更好。
 
-- 🐛 **问题反馈**：发现 Bug？请先搜索已有 [Issues](https://github.com/TNT-Likely/BeeCount/issues)，再[提交问题](https://github.com/TNT-Likely/BeeCount/issues/new)，尽量附上版本、设备信息和复现步骤。
-- 💡 **功能建议**：欢迎在 [Discussions · Ideas](https://github.com/TNT-Likely/BeeCount/discussions/new?category=ideas) 交流使用场景与想法；较大的改动建议先讨论，再开始实现。
-- 💻 **代码贡献**：从 [BeeCount 仓库](https://github.com/TNT-Likely/BeeCount) Fork，创建独立分支，完成修改与测试后提交 Pull Request。
+- 🐛 **问题反馈**：发现 Bug？请先搜索已有记录，再通过 [Issues](https://github.com/xlogd/BeeCount/issues) 提交版本、设备信息和复现步骤。
+- 💡 **功能建议**：请在 [Issues](https://github.com/xlogd/BeeCount/issues) 中提交功能建议，说明使用场景。
+- 💻 **代码贡献**：从 [BeeCount 仓库](https://github.com/xlogd/BeeCount) Fork，创建独立分支，完成修改与测试后提交 Pull Request。
 - 🌍 **翻译与文档**：欢迎补充语言、完善使用文档和开发说明。
-- 🎨 **设计与体验**：欢迎参与 UI/UX、组件和整体视觉体验改进；设计资源与交互原型见 [BeeCount-Design](https://github.com/TNT-Likely/BeeCount-Design)，也可以直接查看 [Figma 设计源文件](https://www.figma.com/design/s7bi4zexefEZkHf6TlHiWX/BeeCount)。同时欢迎参与 [Logo 社区共创](https://github.com/TNT-Likely/BeeCount/issues/608)，详见[设计需求与投稿规范](https://github.com/TNT-Likely/BeeCount/blob/main/docs/branding/LOGO_DESIGN_CHALLENGE.md)。
+- 🎨 **设计与体验**：欢迎参与 UI/UX、组件和整体视觉体验改进；设计资源与交互原型见 [BeeCount-Design](https://github.com/TNT-Likely/BeeCount-Design)，也可以直接查看 [Figma 设计源文件](https://www.figma.com/design/s7bi4zexefEZkHf6TlHiWX/BeeCount)。也可查看上游的 [Logo 社区共创](https://github.com/TNT-Likely/BeeCount/issues/608)，详见[设计需求与投稿规范](https://github.com/TNT-Likely/BeeCount/blob/main/docs/branding/LOGO_DESIGN_CHALLENGE.md)。
 
 **提交 PR 前请留意：**
 - 一个 PR 尽量聚焦一个问题或一项改进，并说明修改动机与影响范围。
@@ -374,13 +363,13 @@ A:
 **Q: 如何确保数据安全?**
 A: 使用自己的服务器 / Storage / Bucket,WebDAV 和 S3 建议 HTTPS 加密传输。BeeCount Cloud 备份默认 AES-256 加密。
 
-更多详情见 [docs/cloud-setup.md](docs/cloud-setup.md) 或 [Issues](https://github.com/TNT-Likely/BeeCount/issues)。
+更多详情见 [docs/cloud-setup.md](docs/cloud-setup.md) 或 [Issues](https://github.com/xlogd/BeeCount/issues)。
 
 </details>
 
 ---
 
-## 💝 捐赠支持
+## 💝 支持原作者
 
 BeeCount 和 BeeCount Cloud 由同一作者维护。如果这些项目对你有帮助，欢迎请作者喝杯咖啡 ☕，支持持续开发。
 
@@ -435,7 +424,7 @@ BeeCount 和 BeeCount Cloud 由同一作者维护。如果这些项目对你有�
 
 ---
 
-## 🤝 商务合作
+## 🤝 上游商务合作
 
 欢迎商业授权、部署协助、定制开发与合作咨询。请邮件联系，并简要说明你的需求与使用场景。
 
@@ -466,7 +455,7 @@ BeeCount 和 BeeCount Cloud 由同一作者维护。如果这些项目对你有�
 
 ---
 
-## 📦 相关项目
+## 📦 上游相关项目
 
 | 项目 | 说明 |
 |---|---|
@@ -484,6 +473,6 @@ BeeCount 和 BeeCount Cloud 由同一作者维护。如果这些项目对你有�
 
 感谢所有为蜜蜂记账项目贡献代码、提出建议和反馈问题的朋友们!
 
-如有问题或建议,欢迎在 [Issues](https://github.com/TNT-Likely/BeeCount/issues) 中提出,或在 [Discussions](https://github.com/TNT-Likely/BeeCount/discussions) 中参与讨论。
+如有问题或建议，欢迎在 [Issues](https://github.com/xlogd/BeeCount/issues) 中提出。
 
-**蜜蜂记账 🐝 — 让记账变得简单而安全**
+**AI账舞 🐝 — 让记账变得简单而安全**

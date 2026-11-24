@@ -76,7 +76,8 @@ db.Transaction local(int id, String note) => db.Transaction(
     happenedAt: DateTime(2026, 10, 20),
     note: note,
     excludeFromStats: false,
-    excludeFromBudget: false);
+    excludeFromBudget: false,
+    invoicePending: false);
 
 List<SyncChange> changes({int perGroup = 1}) => [
       for (var i = 0; i < perGroup; i++)

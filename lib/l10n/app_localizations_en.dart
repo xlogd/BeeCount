@@ -160,7 +160,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiConsentTitle => 'Before enabling AI features';
 
   @override
-  String get aiConsentBody => 'AI features need to send related data to the third-party AI provider you configure:\n\n• Who it goes to: by default Zhipu GLM (open.bigmodel.cn, operated by Zhipu); if you configure another third-party AI service, it goes to the provider you entered.\n• What is sent: the content you actively use for recognition/chat — receipt images, voice recordings, text you type, plus the category names, account names and relevant transaction records needed to complete recognition/analysis.\n• Purpose: only for bill recognition, bookkeeping and chats you initiate; BeeCount itself does not collect or store this data.\n\nThe data is processed by that third-party provider under its own privacy policy. Enabling means you consent to the data sharing above.';
+  String get aiConsentBody => 'AI features need to send related data to the third-party AI provider you configure:\n\n• Who it goes to: by default Zhipu GLM (open.bigmodel.cn, operated by Zhipu); if you configure another third-party AI service, it goes to the provider you entered.\n• What is sent: the content you actively use for recognition/chat — receipt images, voice recordings, text you type, plus the category names, account names and relevant transaction records needed to complete recognition/analysis.\n• Purpose: only for bill recognition, bookkeeping and chats you initiate; AI账舞 itself does not collect or store this data.\n\nThe data is processed by that third-party provider under its own privacy policy. Enabling means you consent to the data sharing above.';
 
   @override
   String get aiConsentAgree => 'Agree & enable';
@@ -172,7 +172,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutChangelog => 'Changelog';
 
   @override
-  String get appTitle => 'Bee Accounting';
+  String get appTitle => 'AI账舞';
 
   @override
   String get tabHome => 'Home';
@@ -285,7 +285,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get voiceRecordingPermissionDeniedTitle => 'Microphone Permission Required';
 
   @override
-  String get voiceRecordingPermissionDeniedMessage => 'Voice billing requires microphone permission. Please allow BeeCount to access the microphone in System Settings.';
+  String get voiceRecordingPermissionDeniedMessage => 'Voice billing requires microphone permission. Please allow AI账舞 to access the microphone in System Settings.';
 
   @override
   String voiceRecordingStartFailed(String error) {
@@ -430,7 +430,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeSelectDate => 'Select date';
 
   @override
-  String get homeAppTitle => 'Bee Accounting';
+  String get homeAppTitle => 'AI账舞';
 
   @override
   String get homeSearch => 'Search';
@@ -715,7 +715,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analyticsToday => 'Today';
 
   @override
-  String get splashAppName => 'Bee Accounting';
+  String get splashAppName => 'AI账舞';
 
   @override
   String get splashSlogan => 'Record Every Drop';
@@ -1249,7 +1249,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteConfirmMessage => 'Are you sure you want to delete this record?';
 
   @override
-  String get mineSlogan => 'Bee Accounting, Every Penny Counts';
+  String get mineSlogan => 'AI账舞, Every Penny Counts';
 
   @override
   String get mineDisplayNameEditTitle => 'Set nickname';
@@ -1524,7 +1524,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mineShareApp => 'Share App';
 
   @override
-  String get mineShareWithFriends => 'Share BeeCount with friends';
+  String get mineShareWithFriends => 'Share AI账舞 with friends';
 
   @override
   String get mineCopyPromoText => 'Copy Promo Text';
@@ -1536,7 +1536,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mineShareGenerating => 'Generating share poster...';
 
   @override
-  String get sharePosterAppName => 'BeeCount';
+  String get sharePosterAppName => 'AI账舞';
 
   @override
   String get sharePosterSlogan => 'Smart Accounting, Beautiful Life';
@@ -1613,7 +1613,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sharePosterSaveSuccess => 'Saved to gallery';
 
   @override
-  String get shareGuidanceCopyText => 'Track my expenses with BeeCount - open source, free & ad-free! 🐝 Download: https://github.com/TNT-Likely/BeeCount';
+  String shareGuidanceCopyText(String url) {
+    return 'Track your expenses with AI账舞. Project page: $url';
+  }
 
   @override
   String get shareGuidanceCopied => 'Text copied';
@@ -1994,7 +1996,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get githubStarGuideTitle => 'How to Star the Project';
 
   @override
-  String get githubStarGuideContent => 'After tapping the button below to open GitHub, tap the area marked in the image to complete the Star';
+  String get githubStarGuideContent => 'Open the repository on GitHub and select Star.';
 
   @override
   String get githubStarGuideButton => 'Go to GitHub';
@@ -2171,7 +2173,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get categoryShareSubject => 'BeeCount Category Configuration';
+  String get categoryShareSubject => 'AI账舞 Category Configuration';
 
   @override
   String get categoryShareFailed => 'Share failed';
@@ -2752,10 +2754,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reminderDescription => 'Tip: When recording reminder is enabled, the system will send notifications at the specified time daily to remind you to record income and expenses.';
 
   @override
-  String get reminderIOSInstructions => '🍎 iOS notification settings:\n• Settings > Notifications > Bee Accounting\n• Enable \"Allow Notifications\"\n• Set notification style: Banner or Alert\n• Enable sound and vibration\n\n⚠️ Important Note:\n• iOS local notifications depend on app process\n• Do not force quit app from task manager\n• Notifications work when app is in background or foreground\n• Force quitting will disable notifications\n\n💡 Usage Tips:\n• Simply press Home button to exit app\n• iOS will manage background apps automatically\n• Keep app in background to receive reminders';
+  String get reminderIOSInstructions => '🍎 iOS notification settings:\n• Settings > Notifications > AI账舞\n• Enable \"Allow Notifications\"\n• Set notification style: Banner or Alert\n• Enable sound and vibration\n\n⚠️ Important Note:\n• iOS local notifications depend on app process\n• Do not force quit app from task manager\n• Notifications work when app is in background or foreground\n• Force quitting will disable notifications\n\n💡 Usage Tips:\n• Simply press Home button to exit app\n• iOS will manage background apps automatically\n• Keep app in background to receive reminders';
 
   @override
-  String get reminderAndroidInstructions => 'If notifications don\'t work properly, check:\n• App is allowed to send notifications\n• Disable battery optimization/power saving for app\n• Allow app to run in background and auto-start\n• Android 12+ needs exact alarm permission\n\n📱 Xiaomi phone special settings:\n• Settings > App Management > Bee Accounting > Notification Management\n• Tap \"Recording Reminder\" channel\n• Set importance to \"Urgent\" or \"High\"\n• Enable \"Banner notifications\", \"Sound\", \"Vibration\"\n• Security Center > App Management > Permissions > Auto-start\n\n🔒 Lock background methods:\n• Find Bee Accounting in recent tasks\n• Pull down app card to show lock icon\n• Tap lock icon to prevent cleanup';
+  String get reminderAndroidInstructions => 'If notifications don\'t work properly, check:\n• App is allowed to send notifications\n• Disable battery optimization/power saving for app\n• Allow app to run in background and auto-start\n• Android 12+ needs exact alarm permission\n\n📱 Xiaomi phone special settings:\n• Settings > App Management > AI账舞 > Notification Management\n• Tap \"Recording Reminder\" channel\n• Set importance to \"Urgent\" or \"High\"\n• Enable \"Banner notifications\", \"Sound\", \"Vibration\"\n• Security Center > App Management > Permissions > Auto-start\n\n🔒 Lock background methods:\n• Find AI账舞 in recent tasks\n• Pull down app card to show lock icon\n• Tap lock icon to prevent cleanup';
 
   @override
   String get categoryDetailLoadFailed => 'Load failed';
@@ -2991,7 +2993,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportTitle => 'Export';
 
   @override
-  String get exportDescription => 'Export current-ledger transactions as a UTF-8 CSV file. Filter by date range and transaction type, then choose the columns and their order. Column settings are remembered for the next export.';
+  String get exportDescription => 'Export current-ledger transactions as UTF-8 CSV with a sequence number in the first column. When Attachments is selected, images and PDF invoices are packaged in a ZIP with the CSV and named by sequence and note. Filters and settings are remembered.';
 
   @override
   String get exportButtonIOS => 'Export and Share';
@@ -3038,7 +3040,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportCsvHeaderAttachments => 'Attachments';
 
   @override
-  String get exportShareText => 'BeeCount Export File';
+  String get exportShareText => 'AI账舞 Export File';
 
   @override
   String get exportSuccessTitle => 'Export Successful';
@@ -3270,7 +3272,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updateCannotOpenLink => 'Cannot open link';
 
   @override
-  String get updateManualVisit => 'Please manually visit in browser:\\nhttps://github.com/TNT-Likely/BeeCount/releases';
+  String updateManualVisit(String url) {
+    return 'Open the release page in your browser:\n$url';
+  }
 
   @override
   String get updateNoLocalApkTitle => 'No Update Package Found';
@@ -3435,7 +3439,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updateNotificationGuideStep1 => 'Go to System Settings > App Management';
 
   @override
-  String get updateNotificationGuideStep2 => 'Find \\\"BeeCount\\\" app';
+  String get updateNotificationGuideStep2 => 'Find \\\"AI账舞\\\" app';
 
   @override
   String get updateNotificationGuideStep3 => 'Enable notification permissions';
@@ -4276,7 +4280,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updateCorruptedFileMessage => 'The previously downloaded installation package is incomplete or corrupted. Delete and re-download?';
 
   @override
-  String get welcomeTitle => 'Welcome to BeeCount';
+  String get welcomeTitle => 'Welcome to AI账舞';
 
   @override
   String get welcomeDescription => 'An accounting app that truly respects your privacy';
@@ -4306,7 +4310,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeCloudSyncTitle => 'Optional Cloud Sync';
 
   @override
-  String get welcomeCloudSyncDescription => 'BeeCount supports multiple sync methods - your data, your control';
+  String get welcomeCloudSyncDescription => 'AI账舞 supports multiple sync methods - your data, your control';
 
   @override
   String get welcomeCloudSyncFeature1 => 'Completely offline usage, no cloud needed';
@@ -4390,7 +4394,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get iosWidgetStep2 => 'Tap the \"+\" button in upper left corner';
 
   @override
-  String get iosWidgetStep3 => 'Search and select \"BeeCount\"';
+  String get iosWidgetStep3 => 'Search and select \"AI账舞\"';
 
   @override
   String get iosWidgetStep4 => 'Select medium widget and add to home screen';
@@ -4402,7 +4406,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get androidWidgetStep2 => 'Select \"Widgets\"';
 
   @override
-  String get androidWidgetStep3 => 'Find and long press \"BeeCount\" widget';
+  String get androidWidgetStep3 => 'Find and long press \"AI账舞\" widget';
 
   @override
   String get androidWidgetStep4 => 'Drag to suitable position on home screen';
@@ -4420,7 +4424,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get widgetQuickEntryDesc => 'Tap the left side of the widget to quickly add an expense, or tap the right side to add an income. You can also use beecount://new?type=transfer via Shortcuts to quickly start a transfer.';
 
   @override
-  String get appName => 'BeeCount';
+  String get appName => 'AI账舞';
 
   @override
   String get monthSuffix => '';
@@ -4504,10 +4508,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get iosAutoShortcutStep2 => 'Add \"Take Screenshot\" action';
 
   @override
-  String get iosAutoShortcutStep3 => 'Search and add \"BeeCount - Auto Billing\" action';
+  String get iosAutoShortcutStep3 => 'Search and add \"AI账舞 - Auto Billing\" action';
 
   @override
-  String get iosAutoShortcutStep4 => 'Set the screenshot parameter of \"BeeCount\" to the previous \"Screenshot\"';
+  String get iosAutoShortcutStep4 => 'Set the screenshot parameter of \"AI账舞\" to the previous \"Screenshot\"';
 
   @override
   String get iosAutoShortcutStep5 => '(Optional) Go to Settings > Accessibility > Touch > Back Tap, bind this shortcut';
@@ -4938,10 +4942,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shareBillingDesc => 'Share a payment screenshot from Alipay/WeChat to bill it';
 
   @override
-  String get shareBillingGuide => 'When you see a payment screenshot in Alipay, WeChat, Photos, etc., tap \"Share\" and choose \"BeeCount\" to auto-recognize the amount, merchant, and time and create a transaction — no need to save the screenshot first.';
+  String get shareBillingGuide => 'When you see a payment screenshot in Alipay, WeChat, Photos, etc., tap \"Share\" and choose \"AI账舞\" to auto-recognize the amount, merchant, and time and create a transaction — no need to save the screenshot first.';
 
   @override
-  String get shareBillingActionHint => 'Recognized automatically in the background after sharing — no need to open BeeCount';
+  String get shareBillingActionHint => 'Recognized automatically in the background after sharing — no need to open AI账舞';
 
   @override
   String get automation => 'Automation';
@@ -5004,19 +5008,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutTelegram => 'Telegram';
 
   @override
-  String get aboutSupportDevelopment => 'Support Development';
+  String get aboutSupportDevelopment => 'Support the original author';
 
   @override
-  String get aboutSupportDevelopmentSubtitle => 'Buy me a coffee';
+  String get aboutSupportDevelopmentSubtitle => 'Upstream donation options';
 
   @override
-  String get aboutDeveloperStoryTitle => 'From the Developer';
+  String get aboutDeveloperStoryTitle => 'From the Original Author';
 
   @override
   String get aboutDeveloperStory => 'I started tracking my expenses in 2015 as an intern, and I\'ve kept the habit for over a decade. Concerned about ads, paywalls, privacy risks, and apps shutting down, I decided to build my own — first as a small tool for myself and my family.\n\nIn September 2025, BeeCount launched its first version. Honestly, I had no idea if anyone would use it. But gradually, feedback started coming in — someone said they finally found a clean budgeting app, others offered great suggestions, and some quietly left five-star reviews. Every single message reminded me this was worth continuing.\n\nBeeCount is ad-free, subscription-free, and fully open source. All your data stays on your device and is never uploaded to any third-party server. But publishing and maintaining an app isn\'t free — developer accounts, servers, and other costs are currently covered by community donations, and every system update, bug fix, and new feature is built outside of my day job.\n\nIf BeeCount has been helpful to you, a rating, a share, or a donation would help this little project go further. Thank you for your trust.';
 
   @override
-  String get aboutRelatedProducts => 'More Products';
+  String get aboutRelatedProducts => 'Other apps by the original author';
 
   @override
   String get aboutBeeAssets => 'BeeAssets';
@@ -5025,7 +5029,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutBeeAssetsSubtitle => 'Visualize your full asset portfolio';
 
   @override
-  String get aboutBeeAssetsIntro => 'BeeCount focuses on daily cash flow; BeeAssets is its sibling product, focused on asset portfolio visualization: net worth trends across accounts, property / investment / crypto classification, returns, holding period, and allocation breakdown.';
+  String get aboutBeeAssetsIntro => 'AI账舞 focuses on daily cash flow; BeeAssets is its sibling product, focused on asset portfolio visualization: net worth trends across accounts, property / investment / crypto classification, returns, holding period, and allocation breakdown.';
 
   @override
   String get aboutBeeDNS => 'BeeDNS';
@@ -5140,7 +5144,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get configExportSubtitle => 'Export current config to YAML file';
 
   @override
-  String get configExportShareSubject => 'BeeCount Config File';
+  String get configExportShareSubject => 'AI账舞 Config File';
 
   @override
   String get configExportSuccess => 'Config exported successfully';
@@ -6231,7 +6235,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get tagShareSubject => 'BeeCount Tags Configuration';
+  String get tagShareSubject => 'AI账舞 Tags Configuration';
 
   @override
   String get tagShareFailed => 'Share failed';
@@ -6900,7 +6904,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appLockBiometricDesc => 'Use Face ID or fingerprint to unlock';
 
   @override
-  String get appLockBiometricReason => 'Verify identity to unlock Bee Accounting';
+  String get appLockBiometricReason => 'Verify identity to unlock AI账舞';
 
   @override
   String get appLockTimeout => 'Auto-lock Timeout';
@@ -7349,11 +7353,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sharedInviteWarning => '⚠️ Don\'t post invite codes to public groups / social. Anyone with the code can join. Revoke and regenerate from Members if leaked.';
 
   @override
-  String get sharedInviteInstruction => 'Send the code or short link to the other person. After they install BeeCount, they can tap the link or enter the code from \"Me → Join shared ledger\".';
+  String get sharedInviteInstruction => 'Send the code or short link to the other person. After they install AI账舞, they can tap the link or enter the code from \"Me → Join shared ledger\".';
 
   @override
   String sharedInviteShareText(String ledger, String code, String url) {
-    return 'I\'m inviting you to BeeCount shared ledger \"$ledger\".\n\nCode: $code\nLink: $url\n\nTap the link, or open BeeCount → Me → Join shared ledger and enter this code.';
+    return 'I\'m inviting you to AI账舞 shared ledger \"$ledger\".\n\nCode: $code\nLink: $url\n\nTap the link, or open AI账舞 → Me → Join shared ledger and enter this code.';
   }
 
   @override
@@ -8252,7 +8256,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get annualReportNotAchieved => 'Not Achieved';
 
   @override
-  String get annualReportDownloadHint => 'Scan to download BeeCount and start bookkeeping';
+  String get annualReportDownloadHint => 'Scan to download AI账舞 and start bookkeeping';
 
   @override
   String get attachmentKeepOriginal => 'Keep Original Attachments';
@@ -8502,7 +8506,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get sharePosterAppText => 'BeeCount - Simple Ledger';
+  String get sharePosterAppText => 'AI账舞';
 
   @override
   String get sharePosterDefaultLedgerName => 'Default Ledger';
@@ -8628,7 +8632,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get logExportTitle => '=== BeeCount log export ===';
+  String get logExportTitle => '=== AI账舞 log export ===';
 
   @override
   String logExportTime(String time) {
@@ -8766,10 +8770,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get v4HomeMonthShare => 'Share monthly summary';
 
   @override
-  String get v4HomeBrandShow => 'Show BeeCount branding';
+  String get v4HomeBrandShow => 'Show AI账舞 branding';
 
   @override
-  String get v4HomeBrandHide => 'Hide BeeCount branding';
+  String get v4HomeBrandHide => 'Hide AI账舞 branding';
 
   @override
   String get v4HomeMonthExpense => 'Monthly expenses';
@@ -9559,7 +9563,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportColumnsReset => 'Restore defaults';
 
   @override
-  String get exportColumnsDescription => 'Select the columns to include. Expand column order to arrange the exported headers.';
+  String get exportColumnsDescription => 'Choose exported columns. Attachments packages images and PDF invoices. Expand column order to arrange the headers.';
 
   @override
   String get imageCropFailed => 'Could not crop or save the image. Please try again.';
@@ -9578,4 +9582,106 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exportDateRangePickerTitle => 'Select export date range';
+
+  @override
+  String get attachmentAddInvoice => 'Add PDF invoice';
+
+  @override
+  String get attachmentOpenInvoice => 'Open invoice';
+
+  @override
+  String get attachmentInvoiceInvalid => 'Select a valid PDF invoice.';
+
+  @override
+  String get attachmentInvoiceOpenFailed => 'Could not open the PDF invoice.';
+
+  @override
+  String get invoiceStatus => 'Invoice status';
+
+  @override
+  String get invoiceIssued => 'Issued';
+
+  @override
+  String get invoicePending => 'To be issued';
+
+  @override
+  String get invoiceNotRequired => 'Not required';
+
+  @override
+  String get attachmentScanDocument => 'Scan document';
+
+  @override
+  String get documentFlattenFailed => 'Could not flatten this page. You can still use the original.';
+
+  @override
+  String get imageCropUndo => 'Undo crop';
+
+  @override
+  String get documentFlattenReview => 'Review pages';
+
+  @override
+  String attachmentSaveIncomplete(int saved, int total) {
+    return 'Saved $saved of $total attachments. Add the missing images again.';
+  }
+
+  @override
+  String get exportAttachmentNoNote => 'No note';
+
+  @override
+  String get documentFlattenOriginal => 'Original';
+
+  @override
+  String attachmentSaveRetry(int saved, int total) {
+    return 'Transaction saved. $saved of $total attachments saved. Try saving again to retry the remaining images.';
+  }
+
+  @override
+  String get exportCsvHeaderSequence => 'No';
+
+  @override
+  String attachmentScanPageLimit(int count) {
+    return 'Attachment limit reached. $count extra scanned pages were skipped.';
+  }
+
+  @override
+  String get attachmentScanFailed => 'Could not scan the document. Try again or take a photo.';
+
+  @override
+  String get documentFlattenResult => 'Flattened';
+
+  @override
+  String get documentFlattenProcessing => 'Flattening on this device…';
+
+  @override
+  String get documentFlattenAction => 'Flatten page';
+
+  @override
+  String get documentFlattenDone => 'Page flattened';
+
+  @override
+  String get imageCropRedo => 'Redo crop';
+
+  @override
+  String get aboutMaintainer => 'Maintainer';
+
+  @override
+  String get aboutOriginalAuthor => 'Original author, with thanks';
+
+  @override
+  String get aboutUpstreamResources => 'Upstream resources';
+
+  @override
+  String get aboutUpstreamDocs => 'Upstream documentation';
+
+  @override
+  String get aboutUpstreamAppStore => 'Rate the upstream app on the App Store';
+
+  @override
+  String get projectStarTitle => 'Star AI账舞 on GitHub';
+
+  @override
+  String get projectStarDescription => 'Open the project repository on GitHub';
+
+  @override
+  String get updateNoRelease => 'This project has no stable release yet.';
 }

@@ -7,10 +7,18 @@ class BeeAttachmentSources extends StatelessWidget {
       {super.key,
       required this.cameraLabel,
       required this.galleryLabel,
+      this.scanLabel,
+      this.invoiceLabel,
       required this.onCamera,
-      required this.onGallery});
+      required this.onGallery,
+      this.onScan,
+      this.onInvoice});
   final String cameraLabel, galleryLabel;
+  final String? scanLabel;
+  final String? invoiceLabel;
   final VoidCallback onCamera, onGallery;
+  final VoidCallback? onScan;
+  final VoidCallback? onInvoice;
 
   @override
   Widget build(BuildContext context) =>
@@ -23,18 +31,55 @@ class BeeAttachmentSources extends StatelessWidget {
         BeeMenuRow(
             title: galleryLabel,
             leading: const BeeLineIcon('ImagePlus', size: 21),
+            divider: onScan != null || onInvoice != null,
             onTap: onGallery),
+        if (scanLabel != null && onScan != null)
+          BeeMenuRow(
+              title: scanLabel!,
+              leading: const BeeLineIcon('ScanLine', size: 21),
+              divider: onInvoice != null,
+              onTap: onScan),
+        if (invoiceLabel != null && onInvoice != null)
+          BeeMenuRow(
+              title: invoiceLabel!,
+              leading: const Icon(Icons.receipt_long_outlined, size: 21),
+              onTap: onInvoice),
       ]);
 }
 
 class BeeAttachment {
   const BeeAttachment(
-      {required this.id,
-      required this.image,
-      required this.label,
-      required this.info});
+      {required this.id, this.image, required this.label, required this.info});
   final String id, label, info;
-  final ImageProvider image;
+  final ImageProvider? image;
+}
+
+class BeeAttachmentThumbnail extends StatelessWidget {
+  const BeeAttachmentThumbnail(
+      {super.key,
+      required this.item,
+      this.fit = BoxFit.cover,
+      this.alignment = Alignment.center,
+      this.errorBuilder});
+
+  final BeeAttachment item;
+  final BoxFit fit;
+  final Alignment alignment;
+  final ImageErrorWidgetBuilder? errorBuilder;
+
+  @override
+  Widget build(BuildContext context) {
+    final image = item.image;
+    if (image == null) {
+      return const Center(
+          child: Icon(Icons.picture_as_pdf_outlined, color: Colors.grey));
+    }
+    return Image(
+        image: image,
+        fit: fit,
+        alignment: alignment,
+        errorBuilder: errorBuilder);
+  }
 }
 
 class BeeAttachments extends StatelessWidget {
@@ -72,8 +117,8 @@ class BeeAttachments extends StatelessWidget {
                 child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Stack(fit: StackFit.expand, children: [
-                      Image(
-                          image: items[i].image,
+                      BeeAttachmentThumbnail(
+                          item: items[i],
                           fit: BoxFit.cover,
                           alignment: Alignment.topCenter,
                           errorBuilder: (_, e, s) =>
@@ -117,6 +162,7 @@ class BeeAttachmentViewer extends StatefulWidget {
       this.fullScreen = false,
       this.onClose,
       this.onImageTap,
+      this.documentBuilder,
       this.metadataBuilder,
       this.showHeaderLabel = true,
       this.actions = const [],
@@ -131,6 +177,7 @@ class BeeAttachmentViewer extends StatefulWidget {
   final ValueChanged<int>? onIndexChanged;
   final bool fullScreen, busy;
   final VoidCallback? onClose, onImageTap;
+  final Widget Function(int)? documentBuilder;
   final Widget Function(int)? metadataBuilder;
   final bool showHeaderLabel;
   final List<Widget> actions;
@@ -198,15 +245,18 @@ class _BeeAttachmentViewerState extends State<BeeAttachmentViewer> {
               controller: pages,
               itemCount: widget.items.length,
               onPageChanged: _changed,
-              itemBuilder: (context, i) => InteractiveViewer(
-                  key: ValueKey('${widget.items[i].id}-$i'),
-                  minScale: .5,
-                  maxScale: widget.maxScale,
-                  child: Center(
-                      child: Image(
-                          image: widget.items[i].image,
-                          fit: BoxFit.contain,
-                          errorBuilder: (_, e, s) => _error(context))))));
+              itemBuilder: (context, i) => widget.items[i].image == null
+                  ? widget.documentBuilder?.call(i) ??
+                      BeeAttachmentThumbnail(item: widget.items[i])
+                  : InteractiveViewer(
+                      key: ValueKey('${widget.items[i].id}-$i'),
+                      minScale: .5,
+                      maxScale: widget.maxScale,
+                      child: Center(
+                          child: BeeAttachmentThumbnail(
+                              item: widget.items[i],
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, e, s) => _error(context))))));
   Widget _thumbnails(BuildContext context) {
     if (widget.fullScreen) {
       return SizedBox(
@@ -241,8 +291,8 @@ class _BeeAttachmentViewerState extends State<BeeAttachmentViewer> {
                                           : Colors.transparent)),
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(5),
-                                  child: Image(
-                                      image: widget.items[i].image,
+                                  child: BeeAttachmentThumbnail(
+                                      item: widget.items[i],
                                       fit: BoxFit.cover,
                                       alignment: Alignment.topCenter,
                                       errorBuilder: (_, a, b) =>
@@ -284,8 +334,8 @@ class _BeeAttachmentViewerState extends State<BeeAttachmentViewer> {
                                               .primary
                                       : Colors.transparent)),
                           clipBehavior: Clip.antiAlias,
-                          child: Image(
-                              image: e.value.image,
+                          child: BeeAttachmentThumbnail(
+                              item: e.value,
                               fit: BoxFit.cover,
                               errorBuilder: (_, a, b) => BeeLineIcon('ImageOff',
                                   color: widget.fullScreen

@@ -160,7 +160,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get aiConsentTitle => 'AI 기능을 켜기 전에';
 
   @override
-  String get aiConsentBody => 'AI 기능을 사용하면 관련 데이터가 사용자가 설정한 제3자 AI 제공업체로 전송됩니다:\n\n• 전송 대상: 기본값은 즈푸 GLM(open.bigmodel.cn, 즈푸 운영)이며, 다른 제3자 AI 서비스를 설정한 경우 해당 제공업체로 전송됩니다.\n• 전송 내용: 인식/대화를 위해 직접 사용하는 콘텐츠 — 영수증 이미지, 음성 녹음, 입력한 텍스트, 그리고 인식/분석을 완료하는 데 필요한 카테고리 이름, 계정 이름 및 관련 거래 기록.\n• 목적: 사용자가 직접 시작한 영수증 인식, 기록, 대화에만 사용되며 BeeCount 자체는 이 데이터를 수집하거나 저장하지 않습니다.\n\n해당 데이터는 제3자 제공업체의 자체 개인정보 처리방침에 따라 처리됩니다. 켜면 위와 같은 데이터 공유에 동의하는 것입니다.';
+  String get aiConsentBody => 'AI 기능을 사용하면 관련 데이터가 사용자가 설정한 제3자 AI 제공업체로 전송됩니다:\n\n• 전송 대상: 기본값은 즈푸 GLM(open.bigmodel.cn, 즈푸 운영)이며, 다른 제3자 AI 서비스를 설정한 경우 해당 제공업체로 전송됩니다.\n• 전송 내용: 인식/대화를 위해 직접 사용하는 콘텐츠 — 영수증 이미지, 음성 녹음, 입력한 텍스트, 그리고 인식/분석을 완료하는 데 필요한 카테고리 이름, 계정 이름 및 관련 거래 기록.\n• 목적: 사용자가 직접 시작한 영수증 인식, 기록, 대화에만 사용되며 AI账舞 자체는 이 데이터를 수집하거나 저장하지 않습니다.\n\n해당 데이터는 제3자 제공업체의 자체 개인정보 처리방침에 따라 처리됩니다. 켜면 위와 같은 데이터 공유에 동의하는 것입니다.';
 
   @override
   String get aiConsentAgree => '동의하고 켜기';
@@ -172,7 +172,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get aboutChangelog => 'Changelog';
 
   @override
-  String get appTitle => '꿀벌 가계부';
+  String get appTitle => 'AI账舞';
 
   @override
   String get tabHome => '홈';
@@ -285,7 +285,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get voiceRecordingPermissionDeniedTitle => '마이크 권한 필요';
 
   @override
-  String get voiceRecordingPermissionDeniedMessage => '음성 기록에는 마이크 권한이 필요합니다. 시스템 설정에서 BeeCount의 마이크 접근을 허용해 주세요.';
+  String get voiceRecordingPermissionDeniedMessage => '음성 기록에는 마이크 권한이 필요합니다. 시스템 설정에서 AI账舞의 마이크 접근을 허용해 주세요.';
 
   @override
   String voiceRecordingStartFailed(String error) {
@@ -430,7 +430,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeSelectDate => '날짜 선택';
 
   @override
-  String get homeAppTitle => '꿀벌 가계부';
+  String get homeAppTitle => 'AI账舞';
 
   @override
   String get homeSearch => '검색';
@@ -715,7 +715,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get analyticsToday => '오늘';
 
   @override
-  String get splashAppName => '꿀벌 가계부';
+  String get splashAppName => 'AI账舞';
 
   @override
   String get splashSlogan => '매 순간의 기록';
@@ -1249,7 +1249,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get deleteConfirmMessage => '이 기록을 삭제하시겠습니까?';
 
   @override
-  String get mineSlogan => '꿀벌 가계부, 한 푼도 소중하게';
+  String get mineSlogan => 'AI账舞, 한 푼도 소중하게';
 
   @override
   String get mineDisplayNameEditTitle => '닉네임 설정';
@@ -1524,7 +1524,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get mineShareApp => '앱 공유';
 
   @override
-  String get mineShareWithFriends => '친구에게 BeeCount 공유하기';
+  String get mineShareWithFriends => '친구에게 AI账舞 공유하기';
 
   @override
   String get mineCopyPromoText => '홍보 문구 복사';
@@ -1536,7 +1536,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get mineShareGenerating => '공유 포스터 생성 중...';
 
   @override
-  String get sharePosterAppName => 'BeeCount';
+  String get sharePosterAppName => 'AI账舞';
 
   @override
   String get sharePosterSlogan => '스마트한 가계부, 아름다운 삶';
@@ -1613,7 +1613,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get sharePosterSaveSuccess => '갤러리에 저장되었습니다';
 
   @override
-  String get shareGuidanceCopyText => 'BeeCount로 지출을 기록하세요 - 오픈소스, 무료, 광고 없음! 🐝 다운로드: https://github.com/TNT-Likely/BeeCount';
+  String shareGuidanceCopyText(String url) {
+    return 'AI账舞로 지출을 기록하세요. 프로젝트 페이지: $url';
+  }
 
   @override
   String get shareGuidanceCopied => '텍스트가 복사되었습니다';
@@ -1994,7 +1996,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get githubStarGuideTitle => '프로젝트에 스타를 남기는 방법';
 
   @override
-  String get githubStarGuideContent => '아래 버튼을 눌러 GitHub를 연 후, 이미지에 표시된 영역을 눌러 스타를 완료하세요';
+  String get githubStarGuideContent => 'GitHub에서 저장소를 열고 Star를 선택하세요.';
 
   @override
   String get githubStarGuideButton => 'GitHub로 이동';
@@ -2171,7 +2173,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get categoryShareSubject => 'BeeCount 카테고리 설정';
+  String get categoryShareSubject => 'AI账舞 카테고리 설정';
 
   @override
   String get categoryShareFailed => '공유 실패';
@@ -2752,10 +2754,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get reminderDescription => '팁: 기록 알림을 활성화하면 시스템이 매일 지정한 시간에 알림을 보내 수입과 지출 기록을 상기시켜 줍니다.';
 
   @override
-  String get reminderIOSInstructions => '🍎 iOS 알림 설정:\n• 설정 > 알림 > 꿀벌 가계부\n• \"알림 허용\" 활성화\n• 알림 스타일 설정: 배너 또는 알림창\n• 소리와 진동 활성화\n\n⚠️ 중요 안내:\n• iOS 로컬 알림은 앱 프로세스에 의존합니다\n• 작업 관리자에서 앱을 강제 종료하지 마세요\n• 앱이 백그라운드나 포그라운드에 있을 때 알림이 작동합니다\n• 강제 종료하면 알림이 작동하지 않습니다\n\n💡 사용 팁:\n• 홈 버튼을 눌러 앱을 종료하기만 하면 됩니다\n• iOS가 백그라운드 앱을 자동으로 관리합니다\n• 알림을 받으려면 앱을 백그라운드에 유지하세요';
+  String get reminderIOSInstructions => '🍎 iOS 알림 설정:\n• 설정 > 알림 > AI账舞\n• \"알림 허용\" 활성화\n• 알림 스타일 설정: 배너 또는 알림창\n• 소리와 진동 활성화\n\n⚠️ 중요 안내:\n• iOS 로컬 알림은 앱 프로세스에 의존합니다\n• 작업 관리자에서 앱을 강제 종료하지 마세요\n• 앱이 백그라운드나 포그라운드에 있을 때 알림이 작동합니다\n• 강제 종료하면 알림이 작동하지 않습니다\n\n💡 사용 팁:\n• 홈 버튼을 눌러 앱을 종료하기만 하면 됩니다\n• iOS가 백그라운드 앱을 자동으로 관리합니다\n• 알림을 받으려면 앱을 백그라운드에 유지하세요';
 
   @override
-  String get reminderAndroidInstructions => '알림이 제대로 오지 않는다면 다음을 확인하세요:\n• 앱의 알림 전송이 허용되어 있는지\n• 앱의 배터리 최적화/절전 모드를 꺼두었는지\n• 앱의 백그라운드 실행과 자동 시작이 허용되어 있는지\n• Android 12 이상은 정확한 알람 권한이 필요합니다\n\n📱 샤오미(Xiaomi) 기기 특별 설정:\n• 설정 > 앱 관리 > 꿀벌 가계부 > 알림 관리\n• \"기록 알림\" 채널을 누르세요\n• 중요도를 \"긴급\" 또는 \"높음\"으로 설정하세요\n• \"배너 알림\", \"소리\", \"진동\"을 활성화하세요\n• 보안센터 > 앱 관리 > 권한 > 자동 실행\n\n🔒 백그라운드 고정 방법:\n• 최근 작업 목록에서 꿀벌 가계부를 찾으세요\n• 앱 카드를 아래로 당겨 잠금 아이콘을 표시하세요\n• 잠금 아이콘을 눌러 정리되지 않도록 하세요';
+  String get reminderAndroidInstructions => '알림이 제대로 오지 않는다면 다음을 확인하세요:\n• 앱의 알림 전송이 허용되어 있는지\n• 앱의 배터리 최적화/절전 모드를 꺼두었는지\n• 앱의 백그라운드 실행과 자동 시작이 허용되어 있는지\n• Android 12 이상은 정확한 알람 권한이 필요합니다\n\n📱 샤오미(Xiaomi) 기기 특별 설정:\n• 설정 > 앱 관리 > AI账舞 > 알림 관리\n• \"기록 알림\" 채널을 누르세요\n• 중요도를 \"긴급\" 또는 \"높음\"으로 설정하세요\n• \"배너 알림\", \"소리\", \"진동\"을 활성화하세요\n• 보안센터 > 앱 관리 > 권한 > 자동 실행\n\n🔒 백그라운드 고정 방법:\n• 최근 작업 목록에서 AI账舞를 찾으세요\n• 앱 카드를 아래로 당겨 잠금 아이콘을 표시하세요\n• 잠금 아이콘을 눌러 정리되지 않도록 하세요';
 
   @override
   String get categoryDetailLoadFailed => '불러오기 실패';
@@ -2991,7 +2993,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get exportTitle => '내보내기';
 
   @override
-  String get exportDescription => '현재 장부의 거래를 UTF-8 CSV 파일로 내보냅니다. 날짜 범위와 거래 유형을 선택하고 열과 순서를 지정할 수 있습니다. 열 설정은 다음 내보내기에도 유지됩니다.';
+  String get exportDescription => '현재 장부의 거래를 첫 열에 순번이 있는 UTF-8 CSV로 내보냅니다. 첨부파일을 선택하면 이미지와 PDF 송장을 순번과 메모로 이름 붙여 CSV와 함께 ZIP에 담습니다. 필터와 설정은 저장됩니다.';
 
   @override
   String get exportButtonIOS => '내보내기 및 공유';
@@ -3038,7 +3040,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get exportCsvHeaderAttachments => '첨부파일';
 
   @override
-  String get exportShareText => 'BeeCount 내보내기 파일';
+  String get exportShareText => 'AI账舞 내보내기 파일';
 
   @override
   String get exportSuccessTitle => '내보내기 성공';
@@ -3270,7 +3272,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get updateCannotOpenLink => '링크를 열 수 없습니다';
 
   @override
-  String get updateManualVisit => '브라우저에서 직접 방문해 주세요:\\nhttps://github.com/TNT-Likely/BeeCount/releases';
+  String updateManualVisit(String url) {
+    return '브라우저에서 릴리스 페이지를 열어 주세요:\n$url';
+  }
 
   @override
   String get updateNoLocalApkTitle => '업데이트 패키지를 찾을 수 없습니다';
@@ -3435,7 +3439,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get updateNotificationGuideStep1 => '시스템 설정 > 앱 관리로 이동';
 
   @override
-  String get updateNotificationGuideStep2 => '\\\"BeeCount\\\" 앱을 찾으세요';
+  String get updateNotificationGuideStep2 => '\\\"AI账舞\\\" 앱을 찾으세요';
 
   @override
   String get updateNotificationGuideStep3 => '알림 권한을 활성화하세요';
@@ -4276,7 +4280,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get updateCorruptedFileMessage => '이전에 다운로드한 설치 패키지가 불완전하거나 손상되었습니다. 삭제하고 다시 다운로드하시겠습니까?';
 
   @override
-  String get welcomeTitle => 'BeeCount에 오신 것을 환영합니다';
+  String get welcomeTitle => 'AI账舞에 오신 것을 환영합니다';
 
   @override
   String get welcomeDescription => '사용자의 개인정보를 진심으로 존중하는 가계부 앱';
@@ -4306,13 +4310,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get welcomeCloudSyncTitle => '선택적 클라우드 동기화';
 
   @override
-  String get welcomeCloudSyncDescription => 'BeeCount는 다양한 동기화 방식을 지원합니다 - 내 데이터는 내가 관리합니다';
+  String get welcomeCloudSyncDescription => 'AI账舞는 다양한 동기화 방식을 지원합니다 - 내 데이터는 내가 관리합니다';
 
   @override
   String get welcomeCloudSyncFeature1 => '클라우드 없이 완전히 오프라인으로 사용 가능';
 
   @override
-  String get welcomeCloudSyncFeature2 => 'BeeCount 클라우드 셀프 호스팅 (실시간 다중 기기 + 웹 UI)';
+  String get welcomeCloudSyncFeature2 => 'AI账舞 클라우드 셀프 호스팅 (실시간 다중 기기 + 웹 UI)';
 
   @override
   String get welcomeCloudSyncFeature3 => '또는 iCloud / WebDAV / Supabase / S3 중 선택';
@@ -4390,7 +4394,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get iosWidgetStep2 => '왼쪽 상단의 \"+\" 버튼을 누르세요';
 
   @override
-  String get iosWidgetStep3 => '\"BeeCount\"를 검색해서 선택하세요';
+  String get iosWidgetStep3 => '\"AI账舞\"를 검색해서 선택하세요';
 
   @override
   String get iosWidgetStep4 => '중간 크기 위젯을 선택해 홈 화면에 추가하세요';
@@ -4402,7 +4406,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get androidWidgetStep2 => '\"위젯\"을 선택하세요';
 
   @override
-  String get androidWidgetStep3 => '\"BeeCount\" 위젯을 찾아 길게 누르세요';
+  String get androidWidgetStep3 => '\"AI账舞\" 위젯을 찾아 길게 누르세요';
 
   @override
   String get androidWidgetStep4 => '홈 화면의 원하는 위치로 드래그하세요';
@@ -4420,7 +4424,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get widgetQuickEntryDesc => '위젯의 왼쪽을 누르면 지출을 빠르게 추가하고, 오른쪽을 누르면 수입을 추가합니다. 단축어에서 beecount://new?type=transfer 를 사용해 이체를 빠르게 시작할 수도 있습니다.';
 
   @override
-  String get appName => 'BeeCount';
+  String get appName => 'AI账舞';
 
   @override
   String get monthSuffix => '';
@@ -4504,10 +4508,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get iosAutoShortcutStep2 => '\"스크린샷 찍기\" 동작을 추가하세요';
 
   @override
-  String get iosAutoShortcutStep3 => '\"BeeCount - 자동 기록\" 동작을 검색해 추가하세요';
+  String get iosAutoShortcutStep3 => '\"AI账舞 - 자동 기록\" 동작을 검색해 추가하세요';
 
   @override
-  String get iosAutoShortcutStep4 => '\"BeeCount\"의 스크린샷 매개변수를 이전 단계의 \"스크린샷\"으로 설정하세요';
+  String get iosAutoShortcutStep4 => '\"AI账舞\"의 스크린샷 매개변수를 이전 단계의 \"스크린샷\"으로 설정하세요';
 
   @override
   String get iosAutoShortcutStep5 => '(선택 사항) 설정 > 손쉬운 사용 > 터치 > 뒷면 탭으로 이동해 이 단축어를 연결하세요';
@@ -4938,10 +4942,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get shareBillingDesc => '알리페이/위챗의 결제 스크린샷을 공유해 기록합니다';
 
   @override
-  String get shareBillingGuide => '알리페이, 위챗, 사진 앱 등에서 결제 스크린샷을 보면 \"공유\"를 누르고 \"BeeCount\"를 선택하세요. 금액, 가맹점, 시간을 자동으로 인식해 거래를 생성합니다 — 스크린샷을 먼저 저장할 필요가 없습니다.';
+  String get shareBillingGuide => '알리페이, 위챗, 사진 앱 등에서 결제 스크린샷을 보면 \"공유\"를 누르고 \"AI账舞\"를 선택하세요. 금액, 가맹점, 시간을 자동으로 인식해 거래를 생성합니다 — 스크린샷을 먼저 저장할 필요가 없습니다.';
 
   @override
-  String get shareBillingActionHint => '공유 후 백그라운드에서 자동으로 인식됩니다 — BeeCount를 열 필요가 없습니다';
+  String get shareBillingActionHint => '공유 후 백그라운드에서 자동으로 인식됩니다 — AI账舞를 열 필요가 없습니다';
 
   @override
   String get automation => '자동화';
@@ -5004,19 +5008,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get aboutTelegram => 'Telegram';
 
   @override
-  String get aboutSupportDevelopment => '개발 후원하기';
+  String get aboutSupportDevelopment => '원작자 후원';
 
   @override
-  String get aboutSupportDevelopmentSubtitle => '커피 한 잔 사주기';
+  String get aboutSupportDevelopmentSubtitle => '업스트림 후원 방법 보기';
 
   @override
-  String get aboutDeveloperStoryTitle => '개발자로부터';
+  String get aboutDeveloperStoryTitle => '원작자의 이야기';
 
   @override
   String get aboutDeveloperStory => '저는 2015년 인턴 시절부터 가계부를 쓰기 시작해서 10년 넘게 그 습관을 이어오고 있습니다. 광고, 유료 결제, 개인정보 유출 위험, 그리고 앱 서비스 종료에 대한 걱정 때문에 직접 만들어보기로 했습니다 — 처음에는 저와 가족을 위한 작은 도구로 시작했죠.\n\n2025년 9월, BeeCount의 첫 버전을 출시했습니다. 솔직히 누가 써줄지 전혀 알 수 없었습니다. 하지만 점차 피드백이 들어오기 시작했습니다 — 드디어 깔끔한 가계부 앱을 찾았다는 분도 있었고, 좋은 제안을 해주신 분도 있었고, 조용히 별점 5개를 남겨주신 분도 있었습니다. 그 하나하나의 메시지가 계속할 가치가 있다는 걸 일깨워 주었습니다.\n\nBeeCount는 광고도, 구독료도 없는 완전한 오픈소스입니다. 모든 데이터는 사용자의 기기에만 저장되며 어떤 제3자 서버로도 업로드되지 않습니다. 하지만 앱을 출시하고 유지하는 데는 비용이 듭니다 — 개발자 계정, 서버 등의 비용은 현재 커뮤니티 후원으로 충당하고 있으며, 모든 시스템 업데이트와 버그 수정, 신규 기능은 본업 외 시간에 만들고 있습니다.\n\nBeeCount가 도움이 되셨다면, 평점이나 공유, 후원 한 번이 이 작은 프로젝트가 더 멀리 나아가는 데 큰 힘이 됩니다. 믿어주셔서 감사합니다.';
 
   @override
-  String get aboutRelatedProducts => '더 많은 제품';
+  String get aboutRelatedProducts => '원작자의 다른 앱';
 
   @override
   String get aboutBeeAssets => 'BeeAssets';
@@ -5025,7 +5029,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get aboutBeeAssetsSubtitle => '전체 자산 포트폴리오를 시각화하세요';
 
   @override
-  String get aboutBeeAssetsIntro => 'BeeCount가 일상적인 현금 흐름에 집중한다면, BeeAssets는 그 자매 제품으로 자산 포트폴리오 시각화에 집중합니다: 계좌별 순자산 추이, 부동산/투자/암호화폐 분류, 수익률, 보유 기간, 자산 배분 분석까지 확인할 수 있습니다.';
+  String get aboutBeeAssetsIntro => 'AI账舞가 일상적인 현금 흐름에 집중한다면, BeeAssets는 그 자매 제품으로 자산 포트폴리오 시각화에 집중합니다: 계좌별 순자산 추이, 부동산/투자/암호화폐 분류, 수익률, 보유 기간, 자산 배분 분석까지 확인할 수 있습니다.';
 
   @override
   String get aboutBeeDNS => 'BeeDNS';
@@ -5140,7 +5144,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get configExportSubtitle => '현재 설정을 YAML 파일로 내보내기';
 
   @override
-  String get configExportShareSubject => 'BeeCount 설정 파일';
+  String get configExportShareSubject => 'AI账舞 설정 파일';
 
   @override
   String get configExportSuccess => '설정을 내보냈습니다';
@@ -6231,7 +6235,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get tagShareSubject => 'BeeCount 태그 설정';
+  String get tagShareSubject => 'AI账舞 태그 설정';
 
   @override
   String get tagShareFailed => '공유 실패';
@@ -6900,7 +6904,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appLockBiometricDesc => 'Face ID 또는 지문으로 잠금을 해제합니다';
 
   @override
-  String get appLockBiometricReason => '꿀벌 가계부 잠금을 해제하려면 본인 인증이 필요합니다';
+  String get appLockBiometricReason => 'AI账舞 잠금을 해제하려면 본인 인증이 필요합니다';
 
   @override
   String get appLockTimeout => '자동 잠금 시간';
@@ -7349,11 +7353,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get sharedInviteWarning => '⚠️ 초대 코드를 공개 그룹이나 SNS에 게시하지 마세요. 코드를 가진 사람은 누구나 참여할 수 있습니다. 유출되었다면 멤버 화면에서 취소하고 다시 생성하세요.';
 
   @override
-  String get sharedInviteInstruction => '코드나 짧은 링크를 상대방에게 전달하세요. BeeCount를 설치한 후 링크를 누르거나 \"내 정보 → 공유 가계부 참여\"에서 코드를 입력하면 됩니다.';
+  String get sharedInviteInstruction => '코드나 짧은 링크를 상대방에게 전달하세요. AI账舞를 설치한 후 링크를 누르거나 \"내 정보 → 공유 가계부 참여\"에서 코드를 입력하면 됩니다.';
 
   @override
   String sharedInviteShareText(String ledger, String code, String url) {
-    return 'BeeCount 공유 가계부 \"$ledger\"에 초대합니다.\n\n코드: $code\n링크: $url\n\n링크를 누르거나 BeeCount → 내 정보 → 공유 가계부 참여에서 이 코드를 입력하세요.';
+    return 'AI账舞 공유 가계부 \"$ledger\"에 초대합니다.\n\n코드: $code\n링크: $url\n\n링크를 누르거나 AI账舞 → 내 정보 → 공유 가계부 참여에서 이 코드를 입력하세요.';
   }
 
   @override
@@ -8252,7 +8256,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get annualReportNotAchieved => 'Not Achieved';
 
   @override
-  String get annualReportDownloadHint => 'Scan to download BeeCount and start bookkeeping';
+  String get annualReportDownloadHint => 'Scan to download AI账舞 and start bookkeeping';
 
   @override
   String get attachmentKeepOriginal => 'Keep Original Attachments';
@@ -8502,7 +8506,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get sharePosterAppText => 'BeeCount - Simple Ledger';
+  String get sharePosterAppText => 'AI账舞';
 
   @override
   String get sharePosterDefaultLedgerName => 'Default Ledger';
@@ -8628,7 +8632,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get logExportTitle => '=== BeeCount log export ===';
+  String get logExportTitle => '=== AI账舞 log export ===';
 
   @override
   String logExportTime(String time) {
@@ -8766,10 +8770,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get v4HomeMonthShare => 'Share monthly summary';
 
   @override
-  String get v4HomeBrandShow => 'Show BeeCount branding';
+  String get v4HomeBrandShow => 'Show AI账舞 branding';
 
   @override
-  String get v4HomeBrandHide => 'Hide BeeCount branding';
+  String get v4HomeBrandHide => 'Hide AI账舞 branding';
 
   @override
   String get v4HomeMonthExpense => 'Monthly expenses';
@@ -9559,7 +9563,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get exportColumnsReset => '기본값 복원';
 
   @override
-  String get exportColumnsDescription => '포함할 열을 선택하세요. 열 순서를 펼쳐 헤더 위치를 조정할 수 있습니다.';
+  String get exportColumnsDescription => '내보낼 열을 선택하세요. 첨부파일을 선택하면 이미지와 PDF 송장이 포함됩니다. 열 순서를 펼쳐 헤더 위치를 조정할 수 있습니다.';
 
   @override
   String get imageCropFailed => '이미지를 자르거나 저장하지 못했습니다. 다시 시도하세요.';
@@ -9578,4 +9582,106 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get exportDateRangePickerTitle => '내보낼 기간 선택';
+
+  @override
+  String get attachmentAddInvoice => 'PDF 송장 추가';
+
+  @override
+  String get attachmentOpenInvoice => '송장 열기';
+
+  @override
+  String get attachmentInvoiceInvalid => '유효한 PDF 송장을 선택하세요.';
+
+  @override
+  String get attachmentInvoiceOpenFailed => 'PDF 송장을 열 수 없습니다.';
+
+  @override
+  String get invoiceStatus => '송장 상태';
+
+  @override
+  String get invoiceIssued => '발급됨';
+
+  @override
+  String get invoicePending => '발급 예정';
+
+  @override
+  String get invoiceNotRequired => '발급 안 함';
+
+  @override
+  String get attachmentScanDocument => '문서 스캔';
+
+  @override
+  String get documentFlattenFailed => '페이지를 펼 수 없습니다. 원본을 사용할 수 있습니다.';
+
+  @override
+  String get imageCropUndo => '자르기 실행 취소';
+
+  @override
+  String get documentFlattenReview => '페이지 확인';
+
+  @override
+  String attachmentSaveIncomplete(int saved, int total) {
+    return '첨부파일 $total개 중 $saved개를 저장했습니다. 저장되지 않은 이미지를 다시 추가하세요.';
+  }
+
+  @override
+  String get exportAttachmentNoNote => '메모 없음';
+
+  @override
+  String get documentFlattenOriginal => '원본';
+
+  @override
+  String attachmentSaveRetry(int saved, int total) {
+    return '거래를 저장했습니다. 첨부파일 $total개 중 $saved개를 저장했습니다. 다시 저장하면 나머지 이미지를 재시도합니다.';
+  }
+
+  @override
+  String get exportCsvHeaderSequence => '번호';
+
+  @override
+  String attachmentScanPageLimit(int count) {
+    return '첨부파일 한도에 도달해 스캔한 $count페이지를 건너뛰었습니다.';
+  }
+
+  @override
+  String get attachmentScanFailed => '문서를 스캔하지 못했습니다. 다시 시도하거나 사진을 찍으세요.';
+
+  @override
+  String get documentFlattenResult => '펴진 이미지';
+
+  @override
+  String get documentFlattenProcessing => '기기에서 페이지를 펴는 중…';
+
+  @override
+  String get documentFlattenAction => '페이지 펴기';
+
+  @override
+  String get documentFlattenDone => '페이지를 폈습니다.';
+
+  @override
+  String get imageCropRedo => '자르기 다시 실행';
+
+  @override
+  String get aboutMaintainer => '프로젝트 관리자';
+
+  @override
+  String get aboutOriginalAuthor => '원작자에게 감사드립니다';
+
+  @override
+  String get aboutUpstreamResources => '업스트림 프로젝트 자료';
+
+  @override
+  String get aboutUpstreamDocs => '업스트림 사용 문서';
+
+  @override
+  String get aboutUpstreamAppStore => 'App Store에서 업스트림 앱 평가하기';
+
+  @override
+  String get projectStarTitle => 'GitHub에서 AI账舞에 스타 남기기';
+
+  @override
+  String get projectStarDescription => 'GitHub에서 프로젝트 저장소 열기';
+
+  @override
+  String get updateNoRelease => '이 프로젝트에는 아직 정식 릴리스가 없습니다.';
 }

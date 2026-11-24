@@ -41,6 +41,7 @@ void main() {
       happenedAt: happenedAt,
       excludeFromStats: false,
       excludeFromBudget: false,
+      invoicePending: false,
       currencyCode: currencyCode,
     );
   }

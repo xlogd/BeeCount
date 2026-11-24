@@ -26,8 +26,9 @@ void main() {
           happenedAt: DateTime(2026, 11, 15),
           note: 'existing electricity');
       final before = (await repo.getTransactionById(id))!;
-      // v34 differs from v33 only by this new table.
+      // Remove later additions to reproduce the v33 layout.
       await db.customStatement('DROP TABLE image_billing_drafts');
+      await db.customStatement('ALTER TABLE transactions DROP COLUMN invoice_pending');
       await db.customStatement('PRAGMA user_version = 33');
       await db.close();
       db = BeeDatabase.forTesting(NativeDatabase(file));
@@ -36,7 +37,7 @@ void main() {
       expect(
           (await db.customSelect('PRAGMA user_version').getSingle())
               .read<int>('user_version'),
-          34);
+          35);
       await repo.saveImageBillingDraft(
           sourceKey: 'source', ledgerId: ledger, billsJson: '[]');
       await db.close();

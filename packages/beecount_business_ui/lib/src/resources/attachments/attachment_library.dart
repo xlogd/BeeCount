@@ -84,8 +84,8 @@ class BeeAttachmentLibrary extends StatelessWidget {
                                           : null),
                                   child: Stack(fit: StackFit.expand, children: [
                                     imageBuilder?.call(index) ??
-                                        Image(
-                                            image: item.image,
+                                        BeeAttachmentThumbnail(
+                                            item: item,
                                             fit: BoxFit.cover,
                                             errorBuilder: (_, error, stack) =>
                                                 const Center(

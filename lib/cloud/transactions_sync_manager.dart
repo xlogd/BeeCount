@@ -429,6 +429,8 @@ class TransactionsSyncManager implements SyncService {
                 drift.Value(raw['excludeFromStats'] as bool? ?? false),
             excludeFromBudget:
                 drift.Value(raw['excludeFromBudget'] as bool? ?? false),
+            invoicePending:
+                drift.Value(raw['invoicePending'] as bool? ?? false),
             currencyCode: drift.Value(currency),
             nativeAmount: drift.Value(native)));
         tagsByIndex[i] = (tx.tagNames ?? const [])
@@ -551,7 +553,11 @@ class TransactionsSyncManager implements SyncService {
           (tx.syncId!.isEmpty || !identities.add(tx.syncId!))) {
         throw const FormatException('Duplicate or empty sync identity');
       }
-      for (final flag in ['excludeFromStats', 'excludeFromBudget']) {
+      for (final flag in [
+        'excludeFromStats',
+        'excludeFromBudget',
+        'invoicePending'
+      ]) {
         if (raw[flag] != null && raw[flag] is! bool) {
           throw FormatException('Invalid $flag');
         }

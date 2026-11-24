@@ -1,12 +1,10 @@
-# BeeCount &nbsp; [中文](README.md)
+# AI账舞 &nbsp; [中文](README.md)
 
 <div align="center">
 
-![GitHub stars](https://img.shields.io/github/stars/TNT-Likely/BeeCount?style=social)
+![GitHub stars](https://img.shields.io/github/stars/xlogd/BeeCount?style=social)
 ![License](https://img.shields.io/badge/license-Business%20Source%20License-orange.svg)
-![Release](https://img.shields.io/github/v/release/TNT-Likely/BeeCount?label=latest&color=green)
-![Downloads](https://img.shields.io/github/downloads/TNT-Likely/BeeCount/total?color=blue)
-![Last commit](https://img.shields.io/github/last-commit/TNT-Likely/BeeCount)
+![Last commit](https://img.shields.io/github/last-commit/xlogd/BeeCount)
 ![Flutter](https://img.shields.io/badge/Flutter-3.27%2B-02569B?logo=flutter)
 
 **Your Data, Your Control — Open Source Accounting App**
@@ -15,20 +13,9 @@ Sync via BeeCount Cloud (self-hosted) / iCloud / Supabase / WebDAV / S3
 
 <br/>
 
-<a href="https://apps.apple.com/app/id6754611670">
-  <img src="https://img.shields.io/badge/App%20Store-000000?style=for-the-badge&logo=app-store&logoColor=white" alt="Download on App Store" height="64"/>
-</a>
-<a href="https://play.google.com/store/apps/details?id=com.tntlikely.beecount">
-  <img src="https://img.shields.io/badge/Google%20Play-414141?style=for-the-badge&logo=google-play&logoColor=white" alt="Get it on Google Play" height="64"/>
-</a>
-<a href="https://github.com/TNT-Likely/BeeCount-Cloud/blob/main/README.en.md">
-  <img src="https://img.shields.io/badge/Web%20(Self--Hosted)-4A90E2?style=for-the-badge&logo=docker&logoColor=white" alt="Self-host Web" height="64"/>
-</a>
+Maintained by **[LogDancer](https://github.com/xlogd)**. Thanks to **sunxiao (TNT-Likely)** for creating the [original BeeCount](https://github.com/TNT-Likely/BeeCount), and to the upstream contributors.
 
-<br/>
-<br/>
-
-[🌐 Website](https://count.beejz.com/en/) · [📖 Docs](https://count.beejz.com/en/docs/intro) · [Logo Design Challenge](https://github.com/TNT-Likely/BeeCount/issues/608) · [💝 Donate](#-donate) · [🤝 Business](mailto:sunxiaoyes@outlook.com?subject=BeeCount%20Business%20Inquiry) · [💬 Telegram](https://t.me/beecount) · [📦 APK](https://github.com/TNT-Likely/BeeCount/releases/latest) · [🚀 TestFlight](https://testflight.apple.com/join/Eaw2rWxa)
+[Project home](https://github.com/xlogd/BeeCount) · [Issue tracker](https://github.com/xlogd/BeeCount/issues) · [Releases](https://github.com/xlogd/BeeCount/releases) · [Privacy policy](PRIVACY.md) · [Upstream docs](https://count.beejz.com/en/docs/intro)
 
 </div>
 
@@ -59,7 +46,7 @@ Sync via BeeCount Cloud (self-hosted) / iCloud / Supabase / WebDAV / S3
 
 ---
 
-## 💡 Why BeeCount
+## 💡 Why AI账舞
 
 A lightweight, open-source, privacy-first **personal finance** and **expense tracking** app.
 
@@ -72,6 +59,8 @@ A lightweight, open-source, privacy-first **personal finance** and **expense tra
 | ❌ Ads / financial product recommendations | ✅ **Zero ads / zero tracking / zero data collection** |
 
 > **Platform support**: 🤖 Android 6.0+ (GitHub APK) / Android 7.0+ (Google Play) · 🍎 iOS 15.5+ · 🌐 Web (built into BeeCount Cloud, see below)
+>
+> Upstream distributions are available on the [App Store](https://apps.apple.com/app/id6754611670), [Google Play](https://play.google.com/store/apps/details?id=com.tntlikely.beecount), and [TestFlight](https://testflight.apple.com/join/Eaw2rWxa).
 >
 > ~~📱 HarmonyOS — [Discontinued](https://github.com/TNT-Likely/beecount-openharmony)~~
 
@@ -337,11 +326,11 @@ See [docs/contributing/CONTRIBUTING.md](docs/contributing/CONTRIBUTING.md) for d
 
 BeeCount 4.0 is officially released! Whether you use the app, write code, design interfaces, or translate content, you're welcome to help make BeeCount better.
 
-- 🐛 **Bug reports**: Search existing [Issues](https://github.com/TNT-Likely/BeeCount/issues) first, then [open a report](https://github.com/TNT-Likely/BeeCount/issues/new) with the app version, device details, and reproduction steps.
-- 💡 **Feature ideas**: Share use cases and proposals in [Discussions · Ideas](https://github.com/TNT-Likely/BeeCount/discussions/new?category=ideas). For larger changes, please discuss the approach before implementation.
-- 💻 **Code**: Fork the [BeeCount repository](https://github.com/TNT-Likely/BeeCount), create a focused branch, implement and test your change, then open a Pull Request.
+- 🐛 **Bug reports**: Search existing reports, then use [Issues](https://github.com/xlogd/BeeCount/issues) to report the app version, device details, and reproduction steps.
+- 💡 **Feature ideas**: Share your use case and proposal in [Issues](https://github.com/xlogd/BeeCount/issues).
+- 💻 **Code**: Fork the [BeeCount repository](https://github.com/xlogd/BeeCount), create a focused branch, implement and test your change, then open a Pull Request.
 - 🌍 **Translations and docs**: Help add languages, improve user guides, or clarify development documentation.
-- 🎨 **Design and UX**: Help improve UI/UX, components, and the overall visual experience. Design resources and interactive prototypes live in [BeeCount-Design](https://github.com/TNT-Likely/BeeCount-Design), with the [Figma source file available here](https://www.figma.com/design/s7bi4zexefEZkHf6TlHiWX/BeeCount). We're also inviting the community to join the [Logo Design Challenge](https://github.com/TNT-Likely/BeeCount/issues/608); see the [design brief and submission guide](https://github.com/TNT-Likely/BeeCount/blob/main/docs/branding/LOGO_DESIGN_CHALLENGE.md).
+- 🎨 **Design and UX**: Help improve UI/UX, components, and the overall visual experience. Design resources and interactive prototypes live in [BeeCount-Design](https://github.com/TNT-Likely/BeeCount-Design), with the [Figma source file available here](https://www.figma.com/design/s7bi4zexefEZkHf6TlHiWX/BeeCount). See also the upstream [Logo Design Challenge](https://github.com/TNT-Likely/BeeCount/issues/608); see the [design brief and submission guide](https://github.com/TNT-Likely/BeeCount/blob/main/docs/branding/LOGO_DESIGN_CHALLENGE.md).
 
 **Before opening a PR:**
 - Keep each PR focused on one issue or improvement, and explain its motivation and scope.
@@ -374,13 +363,13 @@ A:
 **Q: How is data security ensured?**
 A: Use your own server / Storage / Bucket. WebDAV and S3 should use HTTPS. BeeCount Cloud backups are AES-256 encrypted by default.
 
-For more details, see [docs/cloud-setup_EN.md](docs/cloud-setup_EN.md) or [Issues](https://github.com/TNT-Likely/BeeCount/issues).
+For more details, see [docs/cloud-setup_EN.md](docs/cloud-setup_EN.md) or [Issues](https://github.com/xlogd/BeeCount/issues).
 
 </details>
 
 ---
 
-## 💝 Donate
+## 💝 Support the original author
 
 BeeCount and BeeCount Cloud are maintained by the same developer. If these projects help you, consider buying the developer a coffee ☕ to support continued development.
 
@@ -435,7 +424,7 @@ Address: `TKBV69B2AoU67p3vDhnJUbMJtZ1DxuUF5C`
 
 ---
 
-## 🤝 Business Inquiries
+## 🤝 Upstream business inquiries
 
 For commercial licensing, deployment assistance, custom development, or partnerships, email us with a brief description of your needs and use case.
 
@@ -466,7 +455,7 @@ For commercial licensing pricing and process, see [COMMERCIAL_LICENSE.md](COMMER
 
 ---
 
-## 📦 Related Projects
+## 📦 Related upstream projects
 
 | Project | Description |
 |---|---|
@@ -484,6 +473,6 @@ Thanks to [Guhe Bake (Internet Pure Land)](https://www.ghxi.com/) and [Star Moch
 
 Thanks to everyone who has contributed code, suggestions, or feedback to BeeCount!
 
-For questions or suggestions, please raise an [Issue](https://github.com/TNT-Likely/BeeCount/issues) or join the [Discussions](https://github.com/TNT-Likely/BeeCount/discussions).
+Please use [Issues](https://github.com/xlogd/BeeCount/issues) for questions or suggestions.
 
-**BeeCount 🐝 — Making accounting simple and secure**
+**AI账舞 🐝 — Making accounting simple and secure**

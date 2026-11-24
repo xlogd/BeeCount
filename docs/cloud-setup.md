@@ -319,4 +319,4 @@ MinIO(自建):
 - 📦 Dropbox
 - 📦 OneDrive
 
-如果你希望优先支持某个云服务,欢迎在 [Issues](https://github.com/TNT-Likely/BeeCount/issues) 中提出需求!
+如果你希望优先支持某个云服务,欢迎在 [Issues](https://github.com/xlogd/BeeCount/issues) 中提出需求!

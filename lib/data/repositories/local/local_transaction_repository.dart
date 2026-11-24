@@ -515,6 +515,7 @@ class LocalTransactionRepository implements TransactionRepository {
     String? toAccountSyncIdOverride,
     bool excludeFromStats = false,
     bool excludeFromBudget = false,
+    bool invoicePending = false,
     int? recurringId,
     String? currencyCode,
     double? nativeAmount,
@@ -537,6 +538,7 @@ class LocalTransactionRepository implements TransactionRepository {
           toAccountSyncIdOverride: d.Value(toAccountSyncIdOverride),
           excludeFromStats: d.Value(excludeFromStats),
           excludeFromBudget: d.Value(excludeFromBudget),
+          invoicePending: d.Value(invoicePending),
           currencyCode: d.Value(currencyCode),
           nativeAmount: d.Value(nativeAmount),
         ));
@@ -655,6 +657,7 @@ class LocalTransactionRepository implements TransactionRepository {
     String? toAccountSyncIdOverride,
     bool? excludeFromStats,
     bool? excludeFromBudget,
+    bool? invoicePending,
     String? currencyCode,
     double? nativeAmount,
   }) async {
@@ -687,6 +690,9 @@ class LocalTransactionRepository implements TransactionRepository {
         excludeFromBudget: excludeFromBudget == null
             ? const d.Value.absent()
             : d.Value(excludeFromBudget),
+        invoicePending: invoicePending == null
+            ? const d.Value.absent()
+            : d.Value(invoicePending),
         // v30:null = 不更新(保持原快照);非 null = 显式写入
         currencyCode: currencyCode == null
             ? const d.Value.absent()

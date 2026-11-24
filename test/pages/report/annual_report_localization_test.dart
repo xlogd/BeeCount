@@ -45,6 +45,7 @@ AnnualReportData reportData(String currency) => AnnualReportData(
         happenedAt: DateTime(reportYear, 1, 1),
         excludeFromStats: false,
         excludeFromBudget: false,
+        invoicePending: false,
       ),
     );
 

@@ -132,11 +132,11 @@
     }
   },
   "aiConsentTitle": "Before enabling AI features",
-  "aiConsentBody": "AI features need to send related data to the third-party AI provider you configure:\n\n• Who it goes to: by default Zhipu GLM (open.bigmodel.cn, operated by Zhipu); if you configure another third-party AI service, it goes to the provider you entered.\n• What is sent: the content you actively use for recognition/chat — receipt images, voice recordings, text you type, plus the category names, account names and relevant transaction records needed to complete recognition/analysis.\n• Purpose: only for bill recognition, bookkeeping and chats you initiate; BeeCount itself does not collect or store this data.\n\nThe data is processed by that third-party provider under its own privacy policy. Enabling means you consent to the data sharing above.",
+  "aiConsentBody": "AI features need to send related data to the third-party AI provider you configure:\n\n• Who it goes to: by default Zhipu GLM (open.bigmodel.cn, operated by Zhipu); if you configure another third-party AI service, it goes to the provider you entered.\n• What is sent: the content you actively use for recognition/chat — receipt images, voice recordings, text you type, plus the category names, account names and relevant transaction records needed to complete recognition/analysis.\n• Purpose: only for bill recognition, bookkeeping and chats you initiate; AI账舞 itself does not collect or store this data.\n\nThe data is processed by that third-party provider under its own privacy policy. Enabling means you consent to the data sharing above.",
   "aiConsentAgree": "Agree & enable",
   "aboutPrivacyPolicy": "Privacy Policy",
   "aboutChangelog": "Changelog",
-  "appTitle": "Bee Accounting",
+  "appTitle": "AI账舞",
   "@appTitle": {
     "description": "The application title"
   },
@@ -183,7 +183,7 @@
   "voiceRecordingNoInfo": "No billing information recognized",
   "voiceRecordingPermissionDenied": "Microphone permission required",
   "voiceRecordingPermissionDeniedTitle": "Microphone Permission Required",
-  "voiceRecordingPermissionDeniedMessage": "Voice billing requires microphone permission. Please allow BeeCount to access the microphone in System Settings.",
+  "voiceRecordingPermissionDeniedMessage": "Voice billing requires microphone permission. Please allow AI账舞 to access the microphone in System Settings.",
   "voiceRecordingStartFailed": "Failed to start recording: {error}",
   "@voiceRecordingStartFailed": {
     "placeholders": {
@@ -263,7 +263,7 @@
   "homeBalance": "Balance",
   "homeNoRecords": "No records yet",
   "homeSelectDate": "Select date",
-  "homeAppTitle": "Bee Accounting",
+  "homeAppTitle": "AI账舞",
   "homeSearch": "Search",
   "homeYear": "{year}",
   "@homeYear": {
@@ -376,7 +376,7 @@
   "analyticsSwipeToSwitch": "Swipe to switch",
   "analyticsAllYears": "All Years",
   "analyticsToday": "Today",
-  "splashAppName": "Bee Accounting",
+  "splashAppName": "AI账舞",
   "splashSlogan": "Record Every Drop",
   "splashSecurityTitle": "Open Source Data Security",
   "splashSecurityFeature1": "• Local data storage, complete privacy control",
@@ -627,7 +627,7 @@
   "languageSystemDefault": "Follow System",
   "deleteConfirmTitle": "Delete Confirmation",
   "deleteConfirmMessage": "Are you sure you want to delete this record?",
-  "mineSlogan": "Bee Accounting, Every Penny Counts",
+  "mineSlogan": "AI账舞, Every Penny Counts",
   "mineDisplayNameEditTitle": "Set nickname",
   "mineDisplayNameHint": "Enter a nickname",
   "mineDisplayNameSaved": "Nickname updated",
@@ -766,11 +766,11 @@
   "annualReportGenerating": "Generating annual report...",
   "annualReportSaveSuccess": "Annual report poster saved",
   "mineShareApp": "Share App",
-  "mineShareWithFriends": "Share BeeCount with friends",
+  "mineShareWithFriends": "Share AI账舞 with friends",
   "mineCopyPromoText": "Copy Promo Text",
   "mineCopyPromoSubtitle": "Copy and share with friends",
   "mineShareGenerating": "Generating share poster...",
-  "sharePosterAppName": "BeeCount",
+  "sharePosterAppName": "AI账舞",
   "sharePosterSlogan": "Smart Accounting, Beautiful Life",
   "sharePosterFeature1": "Data Security·You Control",
   "sharePosterFeature2": "Open Source·Auditable",
@@ -802,7 +802,8 @@
   "sharePosterHideIncome": "Hide Income",
   "sharePosterShowIncome": "Show Income",
   "sharePosterSaveSuccess": "Saved to gallery",
-  "shareGuidanceCopyText": "Track my expenses with BeeCount - open source, free & ad-free! 🐝 Download: https://github.com/TNT-Likely/BeeCount",
+  "shareGuidanceCopyText": "Track your expenses with AI账舞. Project page: {url}",
+  "@shareGuidanceCopyText": {"placeholders": {"url": {"type": "String"}}},
   "shareGuidanceCopied": "Text copied",
   "sharePosterSaveFailed": "Failed to save",
   "sharePosterPermissionDenied": "Gallery permission denied, please enable in settings",
@@ -935,7 +936,7 @@
     }
   },
   "githubStarGuideTitle": "How to Star the Project",
-  "githubStarGuideContent": "After tapping the button below to open GitHub, tap the area marked in the image to complete the Star",
+  "githubStarGuideContent": "Open the repository on GitHub and select Star.",
   "githubStarGuideButton": "Go to GitHub",
   "categoryEditTitle": "Edit Category",
   "categoryNewTitle": "New Category",
@@ -990,7 +991,7 @@
   "categoryShareScopeIncome": "Income categories only",
   "categoryShareScopeAll": "All categories",
   "categoryShareSuccess": "Saved to {path}",
-  "categoryShareSubject": "BeeCount Category Configuration",
+  "categoryShareSubject": "AI账舞 Category Configuration",
   "categoryShareFailed": "Share failed",
   "categoryImportInvalidFile": "Please select a category package file (.zip)",
   "categoryImportModeTitle": "Select Import Mode",
@@ -1188,8 +1189,8 @@
   "reminderOpenAppSettings": "Open App Settings",
   "reminderAppSettingsMessage": "Please allow notifications and disable battery optimization in settings",
   "reminderDescription": "Tip: When recording reminder is enabled, the system will send notifications at the specified time daily to remind you to record income and expenses.",
-  "reminderIOSInstructions": "🍎 iOS notification settings:\n• Settings > Notifications > Bee Accounting\n• Enable \"Allow Notifications\"\n• Set notification style: Banner or Alert\n• Enable sound and vibration\n\n⚠️ Important Note:\n• iOS local notifications depend on app process\n• Do not force quit app from task manager\n• Notifications work when app is in background or foreground\n• Force quitting will disable notifications\n\n💡 Usage Tips:\n• Simply press Home button to exit app\n• iOS will manage background apps automatically\n• Keep app in background to receive reminders",
-  "reminderAndroidInstructions": "If notifications don't work properly, check:\n• App is allowed to send notifications\n• Disable battery optimization/power saving for app\n• Allow app to run in background and auto-start\n• Android 12+ needs exact alarm permission\n\n📱 Xiaomi phone special settings:\n• Settings > App Management > Bee Accounting > Notification Management\n• Tap \"Recording Reminder\" channel\n• Set importance to \"Urgent\" or \"High\"\n• Enable \"Banner notifications\", \"Sound\", \"Vibration\"\n• Security Center > App Management > Permissions > Auto-start\n\n🔒 Lock background methods:\n• Find Bee Accounting in recent tasks\n• Pull down app card to show lock icon\n• Tap lock icon to prevent cleanup",
+  "reminderIOSInstructions": "🍎 iOS notification settings:\n• Settings > Notifications > AI账舞\n• Enable \"Allow Notifications\"\n• Set notification style: Banner or Alert\n• Enable sound and vibration\n\n⚠️ Important Note:\n• iOS local notifications depend on app process\n• Do not force quit app from task manager\n• Notifications work when app is in background or foreground\n• Force quitting will disable notifications\n\n💡 Usage Tips:\n• Simply press Home button to exit app\n• iOS will manage background apps automatically\n• Keep app in background to receive reminders",
+  "reminderAndroidInstructions": "If notifications don't work properly, check:\n• App is allowed to send notifications\n• Disable battery optimization/power saving for app\n• Allow app to run in background and auto-start\n• Android 12+ needs exact alarm permission\n\n📱 Xiaomi phone special settings:\n• Settings > App Management > AI账舞 > Notification Management\n• Tap \"Recording Reminder\" channel\n• Set importance to \"Urgent\" or \"High\"\n• Enable \"Banner notifications\", \"Sound\", \"Vibration\"\n• Security Center > App Management > Permissions > Auto-start\n\n🔒 Lock background methods:\n• Find AI账舞 in recent tasks\n• Pull down app card to show lock icon\n• Tap lock icon to prevent cleanup",
   "categoryDetailLoadFailed": "Load failed",
   "categoryDetailSummaryTitle": "Category Summary",
   "categoryDetailTotalCount": "Total Count",
@@ -1272,7 +1273,7 @@
   "authErrorWeakPassword": "Password is too simple, please include letters and numbers, at least 6 characters.",
   "importSelectCsvFile": "Please select a file to import (CSV/TSV/XLSX supported)",
   "exportTitle": "Export",
-  "exportDescription": "Export current-ledger transactions as a UTF-8 CSV file. Filter by date range and transaction type, then choose the columns and their order. Column settings are remembered for the next export.",
+  "exportDescription": "Export current-ledger transactions as UTF-8 CSV with a sequence number in the first column. When Attachments is selected, images and PDF invoices are packaged in a ZIP with the CSV and named by sequence and note. Filters and settings are remembered.",
   "exportButtonIOS": "Export and Share",
   "exportButtonAndroid": "Export Data",
   "exportSavedTo": "Saved to: {path}",
@@ -1287,7 +1288,7 @@
   "exportCsvHeaderTime": "Time",
   "exportCsvHeaderTags": "Tags",
   "exportCsvHeaderAttachments": "Attachments",
-  "exportShareText": "BeeCount Export File",
+  "exportShareText": "AI账舞 Export File",
   "exportSuccessTitle": "Export Successful",
   "exportSuccessMessageIOS": "Saved and available in share history:\n{path}",
   "exportSuccessMessageAndroid": "Saved to:\n{path}",
@@ -1422,7 +1423,8 @@
   "updateDownloadFailedTitle": "Download Failed",
   "updateGoToGitHub": "Go to GitHub",
   "updateCannotOpenLink": "Cannot open link",
-  "updateManualVisit": "Please manually visit in browser:\\nhttps://github.com/TNT-Likely/BeeCount/releases",
+  "updateManualVisit": "Open the release page in your browser:\n{url}",
+  "@updateManualVisit": {"placeholders": {"url": {"type": "String"}}},
   "updateNoLocalApkTitle": "No Update Package Found",
   "updateInstallPackageTitle": "Install Update Package",
   "updateMultiplePackagesTitle": "Found Multiple Update Packages",
@@ -1549,7 +1551,7 @@
   "updateMirrorSettingTitle": "Download Accelerator",
   "updateNotificationPermissionGuideText": "Download progress notifications are disabled, but this doesn't affect download functionality. To view progress:",
   "updateNotificationGuideStep1": "Go to System Settings > App Management",
-  "updateNotificationGuideStep2": "Find \\\"BeeCount\\\" app",
+  "updateNotificationGuideStep2": "Find \\\"AI账舞\\\" app",
   "updateNotificationGuideStep3": "Enable notification permissions",
   "updateNotificationGuideInfo": "Downloads will continue normally in the background even without notifications",
   "currencyCNY": "Chinese Yuan",
@@ -1902,7 +1904,7 @@
   "privacyOpenSourceUrlError": "Cannot open link",
   "updateCorruptedFileTitle": "Corrupted Installation Package",
   "updateCorruptedFileMessage": "The previously downloaded installation package is incomplete or corrupted. Delete and re-download?",
-  "welcomeTitle": "Welcome to BeeCount",
+  "welcomeTitle": "Welcome to AI账舞",
   "welcomeDescription": "An accounting app that truly respects your privacy",
   "welcomeCurrencyDescription": "Choose your preferred currency, you can change it anytime in settings",
   "welcomeCreateDefaultLedger": "Create a default ledger",
@@ -1912,7 +1914,7 @@
   "welcomeOpenSourceFeature1": "Active developer community, continuous improvement",
   "welcomeViewGitHub": "Visit GitHub Repository",
   "welcomeCloudSyncTitle": "Optional Cloud Sync",
-  "welcomeCloudSyncDescription": "BeeCount supports multiple sync methods - your data, your control",
+  "welcomeCloudSyncDescription": "AI账舞 supports multiple sync methods - your data, your control",
   "welcomeCloudSyncFeature1": "Completely offline usage, no cloud needed",
   "welcomeCloudSyncFeature2": "BeeCount Cloud self-hosted (real-time multi-device + Web UI)",
   "welcomeCloudSyncFeature3": "Or pick iCloud / WebDAV / Supabase / S3",
@@ -1940,17 +1942,17 @@
   "howToAddWidget": "How to Add Widget",
   "iosWidgetStep1": "Long press on home screen blank area to enter edit mode",
   "iosWidgetStep2": "Tap the \"+\" button in upper left corner",
-  "iosWidgetStep3": "Search and select \"BeeCount\"",
+  "iosWidgetStep3": "Search and select \"AI账舞\"",
   "iosWidgetStep4": "Select medium widget and add to home screen",
   "androidWidgetStep1": "Long press on home screen blank area",
   "androidWidgetStep2": "Select \"Widgets\"",
-  "androidWidgetStep3": "Find and long press \"BeeCount\" widget",
+  "androidWidgetStep3": "Find and long press \"AI账舞\" widget",
   "androidWidgetStep4": "Drag to suitable position on home screen",
   "aboutWidget": "About Widget",
   "widgetDescription": "Widget automatically syncs to display today's and this month's income and expense data, refreshing every 30 minutes. Data updates immediately when app is opened.",
   "widgetQuickEntryTitle": "Quick Entry",
   "widgetQuickEntryDesc": "Tap the left side of the widget to quickly add an expense, or tap the right side to add an income. You can also use beecount://new?type=transfer via Shortcuts to quickly start a transfer.",
-  "appName": "BeeCount",
+  "appName": "AI账舞",
   "monthSuffix": "",
   "todayExpense": "Today's Expense",
   "todayIncome": "Today's Income",
@@ -1978,8 +1980,8 @@
   "iosAutoShortcutConfigTitle": "Configuration Steps:",
   "iosAutoShortcutStep1": "Open \"Shortcuts\" app, tap \"+\" in top right to create new shortcut",
   "iosAutoShortcutStep2": "Add \"Take Screenshot\" action",
-  "iosAutoShortcutStep3": "Search and add \"BeeCount - Auto Billing\" action",
-  "iosAutoShortcutStep4": "Set the screenshot parameter of \"BeeCount\" to the previous \"Screenshot\"",
+  "iosAutoShortcutStep3": "Search and add \"AI账舞 - Auto Billing\" action",
+  "iosAutoShortcutStep4": "Set the screenshot parameter of \"AI账舞\" to the previous \"Screenshot\"",
   "iosAutoShortcutStep5": "(Optional) Go to Settings > Accessibility > Touch > Back Tap, bind this shortcut",
   "iosAutoShortcutStep6": "Done! Double tap phone back during payment for quick billing",
   "iosAutoShortcutRecommendedTip": "✅ Recommended: After binding the shortcut to \"Back Tap\", double tap phone back during payment to auto-screenshot and recognize billing, no manual screenshot needed.",
@@ -2211,8 +2213,8 @@
   "autoScreenshotBillingIosDesc": "Auto-recognize payments via Shortcuts",
   "shareBilling": "Share to Bill",
   "shareBillingDesc": "Share a payment screenshot from Alipay/WeChat to bill it",
-  "shareBillingGuide": "When you see a payment screenshot in Alipay, WeChat, Photos, etc., tap \"Share\" and choose \"BeeCount\" to auto-recognize the amount, merchant, and time and create a transaction — no need to save the screenshot first.",
-  "shareBillingActionHint": "Recognized automatically in the background after sharing — no need to open BeeCount",
+  "shareBillingGuide": "When you see a payment screenshot in Alipay, WeChat, Photos, etc., tap \"Share\" and choose \"AI账舞\" to auto-recognize the amount, merchant, and time and create a transaction — no need to save the screenshot first.",
+  "shareBillingActionHint": "Recognized automatically in the background after sharing — no need to open AI账舞",
   "automation": "Automation",
   "automationDesc": "Recurring transactions and reminders",
   "automationPageTitle": "Automation",
@@ -2233,14 +2235,14 @@
   "aboutXiaohongshu": "Xiaohongshu",
   "aboutDouyin": "Douyin",
   "aboutTelegram": "Telegram",
-  "aboutSupportDevelopment": "Support Development",
-  "aboutSupportDevelopmentSubtitle": "Buy me a coffee",
-  "aboutDeveloperStoryTitle": "From the Developer",
+  "aboutSupportDevelopment": "Support the original author",
+  "aboutSupportDevelopmentSubtitle": "Upstream donation options",
+  "aboutDeveloperStoryTitle": "From the Original Author",
   "aboutDeveloperStory": "I started tracking my expenses in 2015 as an intern, and I've kept the habit for over a decade. Concerned about ads, paywalls, privacy risks, and apps shutting down, I decided to build my own — first as a small tool for myself and my family.\n\nIn September 2025, BeeCount launched its first version. Honestly, I had no idea if anyone would use it. But gradually, feedback started coming in — someone said they finally found a clean budgeting app, others offered great suggestions, and some quietly left five-star reviews. Every single message reminded me this was worth continuing.\n\nBeeCount is ad-free, subscription-free, and fully open source. All your data stays on your device and is never uploaded to any third-party server. But publishing and maintaining an app isn't free — developer accounts, servers, and other costs are currently covered by community donations, and every system update, bug fix, and new feature is built outside of my day job.\n\nIf BeeCount has been helpful to you, a rating, a share, or a donation would help this little project go further. Thank you for your trust.",
-  "aboutRelatedProducts": "More Products",
+  "aboutRelatedProducts": "Other apps by the original author",
   "aboutBeeAssets": "BeeAssets",
   "aboutBeeAssetsSubtitle": "Visualize your full asset portfolio",
-  "aboutBeeAssetsIntro": "BeeCount focuses on daily cash flow; BeeAssets is its sibling product, focused on asset portfolio visualization: net worth trends across accounts, property / investment / crypto classification, returns, holding period, and allocation breakdown.",
+  "aboutBeeAssetsIntro": "AI账舞 focuses on daily cash flow; BeeAssets is its sibling product, focused on asset portfolio visualization: net worth trends across accounts, property / investment / crypto classification, returns, holding period, and allocation breakdown.",
   "aboutBeeDNS": "BeeDNS",
   "aboutBeeDNSSubtitle": "Simple and efficient DNS management tool",
   "aboutBeeDNSIntro": "Got domains across Cloudflare and Aliyun? BeeDNS unifies them in one place: batch edit records, A/AAAA toggles, resolution migration, subdomain bulk management — no more switching between provider consoles.",
@@ -2291,7 +2293,7 @@
   "configImportExportInfoMessage": "This feature is used to export and import app configurations, including cloud service settings, AI settings, etc. The config file uses YAML format for easy viewing and editing.\n\n⚠️ Config files contain sensitive information (such as API keys, passwords, etc.), please keep them safe.",
   "configExportTitle": "Export Config",
   "configExportSubtitle": "Export current config to YAML file",
-  "configExportShareSubject": "BeeCount Config File",
+  "configExportShareSubject": "AI账舞 Config File",
   "configExportSuccess": "Config exported successfully",
   "configExportFailed": "Config export failed",
   "configImportTitle": "Import Config",
@@ -2805,7 +2807,7 @@
       }
     }
   },
-  "tagShareSubject": "BeeCount Tags Configuration",
+  "tagShareSubject": "AI账舞 Tags Configuration",
   "tagShareFailed": "Share failed",
   "tagImportInvalidFile": "Please select a YAML file",
   "tagImportNoTags": "No tags found in file",
@@ -3169,7 +3171,7 @@
   "appLockDisabled": "App Lock disabled",
   "appLockBiometric": "Biometric Unlock",
   "appLockBiometricDesc": "Use Face ID or fingerprint to unlock",
-  "appLockBiometricReason": "Verify identity to unlock Bee Accounting",
+  "appLockBiometricReason": "Verify identity to unlock AI账舞",
   "appLockTimeout": "Auto-lock Timeout",
   "appLockTimeoutImmediate": "Immediately",
   "appLockTimeout1Min": "After 1 minute",
@@ -3445,8 +3447,8 @@
     }
   },
   "sharedInviteWarning": "⚠️ Don't post invite codes to public groups / social. Anyone with the code can join. Revoke and regenerate from Members if leaked.",
-  "sharedInviteInstruction": "Send the code or short link to the other person. After they install BeeCount, they can tap the link or enter the code from \"Me → Join shared ledger\".",
-  "sharedInviteShareText": "I'm inviting you to BeeCount shared ledger \"{ledger}\".\n\nCode: {code}\nLink: {url}\n\nTap the link, or open BeeCount → Me → Join shared ledger and enter this code.",
+  "sharedInviteInstruction": "Send the code or short link to the other person. After they install AI账舞, they can tap the link or enter the code from \"Me → Join shared ledger\".",
+  "sharedInviteShareText": "I'm inviting you to AI账舞 shared ledger \"{ledger}\".\n\nCode: {code}\nLink: {url}\n\nTap the link, or open AI账舞 → Me → Join shared ledger and enter this code.",
   "@sharedInviteShareText": {
     "placeholders": {
       "ledger": {
@@ -3943,7 +3945,7 @@
   "annualReportMonthlyExpenseTrend": "Monthly Spending Trend",
   "annualReportAchieved": "Achieved",
   "annualReportNotAchieved": "Not Achieved",
-  "annualReportDownloadHint": "Scan to download BeeCount and start bookkeeping",
+  "annualReportDownloadHint": "Scan to download AI账舞 and start bookkeeping",
   "attachmentKeepOriginal": "Keep Original Attachments",
   "attachmentKeepOriginalDesc": "Uses more storage and sync data",
   "transactionCopyAction": "Copy as new transaction",
@@ -4261,7 +4263,7 @@
       }
     }
   },
-  "sharePosterAppText": "BeeCount - Simple Ledger",
+  "sharePosterAppText": "AI账舞",
   "sharePosterDefaultLedgerName": "Default Ledger",
   "aiProviderNotConfiguredText": "No text chat provider configured",
   "aiProviderMissingTextModelFor": "Provider {name} has no text model configured",
@@ -4360,7 +4362,7 @@
       }
     }
   },
-  "logExportTitle": "=== BeeCount log export ===",
+  "logExportTitle": "=== AI账舞 log export ===",
   "logExportTime": "Exported at: {time}",
   "@logExportTime": {
     "placeholders": {
@@ -4425,8 +4427,8 @@
   "v4HomeAllTransactions": "All transactions",
   "v4HomeBatch": "Batch",
   "v4HomeMonthShare": "Share monthly summary",
-  "v4HomeBrandShow": "Show BeeCount branding",
-  "v4HomeBrandHide": "Hide BeeCount branding",
+  "v4HomeBrandShow": "Show AI账舞 branding",
+  "v4HomeBrandHide": "Hide AI账舞 branding",
   "v4HomeMonthExpense": "Monthly expenses",
   "v4HomeMonthIncome": "Monthly income",
   "v4HomeMonthBalance": "Monthly balance",
@@ -4933,11 +4935,70 @@
     }
   },
   "exportColumnsReset": "Restore defaults",
-  "exportColumnsDescription": "Select the columns to include. Expand column order to arrange the exported headers.",
+  "exportColumnsDescription": "Choose exported columns. Attachments packages images and PDF invoices. Expand column order to arrange the headers.",
   "imageCropFailed": "Could not crop or save the image. Please try again.",
   "exportAllDates": "All dates",
   "imageCropAction": "Crop",
   "exportRecordTypeLabel": "Transaction type",
   "exportColumnsTitle": "Export columns",
-  "exportDateRangePickerTitle": "Select export date range"
+  "exportDateRangePickerTitle": "Select export date range",
+  "attachmentAddInvoice": "Add PDF invoice",
+  "attachmentOpenInvoice": "Open invoice",
+  "attachmentInvoiceInvalid": "Select a valid PDF invoice.",
+  "attachmentInvoiceOpenFailed": "Could not open the PDF invoice.",
+  "invoiceStatus": "Invoice status",
+  "invoiceIssued": "Issued",
+  "invoicePending": "To be issued",
+  "invoiceNotRequired": "Not required",
+  "attachmentScanDocument": "Scan document",
+  "documentFlattenFailed": "Could not flatten this page. You can still use the original.",
+  "imageCropUndo": "Undo crop",
+  "documentFlattenReview": "Review pages",
+  "attachmentSaveIncomplete": "Saved {saved} of {total} attachments. Add the missing images again.",
+  "exportAttachmentNoNote": "No note",
+  "documentFlattenOriginal": "Original",
+  "attachmentSaveRetry": "Transaction saved. {saved} of {total} attachments saved. Try saving again to retry the remaining images.",
+  "@attachmentSaveIncomplete": {
+    "placeholders": {
+      "saved": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "exportCsvHeaderSequence": "No",
+  "attachmentScanPageLimit": "Attachment limit reached. {count} extra scanned pages were skipped.",
+  "attachmentScanFailed": "Could not scan the document. Try again or take a photo.",
+  "documentFlattenResult": "Flattened",
+  "documentFlattenProcessing": "Flattening on this device…",
+  "@attachmentSaveRetry": {
+    "placeholders": {
+      "saved": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@attachmentScanPageLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "documentFlattenAction": "Flatten page",
+  "documentFlattenDone": "Page flattened",
+  "imageCropRedo": "Redo crop",
+  "aboutMaintainer": "Maintainer",
+  "aboutOriginalAuthor": "Original author, with thanks",
+  "aboutUpstreamResources": "Upstream resources",
+  "aboutUpstreamDocs": "Upstream documentation",
+  "aboutUpstreamAppStore": "Rate the upstream app on the App Store",
+  "projectStarTitle": "Star AI账舞 on GitHub",
+  "projectStarDescription": "Open the project repository on GitHub",
+  "updateNoRelease": "This project has no stable release yet."
 }
