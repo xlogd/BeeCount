@@ -573,7 +573,7 @@
   "importBillTypeWechat": "WeChat",
   "importChooseFile": "Choose File",
   "importNoFileSelected": "No file selected",
-  "importHint": "Tip: Please select a file to start importing (CSV/TSV/XLSX)",
+  "importHint": "Tip: Please select a file to start importing (CSV/TSV/XLSX/ZIP)",
   "importReading": "Reading file…",
   "importPreparing": "Preparing…",
   "importColumnNumber": "Column {number}",
@@ -1271,7 +1271,7 @@
   "authErrorLoginFailed": "Login failed, please try again later.",
   "authErrorEmailInvalid": "Email address is invalid, please check for spelling errors.",
   "authErrorWeakPassword": "Password is too simple, please include letters and numbers, at least 6 characters.",
-  "importSelectCsvFile": "Please select a file to import (CSV/TSV/XLSX supported)",
+  "importSelectCsvFile": "Please select a file to import (CSV/TSV/XLSX/ZIP supported)",
   "exportTitle": "Export",
   "exportDescription": "Export current-ledger transactions as UTF-8 CSV with a sequence number in the first column. When Attachments is selected, images and PDF invoices are packaged in a ZIP with the CSV and named by sequence and note. Filters and settings are remembered.",
   "exportButtonIOS": "Export and Share",
@@ -5000,5 +5000,25 @@
   "aboutUpstreamAppStore": "Rate the upstream app on the App Store",
   "projectStarTitle": "Star AI账舞 on GitHub",
   "projectStarDescription": "Open the project repository on GitHub",
-  "updateNoRelease": "This project has no stable release yet."
+  "updateNoRelease": "This project has no stable release yet.",
+  "importZipContents": "ZIP contains {images} attachments and {invoices} invoices. Files are matched by sequence number.",
+  "importZipRequired": "Map the date and amount columns before importing this ZIP.",
+  "@importZipContents": {
+    "placeholders": {
+      "images": {
+        "type": "int"
+      },
+      "invoices": {
+        "type": "int"
+      }
+    }
+  },
+  "importZipReadError": "Unable to read the ZIP package ({error})",
+  "@importZipReadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

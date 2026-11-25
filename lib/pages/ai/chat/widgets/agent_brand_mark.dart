@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../providers/theme_providers.dart';
 import '../../../../styles/tokens.dart';
-import '../../../shared/branding/bee_artwork.dart';
+import '../../../shared/branding/app_brand_icon.dart';
 
 /// Shared visual identity for the local Agent entry points.
 ///
@@ -46,7 +46,7 @@ final class AgentBrandMark extends ConsumerWidget {
               ),
               child: const SizedBox.expand(),
             ),
-          BeeIcon(color: primary, size: iconSize),
+          AppBrandIcon(size: iconSize),
           if (showStatus)
             Positioned(
               right: size * 0.02,

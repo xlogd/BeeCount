@@ -1,3 +1,4 @@
+import 'package:beecount/pages/shared/branding/app_brand_icon.dart';
 import 'package:beecount_business_ui/annual_report.dart';
 import 'package:beecount_business_ui/share_posters.dart';
 import 'package:beecount_ui/beecount_ui.dart';
@@ -30,7 +31,7 @@ class _AnnualReportSampleState extends State<AnnualReportSample> {
           income: 'NT\$120,000.00',
           savingsLabel: l.annualReportNetSavings,
           savings: '+NT\$81,713.50',
-          brand: Image.asset('assets/logo2.png', width: 48, height: 48)),
+          brand: Image(image: AppBrandIcon.image, width: 48, height: 48)),
       const SizedBox(height: 12),
       BeeAnnualRank(
           rank: 1,

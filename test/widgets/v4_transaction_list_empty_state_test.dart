@@ -1,5 +1,5 @@
 import 'package:beecount/l10n/app_localizations.dart';
-import 'package:beecount/pages/shared/branding/bee_artwork.dart';
+import 'package:beecount/pages/shared/branding/app_brand_icon.dart';
 import 'package:beecount/pages/main/home/bindings/transaction_list.dart';
 import 'package:beecount_ui/beecount_ui.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +43,7 @@ void main() {
       expect(find.byType(BeeEmptyState), findsOneWidget);
       expect(find.text(l.commonEmpty), findsOneWidget);
       expect(find.text(l.homeNoRecords), findsOneWidget);
-      expect(t.widget<BeeIcon>(find.byType(BeeIcon)).size, 52);
+      expect(t.widget<AppBrandIcon>(find.byType(AppBrandIcon)).size, 52);
       expect(t.getSize(find.byType(TransactionList)).height, 180);
       await t.ensureVisible(find.text(l.homeNoRecords));
       await t.pumpAndSettle();

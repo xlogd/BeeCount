@@ -4,7 +4,7 @@ import 'package:beecount_ui/beecount_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
-import '../branding/bee_artwork.dart';
+import '../branding/app_brand_icon.dart';
 
 /// The operation owns its notifier. Only real extraction/persistence events
 /// change the stage; elapsed time adds a hint, never a made-up progress value.
@@ -69,9 +69,7 @@ class _RecordingProgressDialogState extends State<RecordingProgressDialog> {
                         ].join(' · '),
                         contextIcon: BeeLineIcon(widget.voice ? 'Mic' : 'Image',
                             size: 12),
-                        mark: BeeIcon(
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 40),
+                        mark: AppBrandIcon(size: 40),
                         waitHint: _slow ? l.recordingProgressSlow : null)))));
   }
 }

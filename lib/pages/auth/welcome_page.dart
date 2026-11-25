@@ -17,7 +17,7 @@ import '../../services/export/config_export_service.dart';
 import '../../services/attachment_export_import_service.dart';
 import '../../utils/currencies.dart';
 import '../../utils/file_picker_helper.dart';
-import '../shared/branding/bee_artwork.dart';
+import '../shared/branding/app_brand_icon.dart';
 import '../shared/selectors/currency_picker_sheet.dart';
 import '../settings/privacy_policy_page.dart';
 import '../../utils/project_links.dart';
@@ -109,8 +109,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
       title: title,
       description: description,
       brandTitle: l.appTitle,
-      illustration:
-          BeeIcon(size: 27, color: Theme.of(context).colorScheme.primary),
+      illustration: AppBrandIcon(size: 27),
       options: options,
       busy: _busy,
       onStep: total == 5 ? _go : null,

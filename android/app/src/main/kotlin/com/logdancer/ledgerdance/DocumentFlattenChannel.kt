@@ -1,4 +1,4 @@
-package com.tntlikely.beecount
+package com.logdancer.ledgerdance
 
 import ai.onnxruntime.OnnxTensor
 import ai.onnxruntime.OnnxJavaType

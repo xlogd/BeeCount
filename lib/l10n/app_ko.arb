@@ -252,7 +252,7 @@
   "importBillTypeWechat": "위챗",
   "importChooseFile": "파일 선택",
   "importNoFileSelected": "선택된 파일이 없습니다",
-  "importHint": "팁: 가져오기를 시작하려면 파일을 선택하세요 (CSV/TSV/XLSX)",
+  "importHint": "팁: 가져오기를 시작하려면 파일을 선택하세요 (CSV/TSV/XLSX/ZIP)",
   "importReading": "파일 읽는 중…",
   "importPreparing": "준비 중…",
   "importColumnNumber": "{number}열",
@@ -824,7 +824,7 @@
   "authErrorLoginFailed": "로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.",
   "authErrorEmailInvalid": "이메일 주소가 올바르지 않습니다. 철자를 확인해 주세요.",
   "authErrorWeakPassword": "비밀번호가 너무 단순합니다. 영문과 숫자를 포함해 6자 이상 입력해 주세요.",
-  "importSelectCsvFile": "가져올 파일을 선택하세요 (CSV/TSV/XLSX 지원)",
+  "importSelectCsvFile": "가져올 파일을 선택하세요 (CSV/TSV/XLSX/ZIP 지원)",
   "exportTitle": "내보내기",
   "exportDescription": "현재 장부의 거래를 첫 열에 순번이 있는 UTF-8 CSV로 내보냅니다. 첨부파일을 선택하면 이미지와 PDF 송장을 순번과 메모로 이름 붙여 CSV와 함께 ZIP에 담습니다. 필터와 설정은 저장됩니다.",
   "exportButtonIOS": "내보내기 및 공유",
@@ -2286,5 +2286,8 @@
   "aboutUpstreamAppStore": "App Store에서 업스트림 앱 평가하기",
   "projectStarTitle": "GitHub에서 AI账舞에 스타 남기기",
   "projectStarDescription": "GitHub에서 프로젝트 저장소 열기",
-  "updateNoRelease": "이 프로젝트에는 아직 정식 릴리스가 없습니다."
+  "updateNoRelease": "이 프로젝트에는 아직 정식 릴리스가 없습니다.",
+  "importZipContents": "ZIP에 첨부 파일 {images}개와 증빙 {invoices}개가 있습니다. 번호로 거래와 연결합니다.",
+  "importZipRequired": "ZIP을 가져오기 전에 날짜와 금액 열을 연결하세요.",
+  "importZipReadError": "ZIP 파일을 읽을 수 없습니다 ({error})"
 }

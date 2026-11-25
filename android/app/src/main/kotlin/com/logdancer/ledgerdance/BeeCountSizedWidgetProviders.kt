@@ -1,4 +1,4 @@
-package com.tntlikely.beecount
+package com.logdancer.ledgerdance
 
 /**
  * 各内容类型的「按尺寸拆分的选择器入口」——全部是**空子类**,完整复用父类

@@ -1,3 +1,4 @@
+import 'package:beecount/pages/shared/branding/app_brand_icon.dart';
 import 'package:beecount_business_ui/annual_report.dart';
 import 'package:beecount_ui/beecount_ui.dart';
 import 'annual/widgets/annual_report_sections.dart';
@@ -434,7 +435,7 @@ class _AnnualReportPageState extends ConsumerState<AnnualReportPage> {
 
     try {
       // Precache logo image
-      await precacheImage(const AssetImage('assets/logo2.png'), context);
+      await precacheImage(AppBrandIcon.image, context);
 
       // Create poster widget
       final posterKey = GlobalKey();

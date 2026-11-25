@@ -8,7 +8,7 @@ import '../../../../services/export/share_poster_types.dart';
 import '../../../../services/data/category_service.dart';
 import '../../../../utils/category_utils.dart';
 import '../../../../utils/currencies.dart';
-import '../../branding/bee_artwork.dart';
+import '../../branding/app_brand_icon.dart';
 import '../../../../utils/project_links.dart';
 
 /// Format amounts and supply project links for share posters.
@@ -37,23 +37,20 @@ Widget posterQr({String? campaign}) {
   );
 }
 
-Widget posterBrand(AppLocalizations l, Color accent,
+Widget posterBrand(AppLocalizations l,
         {double size = 54,
         bool centered = false,
         double? nameSize,
         double? captionSize}) =>
     BeePosterBrand(
-        logo: Builder(
-            builder: (context) => Theme(
-                data: Theme.of(context).copyWith(brightness: Brightness.light),
-                child: BeeIcon(color: accent, size: size))),
+        logo: AppBrandIcon(size: size),
         name: l.sharePosterAppName,
         size: size,
         centered: centered,
         nameSize: nameSize,
         captionSize: captionSize);
-Widget posterHeader(AppLocalizations l, Color accent, String caption) =>
-    BeePosterHeader(brand: posterBrand(l, accent), caption: caption);
+Widget posterHeader(AppLocalizations l, String caption) =>
+    BeePosterHeader(brand: posterBrand(l), caption: caption);
 Widget posterFooter(AppLocalizations l, {String? campaign, bool qr = true}) =>
     BeePosterFooter(
         slogan: l.sharePosterSlogan,

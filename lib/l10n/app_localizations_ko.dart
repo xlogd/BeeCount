@@ -1092,7 +1092,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get importNoFileSelected => '선택된 파일이 없습니다';
 
   @override
-  String get importHint => '팁: 가져오기를 시작하려면 파일을 선택하세요 (CSV/TSV/XLSX)';
+  String get importHint => '팁: 가져오기를 시작하려면 파일을 선택하세요 (CSV/TSV/XLSX/ZIP)';
 
   @override
   String get importReading => '파일 읽는 중…';
@@ -2987,7 +2987,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get authErrorWeakPassword => '비밀번호가 너무 단순합니다. 영문과 숫자를 포함해 6자 이상 입력해 주세요.';
 
   @override
-  String get importSelectCsvFile => '가져올 파일을 선택하세요 (CSV/TSV/XLSX 지원)';
+  String get importSelectCsvFile => '가져올 파일을 선택하세요 (CSV/TSV/XLSX/ZIP 지원)';
 
   @override
   String get exportTitle => '내보내기';
@@ -9684,4 +9684,17 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get updateNoRelease => '이 프로젝트에는 아직 정식 릴리스가 없습니다.';
+
+  @override
+  String importZipContents(int images, int invoices) {
+    return 'ZIP에 첨부 파일 $images개와 증빙 $invoices개가 있습니다. 번호로 거래와 연결합니다.';
+  }
+
+  @override
+  String get importZipRequired => 'ZIP을 가져오기 전에 날짜와 금액 열을 연결하세요.';
+
+  @override
+  String importZipReadError(String error) {
+    return 'ZIP 파일을 읽을 수 없습니다 ($error)';
+  }
 }

@@ -1,5 +1,5 @@
 import 'package:beecount/pages/ai/chat/widgets/agent_brand_mark.dart';
-import 'package:beecount/pages/shared/branding/bee_artwork.dart';
+import 'package:beecount/pages/shared/branding/app_brand_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,7 +25,7 @@ void main() {
     await tester.pumpWidget(host());
 
     expect(find.bySemanticsLabel('AI 助手'), findsOneWidget);
-    expect(find.byType(BeeIcon), findsOneWidget);
+    expect(find.byType(AppBrandIcon), findsOneWidget);
     expect(find.byType(DecoratedBox), findsWidgets);
   });
 

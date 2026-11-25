@@ -1092,7 +1092,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get importNoFileSelected => '未选择文件';
 
   @override
-  String get importHint => '提示：请选择一个文件开始导入（支持 CSV/TSV/XLSX）';
+  String get importHint => '提示：请选择一个文件开始导入（支持 CSV/TSV/XLSX/ZIP）';
 
   @override
   String get importReading => '读取文件中…';
@@ -2987,7 +2987,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get authErrorWeakPassword => '密码过于简单，请包含字母和数字，长度至少 6 位。';
 
   @override
-  String get importSelectCsvFile => '请选择文件进行导入（支持 CSV/TSV/XLSX 格式）';
+  String get importSelectCsvFile => '请选择文件进行导入（支持 CSV/TSV/XLSX/ZIP 格式）';
 
   @override
   String get exportTitle => '导出';
@@ -9676,6 +9676,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get updateNoRelease => '此项目暂未发布正式版本。';
+
+  @override
+  String importZipContents(int images, int invoices) {
+    return 'ZIP 中有 $images 份附件和 $invoices 份发票，将按序号绑定账单。';
+  }
+
+  @override
+  String get importZipRequired => '请先映射日期和金额列，再导入 ZIP。';
+
+  @override
+  String importZipReadError(String error) {
+    return '无法读取 ZIP 压缩包（$error）';
+  }
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).
@@ -10766,7 +10779,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get importNoFileSelected => '未選擇檔案';
 
   @override
-  String get importHint => '提示：請選擇一個檔案開始匯入（支援 CSV/TSV/XLSX）';
+  String get importHint => '提示：請選擇一個檔案開始匯入（支援 CSV/TSV/XLSX/ZIP）';
 
   @override
   String get importReading => '讀取檔案中…';
@@ -12661,7 +12674,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get authErrorWeakPassword => '密碼過於簡單，請包含字母和數字，長度至少 6 位。';
 
   @override
-  String get importSelectCsvFile => '請選擇檔案進行匯入（支援 CSV/TSV/XLSX 格式）';
+  String get importSelectCsvFile => '請選擇檔案進行匯入（支援 CSV/TSV/XLSX/ZIP 格式）';
 
   @override
   String get exportTitle => '匯出';
@@ -19257,4 +19270,17 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get updateNoRelease => '此專案暫未發布正式版本。';
+
+  @override
+  String importZipContents(int images, int invoices) {
+    return 'ZIP 中有 $images 份附件和 $invoices 份發票，將依序號連結帳單。';
+  }
+
+  @override
+  String get importZipRequired => '請先對應日期和金額欄，再匯入 ZIP。';
+
+  @override
+  String importZipReadError(String error) {
+    return '無法讀取 ZIP 壓縮檔（$error）';
+  }
 }

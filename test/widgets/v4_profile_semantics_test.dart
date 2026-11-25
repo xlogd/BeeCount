@@ -19,7 +19,7 @@ void main() {
                 subtitle: '简单记录',
                 profileLabel: '编辑资料',
                 editLabel: '设置昵称',
-                avatar: Image.asset('assets/logo2.png'),
+                avatar: Image.asset('assets/icon/app_icon.png'),
                 onTap: () => profiles++,
                 onEdit: () => nicknames++),
             const Text('账本结余 ¥12,860.50')

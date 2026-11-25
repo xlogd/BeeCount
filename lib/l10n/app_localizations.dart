@@ -2087,7 +2087,7 @@ abstract class AppLocalizations {
   /// No description provided for @importHint.
   ///
   /// In en, this message translates to:
-  /// **'Tip: Please select a file to start importing (CSV/TSV/XLSX)'**
+  /// **'Tip: Please select a file to start importing (CSV/TSV/XLSX/ZIP)'**
   String get importHint;
 
   /// No description provided for @importReading.
@@ -5669,7 +5669,7 @@ abstract class AppLocalizations {
   /// No description provided for @importSelectCsvFile.
   ///
   /// In en, this message translates to:
-  /// **'Please select a file to import (CSV/TSV/XLSX supported)'**
+  /// **'Please select a file to import (CSV/TSV/XLSX/ZIP supported)'**
   String get importSelectCsvFile;
 
   /// No description provided for @exportTitle.
@@ -18163,6 +18163,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This project has no stable release yet.'**
   String get updateNoRelease;
+
+  /// No description provided for @importZipContents.
+  ///
+  /// In en, this message translates to:
+  /// **'ZIP contains {images} attachments and {invoices} invoices. Files are matched by sequence number.'**
+  String importZipContents(int images, int invoices);
+
+  /// No description provided for @importZipRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Map the date and amount columns before importing this ZIP.'**
+  String get importZipRequired;
+
+  /// No description provided for @importZipReadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to read the ZIP package ({error})'**
+  String importZipReadError(String error);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

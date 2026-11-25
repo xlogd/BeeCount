@@ -2,7 +2,7 @@ import 'package:beecount_business_ui/beecount_business_ui.dart';
 import 'package:beecount_ui/beecount_ui.dart';
 import 'package:flutter/material.dart';
 import '../../utils/account_type_utils.dart';
-import '../../pages/shared/branding/bee_artwork.dart';
+import '../../pages/shared/branding/app_brand_icon.dart';
 
 /// Interactive presentation-only fixture. Production state stays in App bindings.
 class EditorPresentationSample extends StatefulWidget {
@@ -182,8 +182,7 @@ class _EditorPresentationSampleState extends State<EditorPresentationSample> {
               title: sampleSaving ? '正在记账' : '正在识别账单',
               description: sampleSaving ? '正在保存本次识别的记录' : '整理金额、分类与备注',
               contextLabel: '图片记账 · 日常生活',
-              mark: BeeIcon(
-                  color: Theme.of(context).colorScheme.primary, size: 40))),
+              mark: AppBrandIcon(size: 40))),
       const SizedBox(height: 18),
       RecordingFlagsForm(options: [
         RecordingFlagOption(

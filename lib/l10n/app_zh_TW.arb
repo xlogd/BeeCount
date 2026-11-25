@@ -1380,7 +1380,7 @@
       }
     }
   },
-  "importHint": "提示：請選擇一個檔案開始匯入（支援 CSV/TSV/XLSX）",
+  "importHint": "提示：請選擇一個檔案開始匯入（支援 CSV/TSV/XLSX/ZIP）",
   "importInProgress": "正在匯入…",
   "importKeepOriginalName": "保持原名（自動建立/合併）",
   "importNextStep": "下一步",
@@ -1394,7 +1394,7 @@
   "importProgressDetail": "已完成：{done}/{total}，成功 {ok}，失敗 {fail}",
   "importReading": "讀取檔案中…",
   "importSelectCategoryFirst": "請先選擇\"分類\"列再繼續",
-  "importSelectCsvFile": "請選擇檔案進行匯入（支援 CSV/TSV/XLSX 格式）",
+  "importSelectCsvFile": "請選擇檔案進行匯入（支援 CSV/TSV/XLSX/ZIP 格式）",
   "importSkippedNonTransactionTypes": "跳過 {count} 條非收支記錄（債務等）",
   "importStartImport": "開始匯入",
   "importTitle": "匯入帳單",
@@ -3841,5 +3841,8 @@
   "aboutUpstreamAppStore": "在 App Store 為上游版本評分",
   "projectStarTitle": "為專案點 Star",
   "projectStarDescription": "在 GitHub 開啟專案儲存庫",
-  "updateNoRelease": "此專案暫未發布正式版本。"
+  "updateNoRelease": "此專案暫未發布正式版本。",
+  "importZipContents": "ZIP 中有 {images} 份附件和 {invoices} 份發票，將依序號連結帳單。",
+  "importZipRequired": "請先對應日期和金額欄，再匯入 ZIP。",
+  "importZipReadError": "無法讀取 ZIP 壓縮檔（{error}）"
 }

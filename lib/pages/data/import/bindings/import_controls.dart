@@ -1,10 +1,12 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'package:beecount_ui/beecount_ui.dart';
 import '../../../../utils/xlsx_reader.dart';
 import '../../../../services/import/file_reader.dart';
+import '../../../../services/import/transaction_zip.dart';
 import '../../import_confirm_page.dart';
 import 'import_source.dart';
 import '../../../shared/scaffold/widgets/page_scaffold.dart';
@@ -74,7 +76,7 @@ class _ImportControlsState extends ConsumerState<ImportControls> {
               child: BeeImportFileChoice(
                   fileName: _picked?.name ?? l.importNoFileSelected,
                   chooseLabel: l.importChooseFile,
-                  description: 'CSV · TSV · TXT · XLSX',
+                  description: 'CSV · TSV · TXT · XLSX · ZIP',
                   onChoose: _reading ? null : _pickFile)),
           if (_picked == null)
             Padding(
@@ -113,6 +115,11 @@ class _ImportControlsState extends ConsumerState<ImportControls> {
   }
 
   Future<void> _onImport() async {
+    final picked = _picked;
+    if (picked != null && picked.name.toLowerCase().endsWith('.zip')) {
+      await _openZip(picked);
+      return;
+    }
     String csvText = _controller.text.trim();
     if (_picked != null) {
       csvText = await _readFileStreaming(_picked!);
@@ -133,13 +140,50 @@ class _ImportControlsState extends ConsumerState<ImportControls> {
     if (!mounted) return;
   }
 
+  Future<void> _openZip(PlatformFile picked) async {
+    setState(() {
+      _reading = true;
+      _readProgress = null;
+      _cancelRead = false;
+    });
+    TransactionZip? package;
+    try {
+      package = await TransactionZip.read(
+        temporaryDirectory: await getTemporaryDirectory(),
+        path: picked.path,
+        bytes: picked.bytes,
+      );
+      if (!mounted || _cancelRead) return;
+      setState(() => _reading = false);
+      await Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => ImportConfirmPage(
+          csvText: '',
+          hasHeader: true,
+          billType: BillSourceType.generic,
+          transactionZip: package,
+        ),
+      ));
+    } catch (error) {
+      if (mounted && !_cancelRead) {
+        showBeeToast(
+          context,
+          AppLocalizations.of(context).importZipReadError(error.toString()),
+          tone: BeeTone.error,
+        );
+      }
+    } finally {
+      if (mounted && _reading) setState(() => _reading = false);
+      await package?.dispose();
+    }
+  }
+
   Future<void> _pickFile() async {
     try {
       final res = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['csv', 'tsv', 'txt', 'xlsx'],
+        allowedExtensions: ['csv', 'tsv', 'txt', 'xlsx', 'zip'],
         allowMultiple: false,
-        withData: true, // iOS 模拟器/沙盒下读取 bytes
+        withData: false,
       );
       if (!context.mounted) return;
       if (res != null && res.files.isNotEmpty) {
@@ -148,7 +192,7 @@ class _ImportControlsState extends ConsumerState<ImportControls> {
         await _onImport();
         if (!context.mounted) return;
       }
-    } on Exception catch (e) {
+    } catch (e) {
       if (!mounted) return;
       showBeeToast(context,
           AppLocalizations.of(context).importFileOpenError(e.toString()),

@@ -70,7 +70,7 @@ class AnnualReportPoster extends StatelessWidget {
             note: tx.note ?? category?.name ?? '',
             icon: Icon(icon));
     return BeeAnnualReportPoster(
-      header: posterHeader(l, primaryColor, 'ANNUAL REPORT / ${data.year}'),
+      header: posterHeader(l, 'ANNUAL REPORT / ${data.year}'),
       footer: posterFooter(l),
       year: '${data.year}',
       subtitle: l.annualReportPage1Subtitle(data.year),

@@ -56,7 +56,7 @@ void main() {
         ),
         HomeWidgetInfo(iOSKind: '尚未注册的未来类型'),
         HomeWidgetInfo(
-          androidClassName: 'com.tntlikely.beecount.BeeCountWidgetProvider',
+          androidClassName: 'com.logdancer.ledgerdance.BeeCountWidgetProvider',
           androidWidgetId: 42,
         ),
       ];
@@ -73,11 +73,11 @@ void main() {
     test('与 selectSpecsToRender 组合:Android 同 provider 多实例只渲一次', () {
       final infos = [
         HomeWidgetInfo(
-          androidClassName: 'com.tntlikely.beecount.BeeCountWidgetProvider',
+          androidClassName: 'com.logdancer.ledgerdance.BeeCountWidgetProvider',
           androidWidgetId: 1,
         ),
         HomeWidgetInfo(
-          androidClassName: 'com.tntlikely.beecount.BeeCountWidgetProvider',
+          androidClassName: 'com.logdancer.ledgerdance.BeeCountWidgetProvider',
           androidWidgetId: 2,
         ),
       ];
@@ -94,7 +94,7 @@ void main() {
       final infos = [
         HomeWidgetInfo(
           androidClassName:
-              'com.tntlikely.beecount.BeeCountNetWorthWidgetProvider',
+              'com.logdancer.ledgerdance.BeeCountNetWorthWidgetProvider',
           androidWidgetId: 7,
         ),
       ];
@@ -142,7 +142,7 @@ void main() {
         matchInstalledSpecs([
           HomeWidgetInfo(
             androidClassName:
-                'com.tntlikely.beecount.BeeCountGlanceSmallWidgetProvider',
+                'com.logdancer.ledgerdance.BeeCountGlanceSmallWidgetProvider',
             androidWidgetId: 9,
           ),
         ]),
@@ -157,7 +157,7 @@ void main() {
         matchInstalledSpecs([
           HomeWidgetInfo(
             androidClassName:
-                'com.tntlikely.beecount.BeeCountNetWorthLargeWidgetProvider',
+                'com.logdancer.ledgerdance.BeeCountNetWorthLargeWidgetProvider',
             androidWidgetId: 11,
           ),
         ]).toSet(),
@@ -171,7 +171,7 @@ void main() {
         matchInstalledSpecs([
           HomeWidgetInfo(
             androidClassName:
-                'com.tntlikely.beecount.BeeCountBudgetMediumWidgetProvider',
+                'com.logdancer.ledgerdance.BeeCountBudgetMediumWidgetProvider',
             androidWidgetId: 12,
           ),
         ]).toSet(),

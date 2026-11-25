@@ -56,7 +56,7 @@ class TransactionReceipt extends StatelessWidget {
         BeeReceiptRow(label, Text(value));
     return MediaQuery.withNoTextScaling(
         child: BeeReceiptPoster(
-            brand: posterBrand(l, Theme.of(context).colorScheme.primary,
+            brand: posterBrand(l,
                 size: 31, centered: true, nameSize: 15, captionSize: 7),
             amount:
                 '${tx.type == 'expense' ? '−' : tx.type == 'income' ? '+' : ''}${getCurrencySymbol(currency)}$amount',

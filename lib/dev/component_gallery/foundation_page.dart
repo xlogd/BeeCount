@@ -1,3 +1,4 @@
+import 'package:beecount/pages/shared/branding/app_brand_icon.dart';
 import 'refresh_foundation_samples.dart';
 import '../../utils/account_type_utils.dart';
 import 'package:flutter/material.dart';
@@ -369,8 +370,7 @@ class _FoundationAcceptancePageState extends State<FoundationAcceptancePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                 const BeePageHeader(title: '组件令牌'),
-                const BeeAvatar(
-                    label: '示例头像', image: AssetImage('assets/logo2.png')),
+                const BeeAvatar(label: '示例头像', image: AppBrandIcon.image),
                 const SizedBox(height: 12),
                 const Text('圆角 22 / 13 / 15 / 25；触控区 ≥ 44'),
                 const SizedBox(height: 12),
@@ -865,7 +865,7 @@ class _FoundationAcceptancePageState extends State<FoundationAcceptancePage> {
             const SizedBox(height: 12),
             const BeeSurface(
                 child: Row(children: [
-              BeeAvatar(label: '图片头像', image: AssetImage('assets/logo2.png')),
+              BeeAvatar(label: '图片头像', image: AppBrandIcon.image),
               SizedBox(width: 12),
               BeeAvatar(label: '默认头像')
             ])),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:beecount/cloud/sync_service.dart';
 import 'package:beecount/data/db.dart';
@@ -8,6 +9,9 @@ import 'package:beecount/data/repositories/local/local_repository.dart';
 import 'package:beecount/data/repositories/transaction_repository.dart';
 import 'package:beecount/l10n/app_localizations.dart';
 import 'package:beecount/l10n/app_localizations_en.dart';
+import 'package:beecount/l10n/app_localizations_zh.dart';
+import 'package:beecount/pages/data/export/bindings/export_csv.dart';
+import 'package:beecount/pages/data/export/bindings/export_platform.dart';
 import 'package:beecount/pages/data/import_page.dart';
 import 'package:beecount/pages/data/import_confirm_page.dart';
 import 'package:beecount/pages/data/import/bindings/import_confirm_controls.dart';
@@ -19,6 +23,7 @@ import 'package:beecount_ui/beecount_ui.dart';
 import 'package:drift/native.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -250,7 +255,7 @@ void main() {
     expect(await db.select(db.transactions).get(), isEmpty);
   });
 
-  scenario('默认通用CSV及原四种后缀、取消文件选择不导航', (t) async {
+  scenario('默认通用CSV并允许选取ZIP、取消文件选择不导航', (t) async {
     await t.pumpWidget(host(const ImportPage()));
     final chips = t.widgetList<ChoiceChip>(find.byType(ChoiceChip)).toList();
     expect(chips.length, 3);
@@ -259,8 +264,8 @@ void main() {
     await t.pump();
     await t.tap(find.text(l.importChooseFile).last);
     await t.pumpAndSettle();
-    expect(picker.extensions, ['csv', 'tsv', 'txt', 'xlsx']);
-    expect(picker.requestedData, isTrue);
+    expect(picker.extensions, ['csv', 'tsv', 'txt', 'xlsx', 'zip']);
+    expect(picker.requestedData, isFalse);
     expect(find.byType(ImportConfirmControls), findsNothing);
     expect(t.widgetList<ChoiceChip>(find.byType(ChoiceChip)).last.selected,
         isTrue);
@@ -275,6 +280,125 @@ void main() {
     await t.pump();
     expect(find.textContaining('QA picker failure'), findsOneWidget);
     expect(find.byType(ImportConfirmControls), findsNothing);
+  });
+
+  scenario('真实导出 ZIP 按序号恢复多条账单的图片和 PDF', (t) async {
+    final root = Directory.systemTemp.createTempSync('beecount-zip-import-');
+    addTearDown(() => root.deleteSync(recursive: true));
+    const pathChannel = MethodChannel('plugins.flutter.io/path_provider');
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(pathChannel, (_) async => root.path);
+    addTearDown(() => messenger.setMockMethodCallHandler(pathChannel, null));
+
+    final zip = File('${root.path}/导出.zip');
+    final random = Random(278);
+    // The previous reader only failed once it had to read beyond the
+    // archive's 1 MiB file buffer after consuming transactions.csv.
+    final largeAttachment = Uint8List(2 * 1024 * 1024);
+    for (var i = 0; i < largeAttachment.length; i++) {
+      largeAttachment[i] = random.nextInt(256);
+    }
+    final images = [
+      File('${root.path}/one.png')..writeAsBytesSync(largeAttachment),
+      File('${root.path}/two.png')..writeAsBytesSync([4, 5, 6]),
+    ];
+    final invoice = File('${root.path}/invoice.pdf')
+      ..writeAsStringSync('%PDF-1.4\n%%EOF');
+    final now = DateTime(2026, 10, 20, 12);
+    final files = <TransactionExportFile>[];
+    late int first;
+    late int second;
+    await t.runAsync(() async {
+      final source = await repo.createLedger(name: 'ZIP source');
+      first = (await repo.addTransaction(
+          ledgerId: source,
+          type: 'expense',
+          amount: 12,
+          happenedAt: now,
+          note: '有逗号, 也有\n换行'));
+      second = (await repo.addTransaction(
+          ledgerId: source,
+          type: 'income',
+          amount: 20,
+          happenedAt: now.subtract(const Duration(hours: 1)),
+          note: '2-数字备注'));
+      for (final entry in [
+        (first, images[0], 0),
+        (first, invoice, 1),
+        (second, images[1], 0),
+      ]) {
+        await repo.createAttachment(
+          transactionId: entry.$1,
+          fileName: entry.$2.uri.pathSegments.last,
+          sortOrder: entry.$3,
+        );
+      }
+      final inputs = {
+        for (final file in [...images, invoice])
+          file.uri.pathSegments.last: file
+      };
+      final csv = await buildTransactionExportCsv(
+        repo: repo,
+        ledgerId: source,
+        l10n: AppLocalizationsZh(),
+        packageAttachments: true,
+        onAttachments: (entries) => files.addAll(entries.map((entry) =>
+            TransactionExportFile(
+                inputs[entry.attachment.fileName]!, entry.archivePath))),
+      );
+      await const SystemTransactionExportPlatform()
+          .writePackage(zip.path, csv, files.reversed.toList());
+    });
+
+    picker.result = FilePickerResult([
+      PlatformFile(name: '导出.zip', path: zip.path, size: zip.lengthSync()),
+    ]);
+    await t.pumpWidget(host(Builder(
+        builder: (context) => Scaffold(
+            body: TextButton(
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                        builder: (_) => const ImportPage())),
+                child: const Text('Open ZIP import'))))));
+    await t.tap(find.text('Open ZIP import'));
+    await t.pumpAndSettle();
+    await t.tap(find.text(l.importBillTypeWechat));
+    await t.pump();
+    await t.tap(find.text(l.importChooseFile).last);
+    await waitParsing(t);
+    expect(find.text(l.importZipContents(2, 1)), findsOneWidget);
+    await next(t);
+    await t.tap(find.text(l.importStartImport));
+    await flush(t);
+    await t.tap(find.widgetWithText(FilledButton, l.importStartImport).last);
+    await flush(t, cycles: 24);
+    expect(repo.writeStarted, isTrue);
+    final records = await repo.getTransactionsByLedger(1);
+    expect(records.length, 2);
+    final expense = records.singleWhere((record) => record.type == 'expense');
+    final income = records.singleWhere((record) => record.type == 'income');
+    expect(expense.note, '有逗号, 也有\n换行');
+    expect(income.note, '2-数字备注');
+    final expenseFiles = await repo.getAttachmentsByTransaction(expense.id);
+    final incomeFiles = await repo.getAttachmentsByTransaction(income.id);
+    expect(expenseFiles.length, 2);
+    expect(incomeFiles.length, 1);
+    for (final pair in [
+      (expenseFiles[0], images[0]),
+      (expenseFiles[1], invoice),
+      (incomeFiles[0], images[1]),
+    ]) {
+      final stored = File('${root.path}/attachments/${pair.$1.fileName}');
+      expect(stored.readAsBytesSync(), pair.$2.readAsBytesSync());
+    }
+    expect(expenseFiles[1].fileName, endsWith('.pdf'));
+    expect(
+        root.listSync().whereType<Directory>().where((dir) =>
+            dir.uri.pathSegments.any((p) => p.startsWith('transaction_zip_'))),
+        isEmpty);
+    expect(t.takeException(), isNull);
   });
 
   scenario('系统适配器的内存文件进入真实确认页，12字段均自动映射', (t) async {

@@ -23,7 +23,7 @@ class LedgerSummaryPoster extends StatelessWidget {
         posterMoney(n, l, currency: currencyCode, hidden: hidden);
     return MediaQuery.withNoTextScaling(
         child: BeeFinancialSharePoster(
-            header: posterHeader(l, primaryColor, 'OUR SHARED DAYS'),
+            header: posterHeader(l, 'OUR SHARED DAYS'),
             footer: posterFooter(l),
             title: data.ledgerName,
             subtitle: l.sharePosterLedgerTitle,

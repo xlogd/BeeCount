@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../pages/report/annual_report_page.dart';
 import '../../services/export/share_poster_types.dart';
 import '../../utils/app_localizations_resolver.dart';
-import '../../pages/shared/branding/bee_artwork.dart';
+import '../../pages/shared/branding/app_brand_icon.dart';
 import '../../pages/report/annual/bindings/annual_poster_projection.dart';
 import '../../pages/shared/sharing/bindings/app_promo_poster.dart';
 import '../../pages/shared/sharing/bindings/ledger_summary_poster.dart';
@@ -100,7 +100,7 @@ class _PosterCatalogSampleState extends State<PosterCatalogSample> {
               maxConsecutiveDays: 28)),
       '账单小票': BeeReceiptPoster(
           brand: Row(mainAxisSize: MainAxisSize.min, children: [
-            BeeIcon(size: 26, color: color),
+            AppBrandIcon(size: 26),
             const SizedBox(width: 6),
             Text(l.sharePosterAppName, style: const TextStyle(fontSize: 15))
           ]),

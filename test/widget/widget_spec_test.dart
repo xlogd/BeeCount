@@ -122,7 +122,7 @@ void main() {
 
     test('Android class name 匹配 glance-medium', () {
       final info = HomeWidgetInfo(
-        androidClassName: 'com.tntlikely.beecount.BeeCountWidgetProvider',
+        androidClassName: 'com.logdancer.ledgerdance.BeeCountWidgetProvider',
         androidWidgetId: 1,
       );
       expect(WidgetSpec.matchInstalled(info), WidgetSpec.glanceMedium);
@@ -131,7 +131,7 @@ void main() {
     test('未知 kind/class 不匹配任何目录条目', () {
       final iosInfo = HomeWidgetInfo(iOSKind: 'SomeFutureWidget');
       final androidInfo = HomeWidgetInfo(
-        androidClassName: 'com.tntlikely.beecount.SomeFutureProvider',
+        androidClassName: 'com.logdancer.ledgerdance.SomeFutureProvider',
       );
       expect(WidgetSpec.matchInstalled(iosInfo), isNull);
       expect(WidgetSpec.matchInstalled(androidInfo), isNull);

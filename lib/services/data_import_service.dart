@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart' as d;
+import 'package:path/path.dart' as p;
 import '../data/db.dart';
 import '../data/repositories/base_repository.dart';
 import '../data/repositories/transaction_repository.dart' show BatchAttachmentData;
@@ -72,6 +75,7 @@ class ImportAttachment {
   final int sortOrder;
   final String? cloudFileId;
   final String? cloudSha256;
+  final String? sourcePath;
 
   const ImportAttachment({
     required this.fileName,
@@ -82,6 +86,7 @@ class ImportAttachment {
     this.sortOrder = 0,
     this.cloudFileId,
     this.cloudSha256,
+    this.sourcePath,
   });
 }
 
@@ -182,6 +187,8 @@ class DataImportService {
     String defaultCurrency = 'CNY',
     void Function(int done, int total)? onProgress,
     bool recordChanges = true,
+    Directory? attachmentDirectory,
+    bool Function()? isCancelled,
   }) async {
     // 1. 更新账本信息（如果提供）
     if (data.ledgerName != null || data.currency != null) {
@@ -217,6 +224,8 @@ class DataImportService {
       tagNameToId: tagNameToId,
       onProgress: onProgress,
       recordChanges: recordChanges,
+      attachmentDirectory: attachmentDirectory,
+      isCancelled: isCancelled,
     );
 
     return result;
@@ -431,6 +440,8 @@ class DataImportService {
     required Map<String, int> tagNameToId,
     void Function(int done, int total)? onProgress,
     bool recordChanges = true,
+    Directory? attachmentDirectory,
+    bool Function()? isCancelled,
   }) async {
     int inserted = 0;
     int failed = 0;
@@ -473,7 +484,7 @@ class DataImportService {
     // 批次缓冲:tx 列表 + 按 batch 内 index 索引的关联数据
     final batchTx = <TransactionsCompanion>[];
     final batchTagsByIndex = <int, List<int>>{};
-    final batchAttachmentsByIndex = <int, List<BatchAttachmentData>>{};
+    final batchAttachmentsByIndex = <int, List<ImportAttachment>>{};
 
     final localCategoryCache = Map<String, int>.from(categoryCache);
 
@@ -482,17 +493,57 @@ class DataImportService {
       if (batchTx.isEmpty) return;
       final size = batchTx.length;
       final batchSw = Stopwatch()..start();
+      final copiedFiles = <File>[];
       try {
+        final relations = <int, List<BatchAttachmentData>>{};
+        for (final entry in batchAttachmentsByIndex.entries) {
+          final files = <BatchAttachmentData>[];
+          for (final attachment in entry.value) {
+            final sourcePath = attachment.sourcePath;
+            if (sourcePath != null) {
+              final directory = attachmentDirectory;
+              if (directory == null ||
+                  p.basename(attachment.fileName) != attachment.fileName) {
+                throw StateError('Missing or invalid attachment destination');
+              }
+              final destination =
+                  File(p.join(directory.path, attachment.fileName));
+              // Reserve an exclusive name so rollback cannot delete an
+              // existing attachment, including during concurrent imports.
+              await destination.create(exclusive: true);
+              copiedFiles.add(destination);
+              await File(sourcePath).copy(destination.path);
+            }
+            files.add(BatchAttachmentData(
+              fileName: attachment.fileName,
+              originalName: attachment.originalName,
+              fileSize: attachment.fileSize,
+              width: attachment.width,
+              height: attachment.height,
+              sortOrder: attachment.sortOrder,
+              cloudFileId: attachment.cloudFileId,
+              cloudSha256: attachment.cloudSha256,
+            ));
+          }
+          relations[entry.key] = files;
+        }
         final ids = await repo.insertTransactionsBatchWithRelations(
           transactions: List.of(batchTx),
           tagIdsByIndex: Map.of(batchTagsByIndex),
-          attachmentsByIndex: Map.of(batchAttachmentsByIndex),
+          attachmentsByIndex: relations,
           recordChanges: recordChanges,
         );
         inserted += ids.length;
         logger.info('TxImport',
             'flush 批次: size=$size 耗时=${batchSw.elapsedMilliseconds}ms 累计=${processed + size}/$total');
       } catch (e, st) {
+        for (final file in copiedFiles) {
+          try {
+            await file.delete();
+          } on FileSystemException catch (error) {
+            logger.warning('TxImport', 'Could not remove staged attachment: $error');
+          }
+        }
         logger.error('TxImport', '批次 flush 失败,本批 $size 条算 failed', e, st);
         failed += size;
       }
@@ -504,6 +555,7 @@ class DataImportService {
     }
 
     for (final tx in transactions) {
+      if (isCancelled?.call() == true) break;
       // 解析分类ID
       int? categoryId;
       if (tx.categoryId != null) {
@@ -608,18 +660,7 @@ class DataImportService {
         batchTagsByIndex[indexInBatch] = uniqueTagIds;
       }
       if (tx.attachments != null && tx.attachments!.isNotEmpty) {
-        batchAttachmentsByIndex[indexInBatch] = tx.attachments!
-            .map((a) => BatchAttachmentData(
-                  fileName: a.fileName,
-                  originalName: a.originalName,
-                  fileSize: a.fileSize,
-                  width: a.width,
-                  height: a.height,
-                  sortOrder: a.sortOrder,
-                  cloudFileId: a.cloudFileId,
-                  cloudSha256: a.cloudSha256,
-                ))
-            .toList();
+        batchAttachmentsByIndex[indexInBatch] = tx.attachments!;
       }
 
       if (batchTx.length >= batchSize) {
@@ -628,7 +669,7 @@ class DataImportService {
     }
 
     // 刷剩余
-    await flush();
+    if (isCancelled?.call() != true) await flush();
 
     logger.info('TxImport',
         '交易导入完成: 总数=$total 成功=$inserted 失败=$failed 总耗时=${overallSw.elapsedMilliseconds}ms');

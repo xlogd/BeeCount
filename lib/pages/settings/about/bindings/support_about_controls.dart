@@ -14,7 +14,7 @@ import '../../privacy_policy_page.dart';
 import '../../../../services/marketing/product_promos.dart';
 import '../../../../utils/project_links.dart';
 import '../../../../utils/website_urls.dart';
-import '../../../shared/branding/bee_artwork.dart';
+import '../../../shared/branding/app_brand_icon.dart';
 import '../../../../dev/component_gallery/component_gallery_page.dart';
 import '../../support/bindings/support_frame.dart';
 import '../../support/bindings/support_platform.dart';
@@ -70,8 +70,7 @@ class _SupportAboutControlsState extends ConsumerState<SupportAboutControls> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context),
         locale = Localizations.localeOf(context),
-        platform = ref.watch(supportPlatformProvider),
-        primary = ref.watch(primaryColorProvider);
+        platform = ref.watch(supportPlatformProvider);
     final simplified =
         locale.languageCode == 'zh' && locale.countryCode != 'TW';
     Future<bool> open(String url) => platform.open(Uri.parse(url));
@@ -103,7 +102,7 @@ class _SupportAboutControlsState extends ConsumerState<SupportAboutControls> {
         subtitle: l.aboutPageSubtitle,
         body: BeePageBody(eager: true, children: [
           BeeSupportBrand(
-              logo: BeeIcon(color: primary, size: 80),
+              logo: AppBrandIcon(size: 80),
               title: l.appName,
               version: version ??
                   (versionFailed ? l.commonError : l.aboutPageLoadingVersion),

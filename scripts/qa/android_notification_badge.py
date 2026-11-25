@@ -82,7 +82,7 @@ def prepare(args):
     qa.write_json(root / 'manifest.json', m)
     source = qa.snapshot(root, m)
     build = source / 'android/app/build.gradle'
-    build.write_text(build.read_text().replace('applicationId = "com.tntlikely.beecount"',
+    build.write_text(build.read_text().replace('applicationId = "com.logdancer.ledgerdance"',
         'applicationId = "com.tntlikely.beecount.qa"').replace('"@string/app_name_test"', '"BeeCount QA"'))
     env = environment(root)
     avd_env = dict(env, JAVA_HOME='/Applications/Android Studio.app/Contents/jbr/Contents/Home')
@@ -168,7 +168,7 @@ def run(root, m):
     adb(m, 'shell', 'run-as', APP_ID, 'rm', '-rf', 'files/badge-qa')
     with (root / f'raw-logs/instrumentation-{attempt}.log').open('w') as log:
         result = adb(m, 'shell', 'am', 'instrument', '-w', '-r', '-e', 'class',
-            'com.tntlikely.beecount.NotificationBadgeTest', TEST_ID + '/androidx.test.runner.AndroidJUnitRunner', stdout=log, stderr=log, check=False)
+            'com.logdancer.ledgerdance.NotificationBadgeTest', TEST_ID + '/androidx.test.runner.AndroidJUnitRunner', stdout=log, stderr=log, check=False)
     output = (root / f'raw-logs/instrumentation-{attempt}.log').read_text()
     passed = result.returncode == 0 and 'OK (1 test)' in output and 'FAILURES' not in output
     qa.write_json(root / 'evidence/execution.json', dict(status='PASS' if passed else 'FAIL',
@@ -204,7 +204,7 @@ def review(root, m):
         adb(m, 'exec-out', 'cat', installed, stdout=file)
     if hashlib.sha256((root / 'installed.apk').read_bytes()).hexdigest() != m['apk_sha256']:
         raise ValueError('Installed App is not the verified normal-entry binary')
-    adb(m, 'shell', 'am', 'start', '-W', '-n', APP_ID + '/com.tntlikely.beecount.MainActivity', capture_output=True)
+    adb(m, 'shell', 'am', 'start', '-W', '-n', APP_ID + '/com.logdancer.ledgerdance.MainActivity', capture_output=True)
     time.sleep(3)
     with (root / 'evidence/android-normal-entry.png').open('wb') as file:
         adb(m, 'exec-out', 'screencap', '-p', stdout=file)

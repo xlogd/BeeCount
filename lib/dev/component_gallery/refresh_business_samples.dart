@@ -3,7 +3,7 @@ import 'package:beecount_business_ui/card_refinements.dart';
 import 'package:beecount_ui/beecount_ui.dart';
 import 'package:flutter/material.dart';
 import '../../utils/app_localizations_resolver.dart';
-import '../../pages/shared/branding/bee_artwork.dart';
+import '../../pages/shared/branding/app_brand_icon.dart';
 
 class StartupLayoutSample extends StatefulWidget {
   const StartupLayoutSample({super.key});
@@ -60,9 +60,7 @@ class _StartupLayoutSampleState extends State<StartupLayoutSample> {
                           color: BeeCardTheme.of(ctx).canvas,
                           child: BeeSplashLayout(
                               key: ValueKey(replay),
-                              mark: BeeIcon(
-                                  size: 72,
-                                  color: Theme.of(ctx).colorScheme.primary),
+                              mark: AppBrandIcon(size: 72),
                               appName: l.splashAppName,
                               slogan: l.splashSlogan,
                               initializing: l.splashInitializing,

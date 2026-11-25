@@ -12,8 +12,7 @@ class AppPromoPoster extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MediaQuery.withNoTextScaling(
           child: BeeAppSharePoster(
-              header:
-                  posterHeader(l10n, primaryColor, 'OPEN SOURCE · ${l10n.appName}'),
+              header: posterHeader(l10n, 'OPEN SOURCE · ${l10n.appName}'),
               footer: posterFooter(l10n, qr: false),
               title: l10n.sharePosterSlogan.replaceFirst('，', '，\n'),
               accent: primaryColor,

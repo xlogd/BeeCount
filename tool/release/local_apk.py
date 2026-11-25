@@ -22,7 +22,8 @@ import zipfile
 
 from android_version_code import MAX_VERSION_CODE, parse_version, validate_candidate, validate_recorded_version
 
-PACKAGE = "com.tntlikely.beecount"
+PACKAGE = "com.logdancer.ledgerdance"
+LEGACY_PACKAGE = "com.tntlikely.beecount"
 ABI = "arm64-v8a"
 REGISTRY_HEADER = {"kind": "beecount-delivered-apk-registry", "schemaVersion": 1}
 GALLERY = "lib/dev/component_gallery"
@@ -191,7 +192,8 @@ def _registry_lines(content: bytes):
         require(previous_version is None or version.order >= previous_version.order,
                 "交付 registry 版本名回退")
         previous_version = version
-        require(entry["package"] == PACKAGE and entry["abi"] == ABI, "交付 registry 身份无效")
+        require(entry["package"] in (PACKAGE, LEGACY_PACKAGE) and entry["abi"] == ABI,
+                "交付 registry 身份无效")
         require(re.fullmatch(r"[0-9a-f]{40}", entry["sourceSha"]), "交付 registry 源码身份无效")
         for key in ("apkSha256", "certificateSha256", "acceptanceReportSha256"):
             require(re.fullmatch(r"[0-9a-f]{64}", entry[key]), "交付 registry 摘要无效")

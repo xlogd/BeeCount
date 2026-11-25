@@ -1,4 +1,4 @@
-package com.tntlikely.beecount
+package com.logdancer.ledgerdance
 
 import android.content.BroadcastReceiver
 import android.content.Context

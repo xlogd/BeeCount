@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../settings/personalize_page.dart' show headerStyleProvider;
 import '../../../../providers.dart';
-import '../../../shared/branding/bee_artwork.dart';
+import '../../../shared/branding/app_brand_icon.dart';
 import '../../../shared/appearance/primary_header.dart';
 import 'home_overview.dart';
 
@@ -87,9 +87,7 @@ class HomeHeaderBinding extends ConsumerWidget {
                     label: ref.watch(homeBrandVisibleProvider)
                         ? l.v4HomeBrandHide
                         : l.v4HomeBrandShow,
-                    icon: BeeIcon(
-                        size: 18,
-                        color: Theme.of(context).colorScheme.primary)),
+                    icon: AppBrandIcon(size: 18)),
                 if (kDebugMode &&
                     const bool.fromEnvironment('BEECOUNT_V4_RECORDING')) ...[
                   const BeeMenuAction(

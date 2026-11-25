@@ -13,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../pages/report/share/bindings/share_card_controls.dart';
+import '../../pages/shared/branding/app_brand_icon.dart';
 import '../../pages/shared/sharing/bindings/app_promo_poster.dart';
 import '../../pages/shared/sharing/bindings/year_summary_poster.dart';
 import '../../pages/shared/sharing/bindings/month_summary_poster.dart';
@@ -32,6 +33,8 @@ class SharePosterService {
   static Future<Uint8List?> generatePoster(
       BuildContext context, Color primaryColor) async {
     try {
+      await precacheImage(AppBrandIcon.image, context);
+      if (!context.mounted) return null;
       final l10n = AppLocalizations.of(context);
 
       // 创建海报Widget的GlobalKey
@@ -241,6 +244,8 @@ class SharePosterService {
     Widget posterWidget,
   ) async {
     try {
+      await precacheImage(AppBrandIcon.image, context);
+      if (!context.mounted) return null;
       final GlobalKey posterKey = GlobalKey();
 
       final widget = RepaintBoundary(

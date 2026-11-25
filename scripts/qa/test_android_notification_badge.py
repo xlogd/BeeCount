@@ -30,7 +30,7 @@ class AndroidBadgeGuards(unittest.TestCase):
                 badge.device(dict(serial='emulator-5554', protected_serials=[], avd_name='Owned-QA'))
 
     def test_production_apk_is_rejected_before_installation(self):
-        with patch.object(badge.qa, 'command', return_value="package: name='com.tntlikely.beecount'"):
+        with patch.object(badge.qa, 'command', return_value="package: name='com.logdancer.ledgerdance'"):
             with self.assertRaises(ValueError):
                 badge.verify(Path('/unused-owned-run'), {})
 

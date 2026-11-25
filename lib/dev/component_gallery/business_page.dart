@@ -36,7 +36,7 @@ import 'gallery_catalog.dart';
 import 'exchange_rate_sample.dart';
 import 'budget_sample.dart';
 import '../../utils/account_type_utils.dart';
-import '../../pages/shared/branding/bee_artwork.dart';
+import '../../pages/shared/branding/app_brand_icon.dart';
 import 'transaction_row_states.dart';
 import 'package:beecount_ui/beecount_ui.dart';
 import 'package:beecount_business_ui/beecount_business_ui.dart';
@@ -480,7 +480,7 @@ class _BusinessAcceptancePageState extends State<BusinessAcceptancePage> {
                 name: '蜜蜂记账',
                 pageTitle: '明细',
                 ledger: ledger,
-                logo: Image.asset('assets/logo2.png'),
+                logo: Image(image: AppBrandIcon.image),
                 showBrand: brand,
                 onLedgerTap: () => record('切换账本'),
                 actions: [
@@ -659,8 +659,7 @@ class _BusinessAcceptancePageState extends State<BusinessAcceptancePage> {
                           ? expanded.remove('food')
                           : expanded.add('food');
                     })),
-            const BeeCategoryIcon(
-                image: AssetImage('assets/logo2.png'), size: 44),
+            const BeeCategoryIcon(image: AppBrandIcon.image, size: 44),
             const BeeCategoryIcon(
                 image: AssetImage('assets/v4_gallery/attachment-payment.png'),
                 size: 44,
@@ -1051,9 +1050,7 @@ class _BusinessAcceptancePageState extends State<BusinessAcceptancePage> {
               child: Column(children: [
             const Text('启动品牌 · 76', style: TextStyle(fontSize: 12)),
             const SizedBox(height: 8),
-            BeeBrandMark(
-                mark: BeeIcon(
-                    size: 48, color: Theme.of(context).colorScheme.primary)),
+            BeeBrandMark(mark: AppBrandIcon(size: 48)),
             const SizedBox(height: 24),
             BeeOnboardingStep(
                 step: step,
@@ -1071,8 +1068,7 @@ class _BusinessAcceptancePageState extends State<BusinessAcceptancePage> {
                   '开源透明 · 社群驱动'
                 ][step],
                 description: '简单记录每一天，选项稍后也可修改',
-                illustration: BeeIcon(
-                    size: 27, color: Theme.of(context).colorScheme.primary),
+                illustration: AppBrandIcon(size: 27),
                 options: Column(children: [
                   for (var i = 0; i < (step == 2 ? 3 : 2); i++)
                     if (step == 2)
@@ -1467,8 +1463,7 @@ class _BusinessAcceptancePageState extends State<BusinessAcceptancePage> {
                                     id: 'coffee',
                                     label: '咖啡',
                                     icon: BeeCategoryIcon(
-                                        image: AssetImage('assets/logo2.png'),
-                                        size: 20)),
+                                        image: AppBrandIcon.image, size: 20)),
                                 BeeCategoryChoice(
                                     id: 'tea',
                                     label: '奶茶',
@@ -1829,7 +1824,7 @@ class _BusinessAcceptancePageState extends State<BusinessAcceptancePage> {
                 commonLabel: '常用',
                 imageHint: '保留图片原色与透明背景，选择后裁剪为正方形。',
                 chooseImageLabel: '选择图片',
-                preview: Image.asset('assets/logo2.png', fit: BoxFit.contain),
+                preview: Image(image: AppBrandIcon.image, fit: BoxFit.contain),
                 commonItems: const [
                   BeeIconChoice(
                       value: 'food',
@@ -2102,12 +2097,12 @@ class _BusinessAcceptancePageState extends State<BusinessAcceptancePage> {
                     items: const [
                       BeeAttachment(
                           id: 'receipt',
-                          image: AssetImage('assets/logo2.png'),
+                          image: AppBrandIcon.image,
                           label: 'receipt.png',
                           info: '320 × 480 · 12.00 KB'),
                       BeeAttachment(
                           id: 'icon',
-                          image: AssetImage('assets/logo2.png'),
+                          image: AppBrandIcon.image,
                           label: 'custom-icon.png',
                           info: '216 × 216 · 4.50 KB')
                     ],
@@ -2136,7 +2131,7 @@ class _BusinessAcceptancePageState extends State<BusinessAcceptancePage> {
                     items: [
                       BeeAttachment(
                           id: 'bad',
-                          image: const AssetImage('assets/logo2.png'),
+                          image: AppBrandIcon.image,
                           label: 'bad-image.png',
                           info: '3 B')
                     ],
@@ -2150,7 +2145,7 @@ class _BusinessAcceptancePageState extends State<BusinessAcceptancePage> {
                 child: BeeAttachmentLibrary(items: [
                   BeeAttachment(
                       id: 'readonly',
-                      image: AssetImage('assets/logo2.png'),
+                      image: AppBrandIcon.image,
                       label: 'readonly.png',
                       info: '216 × 216 · 4.50 KB')
                 ], emptyLabel: '暂无附件', onOpen: null)),

@@ -36,7 +36,7 @@ class UserProfilePoster extends StatelessWidget {
         const Icon(Icons.person_outline, size: 45, color: BeePaper.muted);
     return MediaQuery.withNoTextScaling(
         child: BeeProfileSharePoster(
-            header: posterHeader(l10n, primaryColor, 'MY DAILY NOTES'),
+            header: posterHeader(l10n, 'MY DAILY NOTES'),
             footer: posterFooter(l10n, campaign: 'user_profile'),
             accent: primaryColor,
             eyebrow: l10n.v4SharePosterProfileEyebrow,

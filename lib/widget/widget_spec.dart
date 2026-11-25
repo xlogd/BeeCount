@@ -116,7 +116,7 @@ class WidgetSpec {
     iosKind: 'BeeCountWidget',
     iosFamily: 'systemSmall',
     androidClassName:
-        'com.tntlikely.beecount.BeeCountGlanceSmallWidgetProvider',
+        'com.logdancer.ledgerdance.BeeCountGlanceSmallWidgetProvider',
   );
 
   /// 现有唯一已上线的组件:中号收支速览。原生标识与升级前完全一致
@@ -128,7 +128,7 @@ class WidgetSpec {
     logicalSize: Size(364, 169),
     iosKind: 'BeeCountWidget',
     iosFamily: 'systemMedium',
-    androidClassName: 'com.tntlikely.beecount.BeeCountWidgetProvider',
+    androidClassName: 'com.logdancer.ledgerdance.BeeCountWidgetProvider',
   );
 
   // ---- 净资产(netWorth):小/中/大 ----
@@ -140,10 +140,10 @@ class WidgetSpec {
     logicalSize: Size(155, 155),
     iosKind: 'BeeCountNetWorthWidget',
     iosFamily: 'systemSmall',
-    androidClassName: 'com.tntlikely.beecount.BeeCountNetWorthWidgetProvider',
+    androidClassName: 'com.logdancer.ledgerdance.BeeCountNetWorthWidgetProvider',
     androidExtraClassNames: [
-      'com.tntlikely.beecount.BeeCountNetWorthMediumWidgetProvider',
-      'com.tntlikely.beecount.BeeCountNetWorthLargeWidgetProvider',
+      'com.logdancer.ledgerdance.BeeCountNetWorthMediumWidgetProvider',
+      'com.logdancer.ledgerdance.BeeCountNetWorthLargeWidgetProvider',
     ],
   );
   static const netWorthMedium = WidgetSpec._(
@@ -152,10 +152,10 @@ class WidgetSpec {
     logicalSize: Size(364, 169),
     iosKind: 'BeeCountNetWorthWidget',
     iosFamily: 'systemMedium',
-    androidClassName: 'com.tntlikely.beecount.BeeCountNetWorthWidgetProvider',
+    androidClassName: 'com.logdancer.ledgerdance.BeeCountNetWorthWidgetProvider',
     androidExtraClassNames: [
-      'com.tntlikely.beecount.BeeCountNetWorthMediumWidgetProvider',
-      'com.tntlikely.beecount.BeeCountNetWorthLargeWidgetProvider',
+      'com.logdancer.ledgerdance.BeeCountNetWorthMediumWidgetProvider',
+      'com.logdancer.ledgerdance.BeeCountNetWorthLargeWidgetProvider',
     ],
   );
   static const netWorthLarge = WidgetSpec._(
@@ -164,10 +164,10 @@ class WidgetSpec {
     logicalSize: Size(364, 382),
     iosKind: 'BeeCountNetWorthWidget',
     iosFamily: 'systemLarge',
-    androidClassName: 'com.tntlikely.beecount.BeeCountNetWorthWidgetProvider',
+    androidClassName: 'com.logdancer.ledgerdance.BeeCountNetWorthWidgetProvider',
     androidExtraClassNames: [
-      'com.tntlikely.beecount.BeeCountNetWorthMediumWidgetProvider',
-      'com.tntlikely.beecount.BeeCountNetWorthLargeWidgetProvider',
+      'com.logdancer.ledgerdance.BeeCountNetWorthMediumWidgetProvider',
+      'com.logdancer.ledgerdance.BeeCountNetWorthLargeWidgetProvider',
     ],
   );
 
@@ -180,9 +180,9 @@ class WidgetSpec {
     logicalSize: Size(155, 155),
     iosKind: 'BeeCountQuickAddWidget',
     iosFamily: 'systemSmall',
-    androidClassName: 'com.tntlikely.beecount.BeeCountQuickAddWidgetProvider',
+    androidClassName: 'com.logdancer.ledgerdance.BeeCountQuickAddWidgetProvider',
     androidExtraClassNames: [
-      'com.tntlikely.beecount.BeeCountQuickAddMediumWidgetProvider',
+      'com.logdancer.ledgerdance.BeeCountQuickAddMediumWidgetProvider',
     ],
   );
   static const quickAddMedium = WidgetSpec._(
@@ -191,9 +191,9 @@ class WidgetSpec {
     logicalSize: Size(364, 169),
     iosKind: 'BeeCountQuickAddWidget',
     iosFamily: 'systemMedium',
-    androidClassName: 'com.tntlikely.beecount.BeeCountQuickAddWidgetProvider',
+    androidClassName: 'com.logdancer.ledgerdance.BeeCountQuickAddWidgetProvider',
     androidExtraClassNames: [
-      'com.tntlikely.beecount.BeeCountQuickAddMediumWidgetProvider',
+      'com.logdancer.ledgerdance.BeeCountQuickAddMediumWidgetProvider',
     ],
   );
 
@@ -206,9 +206,9 @@ class WidgetSpec {
     logicalSize: Size(155, 155),
     iosKind: 'BeeCountBudgetWidget',
     iosFamily: 'systemSmall',
-    androidClassName: 'com.tntlikely.beecount.BeeCountBudgetWidgetProvider',
+    androidClassName: 'com.logdancer.ledgerdance.BeeCountBudgetWidgetProvider',
     androidExtraClassNames: [
-      'com.tntlikely.beecount.BeeCountBudgetMediumWidgetProvider',
+      'com.logdancer.ledgerdance.BeeCountBudgetMediumWidgetProvider',
     ],
   );
   static const budgetMedium = WidgetSpec._(
@@ -217,9 +217,9 @@ class WidgetSpec {
     logicalSize: Size(364, 169),
     iosKind: 'BeeCountBudgetWidget',
     iosFamily: 'systemMedium',
-    androidClassName: 'com.tntlikely.beecount.BeeCountBudgetWidgetProvider',
+    androidClassName: 'com.logdancer.ledgerdance.BeeCountBudgetWidgetProvider',
     androidExtraClassNames: [
-      'com.tntlikely.beecount.BeeCountBudgetMediumWidgetProvider',
+      'com.logdancer.ledgerdance.BeeCountBudgetMediumWidgetProvider',
     ],
   );
 
@@ -232,9 +232,9 @@ class WidgetSpec {
     logicalSize: Size(364, 169),
     iosKind: 'BeeCountRecentWidget',
     iosFamily: 'systemMedium',
-    androidClassName: 'com.tntlikely.beecount.BeeCountRecentWidgetProvider',
+    androidClassName: 'com.logdancer.ledgerdance.BeeCountRecentWidgetProvider',
     androidExtraClassNames: [
-      'com.tntlikely.beecount.BeeCountRecentLargeWidgetProvider',
+      'com.logdancer.ledgerdance.BeeCountRecentLargeWidgetProvider',
     ],
   );
   static const recentLarge = WidgetSpec._(
@@ -243,9 +243,9 @@ class WidgetSpec {
     logicalSize: Size(364, 382),
     iosKind: 'BeeCountRecentWidget',
     iosFamily: 'systemLarge',
-    androidClassName: 'com.tntlikely.beecount.BeeCountRecentWidgetProvider',
+    androidClassName: 'com.logdancer.ledgerdance.BeeCountRecentWidgetProvider',
     androidExtraClassNames: [
-      'com.tntlikely.beecount.BeeCountRecentLargeWidgetProvider',
+      'com.logdancer.ledgerdance.BeeCountRecentLargeWidgetProvider',
     ],
   );
 
@@ -258,7 +258,7 @@ class WidgetSpec {
     logicalSize: Size(364, 382),
     iosKind: 'BeeCountDashboardWidget',
     iosFamily: 'systemLarge',
-    androidClassName: 'com.tntlikely.beecount.BeeCountDashboardWidgetProvider',
+    androidClassName: 'com.logdancer.ledgerdance.BeeCountDashboardWidgetProvider',
   );
 
   // ---- 消费节奏(consumptionRhythm):仅中 ----
@@ -269,7 +269,7 @@ class WidgetSpec {
     iosKind: 'BeeCountConsumptionRhythmWidget',
     iosFamily: 'systemMedium',
     androidClassName:
-        'com.tntlikely.beecount.BeeCountConsumptionRhythmWidgetProvider',
+        'com.logdancer.ledgerdance.BeeCountConsumptionRhythmWidgetProvider',
   );
 
   // ---- 记账连续蜂迹(beeTrail):仅小 ----
@@ -279,7 +279,7 @@ class WidgetSpec {
     logicalSize: Size(155, 155),
     iosKind: 'BeeCountBeeTrailWidget',
     iosFamily: 'systemSmall',
-    androidClassName: 'com.tntlikely.beecount.BeeCountBeeTrailWidgetProvider',
+    androidClassName: 'com.logdancer.ledgerdance.BeeCountBeeTrailWidgetProvider',
   );
 
   /// 全部合法 (type, size) 组合的目录(见 plan.md §二逐组件 spec)。
@@ -309,7 +309,7 @@ class WidgetSpec {
   ///
   /// home_widget(0.9.x `HomeWidgetPlugin.kt` getInstalledWidgets)返回的是
   /// `ComponentName.shortClassName`:当 applicationId 与类所在包名相同时
-  /// (**prod 商店包** `com.tntlikely.beecount` 正是如此),它是带前导点的
+  /// (**prod 商店包** `com.logdancer.ledgerdance` 正是如此),它是带前导点的
   /// 短名 `.BeeCountWidgetProvider` 而**不是**全限定名;dev/debug 因
   /// applicationIdSuffix(`.dev`/`.debug`)与类包名不同才返回全名。此前只按
   /// 全限定名精确比对,商店包上所有条目都匹配不到 → 被当成"一个组件都没装"

@@ -24,7 +24,7 @@ class MonthSummaryPoster extends StatelessWidget {
     final change = data.expenseChangeRate;
     return MediaQuery.withNoTextScaling(
         child: BeeFinancialSharePoster(
-            header: posterHeader(l, primaryColor, 'MONTH IN REVIEW'),
+            header: posterHeader(l, 'MONTH IN REVIEW'),
             footer: posterFooter(l),
             title: DateFormat.yMMMM(l.localeName)
                 .format(DateTime(data.year, data.month)),

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/ui_state_providers.dart';
-import '../shared/branding/bee_artwork.dart';
+import '../shared/branding/app_brand_icon.dart';
 
 /// Initialization and routing remain owned by the application root.
 class SplashPage extends StatelessWidget {
@@ -23,9 +23,7 @@ class SplashPage extends StatelessWidget {
         backgroundColor: BeeCardTheme.of(context).canvas,
         body: Stack(fit: StackFit.expand, children: [
           BeeSplashLayout(
-              mark: BeeIcon(
-                  size: compact ? 72 : 82,
-                  color: Theme.of(context).colorScheme.primary),
+              mark: AppBrandIcon(size: compact ? 72 : 82),
               appName: l.splashAppName,
               slogan: l.splashSlogan,
               initializing: loadError ? l.commonError : l.splashInitializing,

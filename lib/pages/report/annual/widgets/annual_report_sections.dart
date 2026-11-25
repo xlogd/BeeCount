@@ -1,3 +1,4 @@
+import 'package:beecount/pages/shared/branding/app_brand_icon.dart';
 import 'package:beecount_business_ui/annual_report.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -104,7 +105,7 @@ List<Widget> annualReportSections(BuildContext context, AnnualReportData data,
               income: money(data.totalIncome),
               savingsLabel: l.annualReportNetSavings,
               savings: money(data.netSavings, sign: true),
-              brand: Image.asset('assets/logo2.png', width: 32, height: 32),
+              brand: Image(image: AppBrandIcon.image, width: 32, height: 32),
               facts: [
                 (
                   label: l.annualReportTotalDays,

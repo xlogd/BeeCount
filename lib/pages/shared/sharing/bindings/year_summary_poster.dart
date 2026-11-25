@@ -23,7 +23,7 @@ class YearSummaryPoster extends StatelessWidget {
         posterMoney(n, l, currency: currencyCode, hidden: hidden);
     return MediaQuery.withNoTextScaling(
         child: BeeFinancialSharePoster(
-            header: posterHeader(l, primaryColor, 'YEAR IN REVIEW'),
+            header: posterHeader(l, 'YEAR IN REVIEW'),
             footer: posterFooter(l),
             title: '${data.year}',
             subtitle: l.sharePosterYearSubtitle,

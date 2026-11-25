@@ -321,7 +321,7 @@ jobs:
           from googleapiclient.http import MediaFileUpload
 
           # 配置
-          PACKAGE_NAME = 'com.tntlikely.beecount'
+          PACKAGE_NAME = 'com.logdancer.ledgerdance'
           AAB_FILE = sys.argv[1]
           TRACK = 'production'  # internal, alpha, beta, production
 

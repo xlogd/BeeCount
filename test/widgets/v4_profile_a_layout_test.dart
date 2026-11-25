@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:beecount/pages/main/mine/widgets/mine_avatar.dart';
-import 'package:beecount/pages/shared/branding/bee_artwork.dart';
+import 'package:beecount/pages/shared/branding/app_brand_icon.dart';
 import 'package:beecount_business_ui/beecount_business_ui.dart';
 import 'package:beecount_ui/beecount_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 final _photo = Uint8List.fromList(base64Decode(
@@ -73,10 +72,6 @@ void main() {
                     widget.key == const ValueKey('profile-avatar')));
             expect(avatar, findsOneWidget);
             expect(tester.getSize(avatar), const Size(48, 48));
-            expect(
-                find.descendant(of: avatar, matching: find.byType(Container)),
-                dark && !photo ? findsOneWidget : findsNothing,
-                reason: '默认头像仅深色复用通用品牌遮罩，照片不增加边框或遮罩');
             if (photo) {
               final image =
                   find.descendant(of: avatar, matching: find.byType(Image));
@@ -89,13 +84,12 @@ void main() {
                   find.descendant(of: avatar, matching: find.byType(ClipRRect)),
                   findsNothing);
             } else {
-              final svg = tester.widget<SvgPicture>(find.descendant(
-                  of: avatar, matching: find.byType(SvgPicture)));
-              expect((svg.bytesLoader as SvgAssetLoader).assetName,
-                  'assets/bee.svg');
-              expect(
-                  find.descendant(of: avatar, matching: find.byType(BeeIcon)),
-                  findsOneWidget);
+              final brand = find.descendant(
+                  of: avatar, matching: find.byType(AppBrandIcon));
+              expect(brand, findsOneWidget);
+              final image = tester.widget<Image>(
+                  find.descendant(of: brand, matching: find.byType(Image)));
+              expect(image.image, AppBrandIcon.image);
             }
             final total =
                 tester.getBottomLeft(find.byType(BeeLedgerBalance)).dy -
@@ -111,26 +105,4 @@ void main() {
       }
     }
   }
-
-  testWidgets('默认我的头像复用其它品牌位置的暗色圆形遮罩与原色素材', (tester) async {
-    await tester.pumpWidget(MaterialApp(
-        theme: beeTheme(brightness: Brightness.dark),
-        home: const Scaffold(
-            body: Row(children: [
-          MineDefaultAvatar(),
-          BeeIcon(color: Colors.amber, size: 32)
-        ]))));
-    await tester.pumpAndSettle();
-    expect(
-        find.descendant(
-            of: find.byType(MineDefaultAvatar),
-            matching: find.byType(Container)),
-        findsOneWidget);
-    expect(
-        find.descendant(
-            of: find.byType(BeeIcon), matching: find.byType(Container)),
-        findsNWidgets(2));
-    expect(tester.takeException(), isNull);
-    await tester.pumpWidget(const SizedBox.shrink());
-  });
 }

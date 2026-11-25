@@ -1,4 +1,4 @@
-import '../../../shared/branding/bee_artwork.dart';
+import '../../../shared/branding/app_brand_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -482,9 +482,7 @@ class TransactionListState extends ConsumerState<TransactionList> {
                         .withValues(alpha: .08)),
                 child: Padding(
                     padding: const EdgeInsets.all(18),
-                    child: BeeIcon(
-                        size: 52,
-                        color: Theme.of(context).colorScheme.primary))),
+                    child: AppBrandIcon(size: 52))),
           );
     }
 

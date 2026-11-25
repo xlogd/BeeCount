@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:beecount_business_ui/beecount_business_ui.dart';
 import '../../../../providers.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../shared/branding/bee_artwork.dart';
+import '../../../shared/branding/app_brand_icon.dart';
 import '../../../../utils/format_money.dart';
 import 'home_budget_summary.dart';
 import 'home_budget_indicator.dart';
@@ -72,8 +72,7 @@ class HomeOverview extends ConsumerWidget {
                   ledger: ledger == null
                       ? l10n.ledgersNew
                       : translateLedgerName(context, ledger.name),
-                  logo: BeeIcon(
-                      size: 28, color: Theme.of(context).colorScheme.primary),
+                  logo: AppBrandIcon(size: 28),
                   onLedgerTap: onLedgerTap,
                   actions: actions,
                   showBrand: ref.watch(homeBrandVisibleProvider)))),

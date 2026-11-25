@@ -14,6 +14,8 @@ import '../../../../services/import/parsers/wechat_parser.dart';
 import '../../../../services/billing/post_processor.dart';
 import '../../../../services/data_import_service.dart';
 import '../../../../services/import/account_currency_plan.dart';
+import '../../../../services/import/transaction_zip.dart';
+import '../../../../services/attachment_service.dart';
 import '../../../../utils/date_parser.dart';
 import 'import_source.dart';
 import '../../../shared/scaffold/widgets/page_scaffold.dart';
@@ -23,11 +25,13 @@ class ImportConfirmControls extends ConsumerStatefulWidget {
   final String csvText;
   final bool hasHeader;
   final BillSourceType billType;
+  final TransactionZip? transactionZip;
   const ImportConfirmControls({
     super.key,
     required this.csvText,
     required this.hasHeader,
     required this.billType,
+    this.transactionZip,
   });
 
   @override
@@ -71,7 +75,11 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
 
     // 解析在后台 isolate 完成，避免主线程卡顿
     () async {
-      final parsed = await compute(_parseRowsIsolate, widget.csvText);
+      final package = widget.transactionZip;
+      final parsed = package != null
+          ? package.rows
+          : await compute<String, List<List<String>>>(
+              _parseRowsIsolate, widget.csvText);
       if (!mounted) return;
       setState(() {
         rows = parsed;
@@ -79,7 +87,9 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
       });
       // 解析完成
       // 使用解析器查找表头
-      if (widget.hasHeader && rows.isNotEmpty) {
+      if (widget.transactionZip == null &&
+          widget.hasHeader &&
+          rows.isNotEmpty) {
         headerRow = _billParser.findHeaderRow(rows);
         if (headerRow < 0) headerRow = 0; // 兜底
       }
@@ -107,6 +117,30 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
 
     // 使用解析器的列映射功能
     final detectedMapping = _billParser.mapColumns(headers);
+    if (widget.transactionZip != null) {
+      // Match the exported headers even when the app's language has changed.
+      detectedMapping.clear();
+      for (final locale in AppLocalizations.supportedLocales) {
+        final l = lookupAppLocalizations(locale);
+        final fields = {
+          'date': l.exportCsvHeaderTime,
+          'type': l.exportCsvHeaderType,
+          'amount': l.exportCsvHeaderAmount,
+          'currency': l.exportCsvHeaderCurrency,
+          'category': l.exportCsvHeaderCategory,
+          'sub_category': l.exportCsvHeaderSubCategory,
+          'account': l.exportCsvHeaderAccount,
+          'from_account': l.exportCsvHeaderFromAccount,
+          'to_account': l.exportCsvHeaderToAccount,
+          'note': l.exportCsvHeaderNote,
+          'tags': l.exportCsvHeaderTags,
+        };
+        for (final field in fields.entries) {
+          final index = headers.indexOf(field.value, 1);
+          if (index >= 0) detectedMapping[field.key] = index;
+        }
+      }
+    }
 
     // 更新 mapping
     detectedMapping.forEach((key, index) {
@@ -119,6 +153,7 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final package = widget.transactionZip;
     if (parsing) {
       return V4PageScaffold(
           body: Column(children: [
@@ -150,7 +185,7 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
       (l.exportCsvHeaderToAccount, 'to_account'),
       (l.importFieldNote, 'note'),
       (l.exportCsvHeaderTags, 'tags'),
-      (l.exportCsvHeaderAttachments, 'attachments'),
+      if (package == null) (l.exportCsvHeaderAttachments, 'attachments'),
     ];
     return V4PageScaffold(
         bottomNavigationBar: SafeArea(
@@ -196,6 +231,12 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
               l.importConfirmMapping,
               l.importCategoryMapping
             ], current: step + 1),
+            if (package != null)
+              BeeImportSection(
+                child: Text(l.importZipContents(
+                    package.attachmentCount - package.invoiceCount,
+                    package.invoiceCount)),
+              ),
             if (step == 0) ...[
               if (rows.isEmpty)
                 BeeEmptyState(
@@ -310,6 +351,18 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
   }
 
   void _nextStep() {
+    if (importing) return;
+    if (widget.transactionZip != null) {
+      if (mapping['date'] == null || mapping['amount'] == null) {
+        showBeeToast(context, AppLocalizations.of(context).importZipRequired,
+            tone: BeeTone.warning);
+        return;
+      }
+      if (mapping['category'] == null) {
+        _startImport();
+        return;
+      }
+    }
     if (mapping['category'] == null) {
       if (mapping['from_account'] != null || mapping['to_account'] != null) {
         _startImport();
@@ -325,16 +378,21 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
   }
 
   Future<void> _startImport() async {
+    if (importing) return;
     // 使用根容器，保证页面被销毁后仍可更新全局进度供"我的"页展示
     final container = ProviderScope.containerOf(context, listen: false);
     final currentContext = context;
     setState(() {
       importing = true;
+      _cancelled = false;
       ok = 0;
       fail = 0;
     });
     final repo = ref.read(repositoryProvider);
     final ledgerId = ref.read(currentLedgerIdProvider);
+    final package = widget.transactionZip;
+    final attachmentService =
+        package == null ? null : ref.read(attachmentServiceProvider);
 
     // v1.15.0: 获取当前账本的币种信息
     final currentLedger = await repo.getLedgerById(ledgerId);
@@ -467,30 +525,34 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
 
     try {
       // 调用统一导入服务
-      final result = await dataImportService.importData(
-        repo,
-        ledgerId,
-        importData,
-        defaultCurrency: ledgerCurrency,
-        onProgress: (processed, progressTotal) {
-          done = processed;
-          // 更新全局进度
-          container.read(importProgressProvider.notifier).state =
-              ImportProgress(
-            running: true,
-            total: total,
-            done: done,
-            ok: ok,
-            fail: fail,
+      Future<ImportResult> save() async => dataImportService.importData(
+            repo,
+            ledgerId,
+            importData,
+            defaultCurrency: ledgerCurrency,
+            attachmentDirectory:
+                await attachmentService?.getAttachmentDirectory(),
+            isCancelled: package == null ? null : () => _cancelled,
+            onProgress: (processed, progressTotal) {
+              done = processed;
+              // 更新全局进度
+              container.read(importProgressProvider.notifier).state =
+                  ImportProgress(
+                running: true,
+                total: total,
+                done: done,
+                ok: ok,
+                fail: fail,
+              );
+              if (mounted) setState(() {});
+            },
           );
-          if (mounted) setState(() {});
-        },
-      );
+      final result = await (package == null ? save() : package.import(save));
 
       ok = result.inserted;
       fail = result.failed;
       skipped = skippedTypes.values.fold(0, (a, b) => a + b);
-      done = total;
+      if (!_cancelled) done = total;
 
       // 显式触发一次同步上推。SyncCoordinator 监听 local_changes 表已经会
       // 自动调度,这里作为兜底:provider 重建瞬间 / 边界条件下 coordinator
@@ -696,6 +758,7 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
           typeStr == '入帳' ||
           typeStr == '進帳' || // 繁体
           typeStr == 'income' ||
+          typeStr == '수입' ||
           typeStr == 'revenue' ||
           typeStr == 'earning') {
         type = 'income';
@@ -708,10 +771,14 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
           typeStr == '消費' ||
           typeStr == '花費' || // 繁体
           typeStr == 'expense' ||
+          typeStr == '지출' ||
           typeStr == 'spending' ||
           typeStr == 'expenditure') {
         type = 'expense';
-      } else if (typeStr == '转账' || typeStr == '轉帳' || typeStr == 'transfer') {
+      } else if (typeStr == '转账' ||
+          typeStr == '轉帳' ||
+          typeStr == 'transfer' ||
+          typeStr == '이체') {
         // 添加繁体
         type = 'transfer';
       }
@@ -830,6 +897,8 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
       final note = getBy('note');
       final tagsStr = getBy('tags');
       final attachmentsStr = getBy('attachments');
+      final package = widget.transactionZip;
+      final sequence = package == null ? null : int.parse(r.first.trim());
 
       // 类型识别
       final typeStr = typeRaw.trim().toLowerCase();
@@ -841,6 +910,7 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
           typeStr == '入帳' ||
           typeStr == '進帳' || // 繁体
           typeStr == 'income' ||
+          typeStr == '수입' ||
           typeStr == 'revenue' ||
           typeStr == 'earning') {
         type = 'income';
@@ -853,13 +923,21 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
           typeStr == '消費' ||
           typeStr == '花費' || // 繁体
           typeStr == 'expense' ||
+          typeStr == '지출' ||
           typeStr == 'spending' ||
           typeStr == 'expenditure') {
         type = 'expense';
-      } else if (typeStr == '转账' || typeStr == '轉帳' || typeStr == 'transfer') {
+      } else if (typeStr == '转账' ||
+          typeStr == '轉帳' ||
+          typeStr == 'transfer' ||
+          typeStr == '이체') {
         // 添加繁体
         type = 'transfer';
       } else {
+        if (package != null) {
+          throw FormatException(
+              'Invalid transaction type for sequence $sequence');
+        }
         // 未识别的类型：记录并跳过
         skippedTypes[typeRaw.trim()] = (skippedTypes[typeRaw.trim()] ?? 0) + 1;
         continue;
@@ -870,7 +948,15 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
       final amount = double.tryParse(amountClean)?.abs() ?? 0.0;
 
       // 日期解析
-      final date = DateParser.parse(dateStr);
+      final date = package == null
+          ? DateParser.parse(dateStr)
+          : DateTime.tryParse(dateStr ?? '');
+      if (package != null &&
+          (date == null ||
+              double.tryParse(amountClean)?.isFinite != true ||
+              amountStr == null)) {
+        throw FormatException('Invalid date or amount for sequence $sequence');
+      }
 
       // 解析标签名称列表
       List<String>? tagNames;
@@ -883,8 +969,10 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
       }
 
       // 解析附件文件名列表
-      List<ImportAttachment>? attachments;
-      if (attachmentsStr != null && attachmentsStr.isNotEmpty) {
+      List<ImportAttachment>? attachments = package?.attachments[sequence];
+      if (package == null &&
+          attachmentsStr != null &&
+          attachmentsStr.isNotEmpty) {
         final fileNames = attachmentsStr
             .split(',')
             .map((s) => s.trim())
@@ -938,7 +1026,7 @@ class _ImportConfirmControlsState extends ConsumerState<ImportConfirmControls> {
         categoryName: finalCategoryName,
         categoryKind: categoryKind,
         categoryId: categoryId,
-        happenedAt: date,
+        happenedAt: date!,
         note: note,
         accountName: type != 'transfer' ? accountName : null,
         fromAccountName: type == 'transfer' ? fromAccountName : null,

@@ -9,6 +9,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../providers.dart';
 import '../../../../services/export/share_poster_data_service.dart';
 import '../../../../services/export/share_poster_types.dart';
+import '../../../shared/branding/app_brand_icon.dart';
 import '../../../shared/sharing/bindings/app_promo_poster.dart';
 import '../../../shared/sharing/bindings/ledger_summary_poster.dart';
 import '../../../shared/sharing/bindings/month_summary_poster.dart';
@@ -85,6 +86,8 @@ class ShareCardRenderer {
   /// Every exit removes the private overlay and disposes the native image.
   Future<Uint8List?> capture(BuildContext context, Widget poster,
       {double pixelRatio = 3}) async {
+    await precacheImage(AppBrandIcon.image, context);
+    if (!context.mounted) return null;
     final key = GlobalKey();
     final media = MediaQuery.of(context).copyWith(
       size: const Size(750, 1334),

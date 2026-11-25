@@ -16,7 +16,7 @@ import 'package:beecount/pages/main/home/widgets/home_journal.dart';
 import 'package:beecount/pages/main/home/widgets/home_overview.dart';
 import 'package:beecount/providers.dart';
 import 'package:beecount/providers/budget_providers.dart';
-import 'package:beecount/pages/shared/branding/bee_artwork.dart';
+import 'package:beecount/pages/shared/branding/app_brand_icon.dart';
 import 'package:beecount/pages/shared/appearance/primary_header.dart';
 import 'package:beecount_business_ui/beecount_business_ui.dart';
 import 'package:beecount_ui/beecount_ui.dart';
@@ -298,8 +298,15 @@ void main() {
     expect(summary.width, expected['summary']['width']);
     expect(summary.height, closeTo(expected['summary']['height'] as num, 1.5));
     expect(header.top, closeTo(expected['streamHeader']['y'] as num, 1.5));
-    expect(find.byType(BeeIcon), findsOneWidget);
-    expect(find.text('蜜蜂记账'), findsOneWidget);
+    final brand = find.byType(AppBrandIcon);
+    expect(brand, findsOneWidget);
+    expect(
+        tester
+            .widget<Image>(
+                find.descendant(of: brand, matching: find.byType(Image)))
+            .image,
+        AppBrandIcon.image);
+    expect(find.text('AI账舞'), findsOneWidget);
     expect(find.text('2笔'), findsOneWidget);
     expect(find.text('12,000.00'), findsOneWidget);
     expect(find.textContaining('5,000.00'), findsOneWidget);
@@ -383,20 +390,20 @@ void main() {
 
   testWidgets('首页品牌选择写入偏好，重新读取后仍可切换', (tester) async {
     await open(tester, brandControl: true);
-    expect(find.byType(BeeIcon), findsOneWidget);
+    expect(find.byType(AppBrandIcon), findsOneWidget);
     await tester.tap(find.text('切换品牌'));
     await tester.pumpAndSettle();
-    expect(find.byType(BeeIcon), findsNothing);
+    expect(find.byType(AppBrandIcon), findsNothing);
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getBool('v4_home_show_brand'), isFalse);
     container.read(homeBrandVisibleProvider.notifier).state = true;
     container.invalidate(homeBrandPreferenceInitProvider);
     await tester.pumpAndSettle();
-    expect(find.byType(BeeIcon), findsNothing);
+    expect(find.byType(AppBrandIcon), findsNothing);
     await tester.tap(find.text('切换品牌'));
     await tester.pumpAndSettle();
     expect(prefs.getBool('v4_home_show_brand'), isTrue);
-    expect(find.byType(BeeIcon), findsOneWidget);
+    expect(find.byType(AppBrandIcon), findsOneWidget);
     expect(tester.takeException(), isNull);
     await close(tester);
   });

@@ -1092,7 +1092,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importNoFileSelected => 'No file selected';
 
   @override
-  String get importHint => 'Tip: Please select a file to start importing (CSV/TSV/XLSX)';
+  String get importHint => 'Tip: Please select a file to start importing (CSV/TSV/XLSX/ZIP)';
 
   @override
   String get importReading => 'Reading file…';
@@ -2987,7 +2987,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authErrorWeakPassword => 'Password is too simple, please include letters and numbers, at least 6 characters.';
 
   @override
-  String get importSelectCsvFile => 'Please select a file to import (CSV/TSV/XLSX supported)';
+  String get importSelectCsvFile => 'Please select a file to import (CSV/TSV/XLSX/ZIP supported)';
 
   @override
   String get exportTitle => 'Export';
@@ -9684,4 +9684,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updateNoRelease => 'This project has no stable release yet.';
+
+  @override
+  String importZipContents(int images, int invoices) {
+    return 'ZIP contains $images attachments and $invoices invoices. Files are matched by sequence number.';
+  }
+
+  @override
+  String get importZipRequired => 'Map the date and amount columns before importing this ZIP.';
+
+  @override
+  String importZipReadError(String error) {
+    return 'Unable to read the ZIP package ($error)';
+  }
 }

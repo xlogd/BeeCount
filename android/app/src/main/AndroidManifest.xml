@@ -122,7 +122,7 @@
         </receiver>
 
         <!-- 桌面小组件 -->
-        <receiver android:name="com.tntlikely.beecount.BeeCountWidgetProvider"
+        <receiver android:name=".BeeCountWidgetProvider"
             android:label="@string/widget_name"
             android:exported="true">
             <intent-filter>

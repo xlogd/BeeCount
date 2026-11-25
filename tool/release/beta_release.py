@@ -195,7 +195,7 @@ def source_sha(value: str, repo: Path) -> str:
 
 def validate_receipt(release, record):
     gate.require(isinstance(record, dict) and type(record.get("schemaVersion")) is int and
-                 record["schemaVersion"] == 1 and record.get("package") == gate.PACKAGE and
+                 record["schemaVersion"] == 1 and record.get("package") in (gate.PACKAGE, gate.LEGACY_PACKAGE) and
                  record.get("kind") in {"beecount-beta-release", "beecount-android-release"} and
                  record.get("abi") == gate.ABI and
                  record.get("certificateSha256") == PRODUCTION_CERTIFICATE and

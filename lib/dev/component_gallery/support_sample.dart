@@ -1,3 +1,4 @@
+import 'package:beecount/pages/shared/branding/app_brand_icon.dart';
 import 'package:beecount_business_ui/support.dart';
 import 'package:beecount_ui/beecount_ui.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class _SupportSampleState extends State<SupportSample> {
       BeeSurface(child: Text(event)),
       const SizedBox(height: 12),
       BeeSupportBrand(
-          logo: Image.asset('assets/logo2.png', width: 34, height: 34),
+          logo: Image(image: AppBrandIcon.image, width: 34, height: 34),
           title: l.appName,
           version: 'QA 4.0',
           socials: const [],
